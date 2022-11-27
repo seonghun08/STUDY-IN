@@ -14,7 +14,8 @@ thymeleaf, bootstrap, html, css, javaScript
 </pre>
 <br/>
 
-###### 프론트엔드 쪽은 매우 미흡하다...
+백엔드도 그렇지만 프론트엔드 쪽은 매우 미흡하다...<br/>
+
 mdbootstrap 5<br/>
 https://mdbootstrap.com/docs/standard/<br/>
 tagify<br/>
