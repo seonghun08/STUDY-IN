@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div class="container py-3">
+    <div th:replace="fragments.html :: menu (settings)"></div>
+    <div class="row justify-content-center mt-4">
+        <div class="col-2">
+            <div th:replace="fragments.html :: settings-menu(currentMenu='notifications')"></div>
+        </div>
+        <div class="col-8">
+            <div th:replace="fragments.html :: message"></div>
+            <div class="tab-content" role="tabpanel">
+                <div class="card mb-4">
+                    <div class="card-header">Notification settings</div>
+                    <div class="card-body">
+                        <form class="mb-3"
+                              th:action="@{/settings/notifications}" action="#"
+                              th:object="${notificationsForm}"
+                              method="post"
+                              novalidate
+                        >
+                            <div class="alert alert-light" role="alert">
+                                <a th:href="@{/settings/locations}">활동 지역</a>내
+                                <a th:href="@{/settings/keywords}">관심</a> 있는 스터디가 생성될 경우 알림 받을 방법을 설정하세요.
+                            </div>
+                            <div class="form-group mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input"
+                                           th:field="*{studyCreatedByEmail}"
+                                           type="checkbox"
+                                           id="studyCreatedByEmail"
+                                    />
+                                    <label class="form-check-label" for="studyCreatedByEmail">
+                                        이메일로 받기
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input"
+                                           th:field="*{studyCreatedByWeb}"
+                                           type="checkbox"
+                                           id="studyCreatedByWeb"
+                                    />
+                                    <label class="form-check-label" for="studyCreatedByWeb">
+                                        웹으로 받기
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="alert alert-light" role="alert">
+                                <strong>스터디 모임 참가 신청</strong> 결과 알림을 받을 방법을 설정하세요.
+                            </div>
+                            <div class="form-group mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input"
+                                           th:field="*{studyEnrollmentResultByEmail}"
+                                           type="checkbox"
+                                           id="studyEnrollmentResultByEmail"
+                                    />
+                                    <label class="form-check-label" for="studyEnrollmentResultByEmail">
+                                        이메일로 받기
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input"
+                                           th:field="*{studyEnrollmentResultByWeb}"
+                                           type="checkbox"
+                                           id="studyEnrollmentResultByWeb"
+                                    />
+                                    <label class="form-check-label" for="studyEnrollmentResultByWeb">
+                                        웹으로 받기
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="alert alert-light" role="alert">
+                                <strong>참여중인 스터디</strong>에 대한 알림을 받을 방법을 설정하세요.
+                            </div>
+                            <div class="form-group mb-4">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input"
+                                           th:field="*{studyUpdatedByEmail}"
+                                           type="checkbox"
+                                           id="studyWatchByEmail"
+                                    />
+                                    <label class="form-check-label" for="studyWatchByEmail">
+                                        이메일로 받기
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input"
+                                           th:field="*{studyUpdatedByWeb}"
+                                           type="checkbox"
+                                           id="studyWatchByWeb"
+                                    />
+                                    <label class="form-check-label" for="studyWatchByWeb">
+                                        웹으로 받기
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary btn-block" type="submit">
+                                    Save changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+</body>
+</html>

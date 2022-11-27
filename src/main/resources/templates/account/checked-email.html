@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div th:if="${error != null}" class="container">
+    <div class="py-3 text-center form-label">
+        <br/>
+        <h2>STUDY IN</h2>
+        <p>Check email</p>
+        <div class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            이메일 인증 링크가 정확하지 않습니다.
+        </div>
+    </div>
+</div>
+<div th:if="${error == null}" class="container">
+    <div class="py-3 text-center form-label">
+        <br/>
+        <h2>STUDY IN</h2>
+        <p>Check email</p>
+        <div class="alert alert-success" role="alert">
+            <i class="fas fa-check"></i>
+            이메일 인증이 완료되었습니다.
+        </div>
+        <h5>
+            <span th:text="${numberOfUser}">10</span>번째 회원이 되신
+            <span th:text="${nickname}">nickname</span>님, 가입을 진심으로 환영합니다.
+        </h5>
+        <small class="text-info">
+            이제부터 가입할 때 사용한 이메일 또는 아이디와 패스워드로 로그인 할 수 있습니다.
+        </small><br/><br/>
+        <a class="btn btn-primary text-center me-3"
+           th:href="@{/}"
+           type="button"
+        >
+            HOME
+        </a>
+    </div>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+</body>
+</html>

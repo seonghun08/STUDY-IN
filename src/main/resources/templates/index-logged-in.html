@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div th:replace="fragments.html :: email-authentication-message"></div>
+<div th:replace="fragments.html :: message"></div>
+<div class="container text-center" style="margin-top: 60px;">
+    <h2 class="mb-3">STUDY IN</h2>
+    <div class="col-10 mx-auto note note-light text-center">
+        <p style="display:inline;">
+            태그와 지역을 기반으로 원하는 스터디를 찾고 참여하세요.<br/>
+            직접 스터디를 만들거나, 만들어진 스터디에 참여해보세요. 스터디인은 여러분의 성장을 응원합니다.
+        </p>
+    </div>
+</div>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-2">
+            <h5 class="">관심 태그</h5>
+            <ul class="col-8 list-group list-group-flush">
+                <li th:each="tag: ${account.tags}" class="mt-1 list-group-item badge rounded-pill badge-light shadow">
+                    <a class="text-dark" th:href="@{'/search/study?sort=publishedDateTime,desc&keyword=' + ${tag.title}}">
+                        # <span th:text="${tag.title}"></span>
+                    </a>
+                </li>
+                <li th:if="${account.tags.size() == 0}" class="list-group-item badge rounded-pill badge-light shadow">
+                    <a th:href="@{/settings/tags}" class="btn-text">관심 주제 등록</a>
+                </li>
+            </ul>
+            <h5 class="mt-5">활동 지역</h5>
+            <ul class="col-8 list-group list-group-flush">
+                <li th:each="location: ${account.locations}" class="mt-1 list-group-item badge rounded-pill badge-light shadow">
+                    <a class="text-dark" th:href="@{'/search/study?sort=publishedDateTime,desc&keyword=' + ${location.getLocalNameOfCity}}">
+                        <i class="fas fa-globe-asia"></i> <span th:text="${location.getLocalNameOfCity}"></span>
+                    </a>
+                </li>
+                <li th:if="${account.locations.size() == 0}" class="list-group-item badge rounded-pill badge-light shadow">
+                    <a th:href="@{/settings/zones}" class="btn-text">주요 활동 지역 등록</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-7">
+            <h5 th:if="${#lists.isEmpty(enrollmentList)}" class="mb-2">현재 참석할 모임이 없습니다.</h5>
+            <h5 th:if="${!#lists.isEmpty(enrollmentList)}" class="mb-2">참석 모임 알림</h5>
+            <div th:if="${!#lists.isEmpty(enrollmentList)}" class="row row-cols-1 row-cols-md-2">
+                <div th:each="enrollment: ${enrollmentList}" class="col mb-4">
+                    <div class="card row mx-auto">
+                        <h6 class="card-header text-dark" th:text="${enrollment.event.study.title}">Study title</h6>
+                        <div class="card-body">
+                            <div class="card-subtitle text-dark" th:text="':: ' + ${enrollment.event.title}">Event title</div>
+                            <label class="mt-2" for="progress" style="font-size: small">
+                                <strong>모임 진행률</strong>
+                            </label>
+                            <div class="mx-auto progress rounded" style="height: 18px;">
+                                <div class="progress-bar bg-primary"
+                                     id="progress"
+                                     role="progressbar"
+                                     th:text="${enrollment.event.currentProgress()} + '%'"
+                                     th:style="'width: ' + (${enrollment.event.currentProgress()} < 0  ? '0' : ${enrollment.event.currentProgress()} + '%;')"
+                                     th:aria-valuenow="${enrollment.event.currentProgress()}"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100"
+                                >
+                                </div>
+                            </div>
+                            <div>
+                                <span class="badge badge-dark mt-3 mb-2">
+                                    <i class="far fa-calendar"></i>
+                                    <span class="weekday" th:text="${enrollment.event.startDateTime}"></span>
+                                    <span class="time" th:text="${enrollment.event.startDateTime}"></span>
+                                </span>
+                                <span class="badge badge-dark mt-3 mb-2">
+                                    <i class="far fa-user"></i>
+                                    <span th:text="${enrollment.event.enrollmentCount}"></span>명 참여중
+                                </span>
+                            </div>
+                            <div>
+                                <a class="btn btn-link"
+                                   th:href="@{'/study/' + ${enrollment.event.study.path} + '/events/' + ${enrollment.event.id}}"
+                                   data-mdb-ripple-color="dark"
+                                >
+                                    모임 조회
+                                </a>
+                                <a class="btn btn-link"
+                                   th:href="@{'/study/' + ${enrollment.event.study.path}}"
+                                   data-mdb-ripple-color="dark"
+                                >
+                                    스터디 조회
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="col-10 mx-auto">
+                <h5 th:if="${#lists.isEmpty(studyManagerOf)}" class="">관리중인 스터디가 없습니다.</h5>
+                <h5 th:if="${!#lists.isEmpty(studyManagerOf)}" class="">관리중인 스터디 </h5>
+                <ul th:if="${!#lists.isEmpty(studyManagerOf)}" class="list-group list-group-light list-group-small text-center">
+                    <li class="list-group-item">
+                        <div class="small shadow">
+                            <a th:each="study: ${studyManagerOf}"
+                               th:href="@{'/study/' + ${study.path}}" th:text="${study.title}" href="#"
+                               class="list-group-item"
+                            >
+                                Study title
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+                <h5 th:if="${#lists.isEmpty(studyMemberOf)}" class="mt-3">참여중인 스터디가 없습니다.</h5>
+                <h5 th:if="${!#lists.isEmpty(studyMemberOf)}" class="mt-3">참여중인 스터디</h5>
+                <ul th:if="${!#lists.isEmpty(studyMemberOf)}" class="list-group list-group-light list-group-small text-center">
+                    <li class="list-group-item">
+                        <div class="small shadow">
+                            <a th:each="study: ${studyMemberOf}"
+                               th:href="@{'/study/' + ${study.path}}" href="#"
+                               th:text="${study.title}"
+                               class="list-group-item"
+                            >
+                                Study title
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-10 mx-auto">
+                <div class="text-center mb-4">
+                    <h5>주요 활동 지역 및 관심 주제 스터디 목록</h5>
+                    <div class="dropdown mt-2">
+                        <button class="btn btn-primary dropdown-toggle"
+                                type="button"
+                                id="dropdownMenuButton"
+                                data-mdb-toggle="dropdown"
+                                aria-expanded="false"
+                        >
+                            <strong>스터디 목록 정렬 방식</strong>
+                        </button>
+                        <ul class="dropdown-menu lead" aria-labelledby="dropdownMenuButton">
+                            <li>
+                                <a class="dropdown-item"
+                                   th:classappend="${#strings.equals(sortProperty, 'publishedDateTime')}? active"
+                                   th:href="@{'/?sort=publishedDateTime,desc&'}"
+                                >
+                                    스터디 공개일
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                   th:classappend="${#strings.equals(sortProperty, 'memberCount')}? active"
+                                   th:href="@{'/?sort=memberCount,desc'}"
+                                >
+                                    멤버 수
+                                </a>
+                            </li>
+                        </ul>
+                </div>
+                </div>
+                <div class="row">
+                    <div th:each="study: ${studyPage.getContent()}" class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <img th:src="${study.image}"
+                                 th:alt="${study.title}"
+                                 class="card-img-top"
+                            >
+                            <div class="card-body">
+                                <a th:href="@{'/study/' + ${study.path}}">
+                                    <h6 class="card-title context" th:text="${study.title}"></h6>
+                                </a>
+                                <p class="card-text" th:text="${study.shortDescription}">short description</p>
+                                <p class="card-text context">
+                                <span th:each="tag: ${study.tags}">
+                                    <a class="badge rounded-pill badge-primary mr-3"
+                                       th:href="@{'/search/tag/' + ${tag.title}}">
+                                        <i class="fas fa-tag"></i>
+                                        <span th:text="${tag.title}">Tag</span>
+                                    </a>
+                                </span>
+                                    <span th:each="location: ${study.locations}" class="mr-2">
+                                    <a class="badge rounded-pill badge-success mr-3"
+                                       th:href="@{'/search/location/' + ${location.id}}">
+                                        <i class="fas fa-globe-asia"></i>
+                                        <span th:text="${location.localNameOfCity}">Location</span>
+                                    </a>
+                                </span>
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small>
+                                        <i class="fa fa-user-circle"></i>
+                                        <span th:text="${study.memberCount}"></span>명
+                                    </small>
+                                    <small class="date-ll" th:text="${study.publishedDateTime}">2023년 08월 30일</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-10"><hr/>
+                <nav>
+                    <ul class="pagination justify-content-center fw-bolder">
+                        <li class="page-item" th:classappend="${!studyPage.hasPrevious()}? disabled">
+                            <a class="page-link"
+                               th:href="@{'/?sort=' + ${sortProperty} + ',desc&page=' + ${studyPage.getNumber() - 1}}"
+                               tabindex="-1"
+                               aria-disabled="true"
+                            >
+                                Previous
+                            </a>
+                        </li>
+                        <li class="page-item"
+                            th:classappend="${i == studyPage.getNumber()}? active"
+                            th:each="i: ${#numbers.sequence(0, studyPage.getTotalPages() - 1)}"
+                        >
+                            <a class="page-link"
+                               th:href="@{'/?sort=' + ${sortProperty} + ',desc&page=' + ${i}}"
+                               href="#"
+                               th:text="${i + 1}"
+                            >
+                                1
+                            </a>
+                        </li>
+                        <li class="page-item" th:classappend="${!studyPage.hasNext()}? disabled">
+                            <a class="page-link"
+                               th:href="@{'/?&sort=' + ${sortProperty} + ',desc&page=' + ${studyPage.getNumber() + 1}}">
+                                Next
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+<script th:replace="fragments.html :: date-time"></script>
+</body>
+</html>

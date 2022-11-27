@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div class="container">
+    <div class="py-3 text-center form-label">
+        <br/>
+        <h2>STUDY IN</h2>
+    </div>
+    <div class="row justify-content-center">
+        <div class="text-center">
+            <p>sign in with:</p>
+            <button type="button" class="btn btn-primary btn-floating mx-1">
+                <i class="fab fa-facebook-f"></i>
+            </button>
+            <button type="button" class="btn btn-primary btn-floating mx-1">
+                <i class="fab fa-google"></i>
+            </button>
+            <button type="button" class="btn btn-primary btn-floating mx-1">
+                <i class="fab fa-twitter"></i>
+            </button>
+            <button type="button" class="btn btn-primary btn-floating mx-1">
+                <i class="fab fa-github"></i>
+            </button>
+            <p class="text-center">or:</p>
+        </div>
+        <form class="row justify-content-center col-sm-6"
+              th:action="@{/login}" action="#"
+              method="post"
+              novalidate
+        >
+            <div class="form-group mt-4">
+                <label class="form-label" for="username">Email or Username</label>
+                <input class="form-control"
+                       id="username"
+                       type="text"
+                       name="username"
+                       placeholder="이메일 또는 아이디를 입력하세요."
+                       required
+                />
+            </div>
+            <div class="form-group mt-4">
+                <label class="form-label" for="password">Password</label>
+                <input class="form-control"
+                       id="password"
+                       type="password"
+                       name="password"
+                       placeholder="비밀번호를 입력하세요."
+                       aria-describedby="passwordHelp"
+                       required
+                >
+                <small class="form-text text-muted" id="passwordHelp">
+                    비밀번호가 기억나지 않으시면, <a th:href="@{/email-login}">비밀번호 없이 임시 로그인하기</a>
+                </small>
+            </div>
+            <div th:if="${param.error}" class="text-danger text-center mt-3">
+                <small>
+                    이메일(또는 아이디) 또는 비밀번호가 정확하지 않습니다.<br/>
+                    입력하신 내용을 다시 확인해주세요.
+                </small>
+            </div>
+            <div class="row mt-3 mb-3">
+                <div class="col-md-6 d-flex justify-content-center">
+                    <div class="form-check mb-3 mb-md-0">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="rememberMe"
+                               name="remember-me"
+                               checked
+                        />
+                        <label class="form-check-label" for="rememberMe">Remember me</label>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex justify-content-center">
+                    <a th:href="@{/find-password}" href="#">Forgot password?</a>
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary btn-block"
+                        type="submit"
+                        aria-describedby="submitHelp">
+                    SIGN IN
+                </button>
+                <small class="form-text text-muted" id="submitHelp">
+                    스터디인에 처음 오신거라면 <a th:href="@{/sign-up}" href="#">계정을 먼저 만드세요.</a>
+                </small>
+            </div>
+        </form>
+    </div>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+</body>
+</html>
+
+

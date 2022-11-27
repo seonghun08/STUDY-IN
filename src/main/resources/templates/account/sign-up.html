@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div class="container">
+    <div class="py-3 text-center form-label">
+        <br/>
+        <h2>STUDY IN</h2>
+    </div>
+    <div class="row justify-content-center">
+        <div class="text-center">
+            <p>sign up with:</p>
+            <button type="button" class="btn btn-primary btn-floating mx-1">
+                <i class="fab fa-facebook-f"></i>
+            </button>
+            <button type="button" class="btn btn-primary btn-floating mx-1">
+                <i class="fab fa-google"></i>
+            </button>
+            <button type="button" class="btn btn-primary btn-floating mx-1">
+                <i class="fab fa-twitter"></i>
+            </button>
+            <button type="button" class="btn btn-primary btn-floating mx-1">
+                <i class="fab fa-github"></i>
+            </button>
+            <p class="text-center">or:</p>
+        </div>
+        <form class="col-sm-6"
+              th:action="@{/sign-up}" action="#"
+              th:object="${signUpForm}"
+              method="post"
+              novalidate
+        >
+
+            <div class="form-group mt-4">
+                <label class="form-label" for="username">Username</label>
+                <input class="form-control"
+                       th:field="*{username}"
+                       id="username"
+                       type="text"
+                       placeholder="아이디를 입력하세요."
+                       aria-describedby="usernameHelp"
+                       required minlength="2" maxlength="20"
+                />
+                <small class="invalid-feedback">공백없이 문자와 숫자로 2~20자 이내로 입력하세요.</small>
+                <small th:if="${#fields.hasErrors('username')}"
+                       th:errors="*{username}"
+                       class="form-text text-danger"
+                >
+                    Username Error
+                </small>
+            </div>
+
+            <div class="form-group mt-4">
+                <label class="form-label" for="email">Email</label>
+                <input class="form-control"
+                       th:field="*{email}"
+                       id="email" type="email"
+                       placeholder="이메일을 입력하세요."
+                       aria-describedby="emailHelp"
+                       required
+                />
+                <small class="invalid-feedback">이메일을 입력하세요.</small>
+                <small th:if="${#fields.hasErrors('email')}"
+                       th:errors="*{email}"
+                       class="form-text text-danger"
+                >
+                    Email Error
+                </small>
+            </div>
+
+            <div class="form-group mt-4">
+                <label class="form-label" for="nickname">Nickname</label>
+                <input class="form-control"
+                       th:field="*{nickname}"
+                       id="nickname"
+                       type="text"
+                       placeholder="닉네임을 입력하세요."
+                       aria-describedby="nicknameHelp"
+                       required minlength="2" maxlength="20"
+                />
+                <small class="invalid-feedback">공백없이 문자와 숫자로 2~20자 이내로 입력하세요.<br/> 가입 후 변경할 수 있습니다.</small>
+            </div>
+
+            <div class="row">
+                <div class="col-sm mt-4">
+                    <label class="form-label" for="genderType">Gender</label>
+                    <select class="form-select form-control"
+                            th:field="*{genderType}"
+                            id="genderType"
+                    >
+                        <option th:value="none">선택 안함</option>
+                        <option th:value="man">남성</option>
+                        <option th:value="girl">여성</option>
+                    </select>
+                </div>
+                <div class="col-sm mt-4">
+                    <label class="form-label" for="birthday">Birthday</label>
+                    <input class="form-control"
+                           th:field="*{birthday}"
+                           id="birthday"
+                           type="date"
+                           th:max="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}"
+                           required
+                    />
+                    <small class="invalid-feedback">생일을 입력하세요.</small>
+                </div>
+            </div>
+
+            <div class="form-group mt-4">
+                <label class="form-label" for="password">Password</label>
+                <input class="form-control"
+                       th:field="*{password}"
+                       id="password" type="password"
+                       placeholder="비밀번호를 입력해주세요."
+                       aria-describedby="passwordHelp"
+                       required minlength="8" maxlength="50"
+                />
+                <small class="invalid-feedback">8~50자 이내로 입력하세요. 영문자, 숫자, 특수기호를 사용할 수 있습니다.</small>
+                <small th:if="${#fields.hasErrors('password')}"
+                       th:errors="*{password}"
+                       class="form-text text-danger"
+                >
+                    Password Error
+                </small>
+            </div>
+
+            <div class="form-group mt-5">
+                <button class="btn btn-primary btn-block"
+                        type="submit"
+                        aria-describedby="submitHelp"
+                >
+                    sign up
+                </button>
+                <small class="form-text text-muted" id="submitHelp">
+                    <a href="#">약관</a>에 동의하시면 가입하기 버튼을 클릭하세요.
+                </small>
+            </div>
+
+        </form>
+    </div>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+</body>
+</html>
