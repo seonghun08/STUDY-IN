@@ -3,8 +3,9 @@
 Back-end Dev 준비생의 스프링 기반 포트폴리오<br/>
 
 
-java 11, spring, spring boot, spring data JPA, spring security, queryDSL, PostgreSQL, JUnit5<br/>
-thymeleaf, bootstrap, html, css, javaScript
+##### java 11, spring, spring boot, spring data JPA, spring security
+##### queryDSL, PostgreSQL, JUnit5
+##### thymeleaf, bootstrap, html, css, javaScript
 
 프론트 쪽은 매우 미흡...<br/>
 
