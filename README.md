@@ -1,14 +1,16 @@
 # studyIn
 ### 스터디 모임 관리 웹 서비스<br/>
-Back-end Dev 준비생의 스프링 기반 포트폴리오<br/>
+Back-end dev 준비생의 스프링 기반 포트폴리오<br/>
+
+<pre>
+java 11, JUnit5, MVC
+spring boot, spring data JPA, spring security
+queryDSL, PostgreSQL
+thymeleaf, bootstrap, html, css, javaScript
+</pre>
 
 
-##### java 11, spring, spring boot, spring data JPA, spring security
-##### queryDSL, PostgreSQL, JUnit5
-##### thymeleaf, bootstrap, html, css, javaScript
-
-프론트 쪽은 매우 미흡...<br/>
-
+프론트엔드 쪽은 매우 미흡...
 mdbootstrap 5<br/>
 https://mdbootstrap.com/docs/standard/<br/>
 tagify<br/>
