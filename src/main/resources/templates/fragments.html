@@ -166,7 +166,6 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
                 <li class="nav-item">
                     <a class="nav-link"
                        aria-current="page"
@@ -186,34 +185,28 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle"
                        href="#"
-                       id="menuDropdown"
+                       id="navbarDropdown"
                        role="button"
                        data-mdb-toggle="dropdown"
                        aria-expanded="false"
                     >
                         Menu
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="menuDropdown">
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">List of studies</a></li>
+                        <li><a class="dropdown-item" href="#">List of meetings</a></li>
+                        <li><a class="dropdown-item" href="#">Road map</a></li>
                         <li>
-                            <a class="dropdown-item" href="#"><i class="fas fa-book-open"></i>  스터디 목록</a>
+                            <hr class="dropdown-divider"/>
                         </li>
-                        <li>
-                            <a class="dropdown-item" href="#"><i class="fas fa-list-alt"></i>  모임 목록</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#"><i class="fas fa-location-arrow"></i>  로드맵</a>
-                        </li>
-                        <li><hr class="dropdown-divider"/></li>
-                        <li>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                        </li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
                     </ul>
                 </li>
             </ul>
         </div>
 
         <form th:action="@{/search/study}"
-              class="input-group w-auto mx-4"
+              class="input-group hover-shadow w-auto mx-4"
               method="get"
         >
             <div id="navbar-search-autocomplete" class="form-outline">
@@ -329,7 +322,7 @@
 <!--  Email authentication message  -->
 <div th:fragment="email-authentication-message"
      th:if="${account != null && !account.emailVerified}"
-     class="alert alert-warning text-center mt-4"
+     class="alert alert-warning text-center"
      role="alert"
 >
     <i class="fas fa-gem"></i>
@@ -390,10 +383,10 @@
 
 <!--  profile settings-menu  -->
 <div th:fragment="settings-menu (currentMenu)"
-     class="card list-group mb-4"
+     class="card shadow-sm list-group mb-4"
      role="tablist"
 >
-    <div class="card-header">Settings</div>
+    <div class="list-group-item list-group-item bg-light">Settings</div>
     <a class="list-group-item list-group-item-action"
        th:classappend="${currentMenu == 'profile'}? active"
        th:href="@{/settings/profile}" href="#"

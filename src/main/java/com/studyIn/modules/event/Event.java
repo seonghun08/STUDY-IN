@@ -67,7 +67,7 @@ public class Event {
         long totalTime = ChronoUnit.DAYS.between(this.startDateTime, this.endDateTime);
         long pastTime = ChronoUnit.DAYS.between(this.startDateTime, LocalDateTime.now());
         long currentProgress = (long) (((double) pastTime / totalTime) * 100);
-        return currentProgress;
+        return currentProgress > 0 ? currentProgress : 0;
     }
 
     public boolean isEventStarted() {

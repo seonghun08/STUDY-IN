@@ -9,7 +9,7 @@
     <div th:replace="fragments.html :: menu (profile)"></div>
     <div class="row justify-content-center col-10 mx-auto mt-2">
         <div class="col-lg-4">
-            <div class="card mb-4">
+            <div class="card shadow-sm mb-4">
                 <div class="card-body text-center">
                     <svg th:if="${#strings.isEmpty(profile.profileImage)}"
                          th:data-jdenticon-value="${profile.username}"
@@ -33,7 +33,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card mb-4 mb-lg-0">
+            <div class="card shadow-sm mb-4 mb-lg-0">
                 <div class="card-body p-0">
                     <ul class="list-group list-group-flush rounded-3">
                         <li class="list-group-item d-flex justify-content-between align-items-center p-3">
@@ -57,7 +57,7 @@
             </div>
         </div>
         <div class="col-lg-8">
-            <div class="card mb-3">
+            <div class="card shadow-sm mb-3">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-3">
@@ -77,7 +77,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card mb-4">
+            <div class="card shadow-sm mb-4">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-3">
@@ -133,7 +133,7 @@
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    <div class="card mb-4 mb-md-0">
+                    <div class="card shadow-sm mb-4 mb-md-0">
                         <div class="card-body">
                             <p class="mb-4">
                                 <span class="text-primary font-italic me-1">assigment</span> Project Status
@@ -197,7 +197,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card mb-4 mb-md-0">
+                    <div class="card shadow-sm mb-4 mb-md-0">
                         <div class="card-body">
                             <p class="mb-4">
                                 <span class="text-primary font-italic me-1">assigment</span> Project Status

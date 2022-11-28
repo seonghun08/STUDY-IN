@@ -205,10 +205,10 @@
 
 <!--  study settings-menu  -->
 <div th:fragment="study-settings-menu (currentMenu)"
-     class="card list-group mb-4"
+     class="card list-group shadow-sm mb-4"
      role="tablist"
 >
-    <div class="card-header">Settings</div>
+    <div class="list-group-item list-group-item bg-light">Settings</div>
     <a class="list-group-item list-group-item-action"
        th:classappend="${currentMenu == 'description'}? active"
        th:href="@{'/study/' + ${study.path} + '/settings/description'}" href="#"
