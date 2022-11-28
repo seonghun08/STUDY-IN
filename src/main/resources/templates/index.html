@@ -5,18 +5,31 @@
 <body>
 <nav th:replace="fragments.html :: main-nav"></nav>
 <div th:replace="fragments.html :: message"></div>
-<div class="container text-center" style="margin-top: 60px;">
+<div class="text-center bg-light">
+    <br/><br/>
     <h2 class="mb-3">STUDY IN</h2>
     <p class="lead">
         스터디인에 오신 걸 환영합니다.<br/>
         스터디인은 스터디 모임을 보다 효율적으로 관리해주는 웹 스터디 서비스입니다.
     </p>
-    <a th:href="@{/sign-up}" class="btn btn-primary my-2">Sign Up</a>
+    <a th:href="@{/}" class="btn btn-primary my-2 mb-3">login</a>
 </div>
 <div class="container mt-5">
+    <h5 class="text-center text-success fw-bold">서로 배우고, 나누고, 성장하세요.</h5>
+    <div class="input-group mx-auto rounded w-50 mb-3">
+        <input class="form-control rounded"
+               type="search"
+               placeholder="참여하고 싶은 스터디를 입력해보세요."
+               aria-label="Search"
+               aria-describedby="search-addon"
+        />
+        <span class="input-group-text border-0" id="search-addon">
+            <i class="fas fa-search"></i>
+        </span>
+    </div><br/>
     <div class="row justify-content-center">
-        <h5 class="fw-bold text-center">스터디 목록</h5>
         <div class="col-10 mx-auto">
+            <h5 class="fw-bold mb-3">스터디 목록 <i class="fas fa-angle-right"></i></h5>
             <div class="row">
                 <div th:each="study: ${studyPage.getContent()}" class="col-md-4">
                     <div class="card mb-4 shadow-sm">
@@ -60,7 +73,6 @@
     </div>
     <div class="row justify-content-center">
         <div class="col-10">
-            <hr/>
             <nav>
                 <ul class="pagination justify-content-center fw-bolder">
                     <li class="page-item" th:classappend="${!studyPage.hasPrevious()}? disabled">

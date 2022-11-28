@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div class="p-5 text-center bg-light">
+    <h2 class="mb-3">STUDY IN</h2>
+    <p class="lead text-mute">
+        <strong>다시 한번 확인해주세요!</strong><br/>
+        입력하신 주소의 페이지는 잘못된 요청입니다.<br/>
+    </p>
+    <a class="btn btn-primary" th:href="@{/}">home</a>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+</body>
+</html>
