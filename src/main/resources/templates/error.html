@@ -3,25 +3,26 @@
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments.html :: head"></head>
 <body class="bg-light">
-<div class="row text-center p-5">
-    <h2 class="mb-3">STUDY IN</h2>
-    <p class="lead text-mute">
-        <strong>
-            404 Error<br/>
-            요청하신 주소의 페이지는 잘못된 요청입니다.<br/>
-        </strong>
+<div class="p-5">
+    <h2 class="mb-3 text-center">STUDY IN</h2>
+    <p class="lead text-mute text-center fw-bold">
+        404 ERROR<br/>
+        요청하신 주소의 페이지는 잘못된 요청입니다.<br/>
     </p>
-    <p class="col align-self-center">
-        방문하시려는 페이지의 주소가 잘못 입력되었거나, 권한이 없습니다.<br/>
-        주소가 변경 혹은 삭제되어 요청하신 페이지를 찾을 수 없습니다.<br/>
+    <div class="card shadow-sm mx-auto" style="width: 30%">
+        <div class="card-body">
+            방문하시려는 페이지의 주소가 잘못 입력되었거나, 권한이 없습니다.<br/>
+            또는 주소가 변경 혹은 삭제되어 요청하신 페이지를 찾을 수 없습니다.<br/>
 
-        입력하신 주소가 정확한지 다시 한번 확인해 주시기 바랍니다.<br/>
-        관련 문의 사항은 고객센터에 문의해주시면 친절하게 안내해 드리겠습니다.<br/>
-        감사합니다.<br/>
-    </p>
-    <a class="btn btn-primary" th:href="@{/}">home</a>
+            입력하신 주소가 정확한지 다시 한번 확인해 주시기 바랍니다.<br/>
+            관련 문의 사항은 고객센터에 문의해주시면 친절하게 안내해 드리겠습니다.<br/>
+        </div>
+        <div class="card-footer row">
+            <a class="col-3 btn btn-primary mx-auto" th:href="@{/}">home</a>
+        </div>
+    </div>
+
 </div>
-
 <script th:replace="fragments.html :: mdb-js"></script>
 </body>
 </html>
