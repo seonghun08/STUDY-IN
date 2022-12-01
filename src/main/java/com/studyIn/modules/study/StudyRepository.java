@@ -1,6 +1,8 @@
 package com.studyIn.modules.study;
 
 import com.studyIn.modules.account.Account;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +39,22 @@ public interface StudyRepository extends JpaRepository<Study, Long>, StudyReposi
     @EntityGraph(attributePaths = {"tags", "locations"})
     Study findStudyWithTagsAndLocationsById(Long id);
 
-    List<Study> findFirst5ByManagersContainingAndClosedOrderByPublishedDateTimeDesc(Account account, boolean closed);
+    @EntityGraph(attributePaths = {"tags", "locations"})
+    List<Study> findFirst4ByManagersContainingAndClosedOrderByPublishedDateTimeDesc(Account account, boolean closed);
 
-    List<Study> findFirst5ByMembersContainingAndClosedOrderByPublishedDateTimeDesc(Account account, boolean closed);
+    @EntityGraph(attributePaths = {"tags", "locations"})
+    List<Study> findByManagersContainingAndClosedOrderByPublishedDateTimeDesc(Account account, boolean closed);
+
+    @EntityGraph(attributePaths = {"tags", "locations"})
+    Page<Study> findByManagersContainingAndClosedOrderByPublishedDateTimeDesc(Account account, boolean closed, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"tags", "locations"})
+    List<Study> findFirst4ByMembersContainingAndClosedOrderByPublishedDateTimeDesc(Account account, boolean closed);
+
+    @EntityGraph(attributePaths = {"tags", "locations"})
+    Page<Study> findByMembersContainingAndClosedOrderByPublishedDateTimeDesc(Account account, boolean closed, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"tags", "locations"})
+    List<Study> findByMembersContainingAndClosedOrderByPublishedDateTimeDesc(Account account, boolean closed);
+
 }

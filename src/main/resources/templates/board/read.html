@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-10 mx-auto">
+
+            <div class="col-1">
+                <a th:href="@{/community}">
+                   <button class="btn btn-primary btn-sm">
+                       <i class="fas fa-arrow-left"></i>
+                   </button>
+                </a>
+            </div>
+
+            <span class="col-6">
+                <div th:text="${board.title}"></div>
+                <div th:text="${board.writer.nickname}"></div>
+                <div th:utext="${board.content}"></div>
+                <div class="date-time" th:text="${board.dateCreated}"></div>
+            </span>
+
+
+        </div>
+    </div>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+<script th:replace="fragments.html :: date-time"></script>
+</body>
+</html>

@@ -14,7 +14,7 @@
         스터디인은 여러분의 성장을 응원합니다.
     </div>
 </div>
-<div class="container mt-5">
+<div class="container justify-content-center">
     <h5 class="text-center text-primary fw-bold">서로 배우고, 나누고, 성장하세요.</h5>
     <form th:action="@{/search/study}"
           class="input-group mb-5"
@@ -33,15 +33,22 @@
         </span>
         </div>
     </form>
+</div>
+<div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-10 mx-auto">
             <h5 class="fw-bold mb-3">내 참석 모임 <i class="fas fa-angle-right"></i></h5>
+            <div th:if="${#lists.isEmpty(enrollmentList)}">
+                <p class="fw-bold">
+                    현재 참여중인 모임이 없습니다.
+                </p>
+            </div>
             <div th:if="${!#lists.isEmpty(enrollmentList)}" class="row row-cols-1 row-cols-md-2 row-cols-md-3">
                 <div th:each="enrollment: ${enrollmentList}" class="col mb-4">
-                    <div class="card row shadow-sm mx-auto">
-                        <div class="card-header" th:text="${enrollment.event.study.title}">Study title</div>
+                    <div class="card row shadow-2 mx-auto">
+                        <div class="box card-header" th:text="${enrollment.event.study.title}">Study title</div>
                         <div class="card-body">
-                            <div class="card-subtitle fw-bold" th:text="${enrollment.event.title}">Event title
+                            <div class="box card-subtitle fw-bold" th:text="${enrollment.event.title}">Event title
                             </div>
                             <label class="mt-2" for="progress" style="font-size: small">
                                 <strong>진도율: <span
@@ -93,14 +100,74 @@
         </div>
     </div>
 </div>
-<div class="container mt-4">
-    <div class="col-10 row justify-content-between mx-auto">
-        <ul class="col-6">
-            <h5 class="fw-bold mb-3">내 태그 <i class="fas fa-angle-right"></i></h5>
+<div th:if="${!#lists.isEmpty(studyManagerOf)}" class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-10 mx-auto">
+            <h5 class="fw-bold mb-3">관리중인 스터디 <i class="fas fa-angle-right"></i></h5>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-md-3 row-cols-md-4">
+                <div th:each="studyMemberOf: ${studyManagerOf}" class="col mb-4">
+                    <div class="card row shadow-3 mx-auto hover-overlay">
+                        <div class="card-body">
+                            <div class="box fw-bold text-dark" th:text="${studyMemberOf.title}">Study title</div>
+                            <div class="small text-dark">
+                                <i class="fas fa-user-circle"></i>
+                                <span th:text="${studyMemberOf.memberCount}"></span>명
+                            </div>
+                            <div class="box small mt-3">
+                                <span th:each="tag: ${studyMemberOf.tags}">
+                                    <label class="badge rounded-pill badge-light mr-3">
+                                        <i class="fas fa-hashtag"></i>
+                                        <span th:text="${tag.title}">Tag</span>
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+                        <a th:href="@{'/study/' + ${studyMemberOf.path}}">
+                            <div class="mask rounded"></div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-10 mx-auto">
+            <h5 class="fw-bold mb-3">참여중인 스터디 <i class="fas fa-angle-right"></i></h5>
+            <div th:if="${!#lists.isEmpty(studyMemberOf)}"
+                 class="row row-cols-1 row-cols-md-2 row-cols-md-3 row-cols-md-4">
+                <div th:each="studyMemberOf: ${studyMemberOf}" class="col mb-4">
+                    <div class="card row shadow-3 mx-auto hover-overlay">
+                        <div class="card-body">
+                            <div class="box fw-bold text-dark" th:text="${studyMemberOf.title}">Study title</div>
+                            <div class="small text-dark">
+                                <i class="fas fa-user-circle"></i>
+                                <span th:text="${studyMemberOf.memberCount}"></span>명
+                            </div>
+                            <div class="box small mt-3">
+                                <span th:each="tag: ${studyMemberOf.tags}">
+                                    <label class="badge rounded-pill badge-light mr-3">
+                                        <i class="fas fa-hashtag"></i>
+                                        <span th:text="${tag.title}">Tag</span>
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+                        <a th:href="@{'/study/' + ${studyMemberOf.path}}">
+                            <div class="mask rounded"></div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container mt-5">
+    <div class="col-10 row justify-content-center mx-auto">
+        <ul class="col-6" style="margin:0; padding:0;">
+            <h6 class="fw-bold mb-3">내 태그</h6>
             <li th:each="tag: ${account.tags}" class="badge badge-light">
                 <a class="text-dark"
                    th:href="@{'/search/study?sort=publishedDateTime,desc&keyword=' + ${tag.title}}">
-                    # <span th:text="${tag.title}"></span>
+                    <i class="fas fa-hashtag"></i>
+                    <span th:text="${tag.title}"></span>
                 </a>
             </li>
             <li th:if="${account.tags.size() == 0}" class="badge badge-light">
@@ -108,7 +175,7 @@
             </li>
         </ul>
         <ul class="col-6">
-            <h5 class="fw-bold mb-3">내 활동 지역 <i class="fas fa-angle-right"></i></h5>
+            <h6 class="fw-bold mb-3">내 활동 지역</h6>
             <li th:each="location: ${account.locations}" class="badge badge-light">
                 <a class="text-dark"
                    th:href="@{'/search/study?sort=publishedDateTime,desc&keyword=' + ${location.getLocalNameOfCity}}">
@@ -116,7 +183,7 @@
                 </a>
             </li>
             <li th:if="${account.locations.size() == 0}" class="badge badge-light">
-                <a th:href="@{/settings/zones}" class="btn-text">주요 활동 지역 등록</a>
+                <a th:href="@{/settings/locations}" class="btn-text">주요 활동 지역 등록</a>
             </li>
         </ul>
     </div>
@@ -154,28 +221,38 @@
             </div>
             <h5 class="fw-bold mb-3">나의 지역 및 태그 스터디 목록 <i class="fas fa-angle-right"></i></h5>
             <div class="row">
-                <div th:each="study: ${studyPage.getContent()}" class="col-md-4">
-                    <div class="card mb-4 shadow-sm">
-                        <img th:src="${study.image}"
-                             th:alt="${study.title}"
-                             class="card-img-top"
-                        >
-                        <div class="card-body" style="height: 14rem;">
+                <div th:if="${#lists.isEmpty(studyPage.getContent())}" class="fw-bold">
+                    지역과 태그를 설정하여 원하는 스터디를 찾아보세요.
+                </div>
+                <div th:if="${!#lists.isEmpty(studyPage.getContent())}"
+                     th:each="study: ${studyPage.getContent()}"
+                     class="col-md-4"
+                >
+                    <div class="card mb-4 shadow-2">
+                        <a th:href="@{'/study/' + ${study.path}}">
+                            <img th:src="${study.image}"
+                                 th:alt="${study.title}"
+                                 class="card-img-top"
+                            >
+                        </a>
+                        <div class="card-body" style="height: 11rem;">
                             <a th:href="@{'/study/' + ${study.path}}">
-                                <p class="card-title context fw-bold" th:text="${study.title}"></p>
+                                <p class="box card-title context text-dark fw-bold" th:text="${study.title}"></p>
                             </a>
-                            <p class="card-text" th:text="${study.shortDescription}">short description</p>
-                            <p class="card-text context">
-                                <span th:each="tag: ${study.tags}">
-                                    <a class="badge rounded-pill badge-primary mr-3"
-                                       th:href="@{'/search/tag/' + ${tag.title}}">
-                                        <i class="fas fa-tag"></i>
+                            <p class="box2 card-text" th:text="${study.shortDescription}">short description</p>
+                            <p class="box card-text context">
+                                <span th:each="tag: ${study.tags}" class="mr-2">
+                                    <a class="badge rounded-pill badge-light mr-3"
+                                       th:href="@{'/search/study?sort=publishedDateTime,desc&keyword=' + ${tag.title}}"
+                                    >
+                                        <i class="fas fa-hashtag"></i>
                                         <span th:text="${tag.title}">Tag</span>
                                     </a>
                                 </span>
+                                <br/>
                                 <span th:each="location: ${study.locations}" class="mr-2">
-                                    <a class="badge rounded-pill badge-success mr-3"
-                                       th:href="@{'/search/location/' + ${location.id}}">
+                                    <a class="badge rounded-pill badge-light mr-3"
+                                       th:href="@{'/search/study?sort=publishedDateTime,desc&keyword=' + ${location.getLocalNameOfCity}}">
                                         <i class="fas fa-globe-asia"></i>
                                         <span th:text="${location.localNameOfCity}">Location</span>
                                     </a>
@@ -196,7 +273,7 @@
             </div>
         </div>
     </div>
-    <div class="row justify-content-center">
+    <div th:if="${!#lists.isEmpty(studyPage.getContent())}" class="row justify-content-center">
         <div class="col-10">
             <nav>
                 <ul class="pagination justify-content-center fw-bolder">

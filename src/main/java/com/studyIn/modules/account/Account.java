@@ -1,21 +1,22 @@
 package com.studyIn.modules.account;
 
+import com.studyIn.modules.board.Board;
 import com.studyIn.modules.location.Location;
 import com.studyIn.modules.tag.Tag;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static javax.persistence.FetchType.EAGER;
 
-@NamedEntityGraph(name = "Account.withAll", attributeNodes = {
-        @NamedAttributeNode("tags"),
-        @NamedAttributeNode("locations")
-})
+@NamedEntityGraph(
+        name = "Account.withAll",
+        attributeNodes = {
+                @NamedAttributeNode("tags"),
+                @NamedAttributeNode("locations")
+        })
 
 @Entity
 @Getter @Setter @EqualsAndHashCode(of = "id")
@@ -85,6 +86,9 @@ public class Account {
 
     @ManyToMany
     private Set<Location> locations = new HashSet<>();
+
+    @OneToMany(mappedBy = "writer")
+    private List<Board> boards = new ArrayList<>();
 
 
     /**

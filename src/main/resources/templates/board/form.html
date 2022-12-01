@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div class="container">
+    <div class="py-3 text-center form-label">
+        <br/>
+        <h2>STUDY IN</h2>
+    </div>
+    <div class="row justify-content-center">
+        <div class="lead text-center">
+            <p></p>
+        </div>
+        <form class="needs-validation col-sm-8"
+              th:action="@{/community/new-writing}"
+              th:object="${boardForm}"
+              method="post"
+              novalidate
+        >
+            <div class="form-group mt-3">
+                <label class="form-label" for="title">Study Title</label>
+                <input class="form-control"
+                       th:field="*{title}"
+                       id="title"
+                       type="text"
+                       placeholder="스터디 모임의 이름을 입력하세요."
+                       aria-describedby="titleHelp"
+                       required max="30"
+                />
+                <small class="form-text text-muted" id="titleHelp">
+                    30자 이내로 입력하세요.<br/>
+                </small>
+                <small class="invalid-feedback">제목을 입력하세요.</small>
+                <small th:if="${#fields.hasErrors('title')}"
+                       th:errors="*{title}"
+                       class="form-text text-danger"
+                >
+                    Title Error
+                </small>
+            </div>
+            <div class="form-group mt-3">
+                <label class="form-label" for="fullDescription">Content</label>
+                <textarea class="editor form-control"
+                          th:field="*{content}"
+                          id="fullDescription"
+                          required
+                >
+                </textarea>
+                <small class="invalid-feedback">상세 소개를 입력하세요.</small>
+                <small th:if="${#fields.hasErrors('content')}"
+                       th:errors="*{content}"
+                       class="form-text text-danger"
+                >
+                    Content Error
+                </small>
+            </div>
+            <div class="form-group mt-3">
+                <button class="btn btn-primary btn-block" type="submit">등록</button>
+            </div>
+        </form>
+    </div>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+<script th:replace="fragments.html :: summernote"></script>
+</body>
+</html>

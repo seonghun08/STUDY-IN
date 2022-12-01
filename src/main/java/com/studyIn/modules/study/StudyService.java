@@ -94,13 +94,37 @@ public class StudyService {
     }
 
     @Transactional(readOnly = true)
-    public StudyList getStudyListDTOByMemberAndManager(Account account, boolean closed) {
+    public StudyList getStudyList_4_ByMemberAndManager(Account account, boolean closed) {
         StudyList studyList = new StudyList();
         studyList.setStudyListManagerOf(
-                studyRepository.findFirst5ByManagersContainingAndClosedOrderByPublishedDateTimeDesc(account, closed)
+                studyRepository.findFirst4ByManagersContainingAndClosedOrderByPublishedDateTimeDesc(account, closed)
         );
         studyList.setStudyListMemberOf(
-                studyRepository.findFirst5ByMembersContainingAndClosedOrderByPublishedDateTimeDesc(account, closed)
+                studyRepository.findFirst4ByMembersContainingAndClosedOrderByPublishedDateTimeDesc(account, closed)
+        );
+        return studyList;
+    }
+
+    @Transactional(readOnly = true)
+    public StudyList getStudyPageByMemberAndManager(Account account, boolean closed, Pageable pageable) {
+        StudyList studyList = new StudyList();
+        studyList.setStudyPageManagerOf(
+                studyRepository.findByManagersContainingAndClosedOrderByPublishedDateTimeDesc(account, closed, pageable)
+        );
+        studyList.setStudyPageMemberOf(
+                studyRepository.findByMembersContainingAndClosedOrderByPublishedDateTimeDesc(account, closed, pageable)
+        );
+        return studyList;
+    }
+
+    @Transactional(readOnly = true)
+    public StudyList getStudyListByMemberAndManager(Account account, boolean closed) {
+        StudyList studyList = new StudyList();
+        studyList.setStudyListManagerOf(
+                studyRepository.findByManagersContainingAndClosedOrderByPublishedDateTimeDesc(account, closed)
+        );
+        studyList.setStudyListMemberOf(
+                studyRepository.findByMembersContainingAndClosedOrderByPublishedDateTimeDesc(account, closed)
         );
         return studyList;
     }

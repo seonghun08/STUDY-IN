@@ -45,32 +45,34 @@
         <div class="col-sm-10">
             <div class="row">
                 <div th:each="study: ${studyPage.getContent()}" class="col-md-4">
-                    <div class="card mb-4 shadow-sm">
+                    <div class="card mb-4 shadow-2">
                         <img th:src="${study.image}"
                              th:alt="${study.title}"
                              class="card-img-top"
                         >
-                        <div class="card-body">
+                        <div class="card-body" style="height: 11rem;">
                             <a th:href="@{'/study/' + ${study.path}}">
-                                <h6 class="card-title context" th:text="${study.title}"></h6>
+                                <div class="box card-title context text-dark fw-bold" th:text="${study.title}"></div>
                             </a>
-                            <p class="card-text" th:text="${study.shortDescription}">short description</p>
-                            <p class="card-text context">
-                                <span th:each="tag: ${study.tags}">
-                                    <a class="badge rounded-pill badge-primary mr-3"
-                                       th:href="@{'/search/tag/' + ${tag.title}}">
-                                        <i class="fas fa-tag"></i>
+                            <p class="box2 card-text" th:text="${study.shortDescription}">short description</p>
+                            <p class="box card-text context">
+                                <span th:each="tag: ${study.tags}" class="mr-2">
+                                    <a class="badge rounded-pill badge-light mr-3"
+                                       th:href="@{'/search/study?keyword=' + ${tag.title}}">
+                                        <i class="fas fa-hashtag"></i>
                                         <span th:text="${tag.title}">Tag</span>
                                     </a>
-                                </span>
+                                </span><br/>
                                 <span th:each="location: ${study.locations}" class="mr-2">
-                                    <a class="badge rounded-pill badge-success mr-3"
-                                       th:href="@{'/search/location/' + ${location.id}}">
+                                    <a class="badge rounded-pill badge-light mr-3"
+                                       th:href="@{'/search/study?keyword=' + ${location.getLocalNameOfCity}}">
                                         <i class="fas fa-globe-asia"></i>
                                         <span th:text="${location.localNameOfCity}">Location</span>
                                     </a>
                                 </span>
                             </p>
+                        </div>
+                        <div class="card-footer">
                             <div class="d-flex justify-content-between align-items-center">
                                 <small>
                                     <i class="fa fa-user-circle"></i>

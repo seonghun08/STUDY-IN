@@ -40,7 +40,7 @@ public class MainController {
             Account renewalAccount = accountService.getTagsAndLocationsOnAccount(account);
             Page<Study> studyPage = studyService.findStudyPageByTagsAndLocations(renewalAccount.getTags(), renewalAccount.getLocations(), pageable);
             List<Enrollment> enrollmentList = eventService.getEnrollmentList(renewalAccount, true);
-            StudyList studyList = studyService.getStudyListDTOByMemberAndManager(account, false);
+            StudyList studyList = studyService.getStudyList_4_ByMemberAndManager(account, false);
 
             model.addAttribute("account", renewalAccount);
             model.addAttribute("enrollmentList", enrollmentList);

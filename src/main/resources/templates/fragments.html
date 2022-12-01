@@ -50,6 +50,26 @@
     <script src="/node_modules/moment/min/moment-with-locales.min.js"></script>
 
     <style>
+        .box {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .box2 {
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+
+        }
+
+        .mask {
+            background: linear-gradient(45deg, rgba(251, 251, 251, 0.6), rgba(18, 102, 241, 0.2) 100%);
+        }
+
         .rounded-circle {
             border-radius: 50% !important;
         }
@@ -177,7 +197,7 @@
                 <li class="nav-item">
                     <a class="nav-link"
                        aria-current="page"
-                       href="#"
+                       th:href="@{/community}" href="#"
                     >
                         Community
                     </a>
@@ -293,23 +313,26 @@
                         <div class="dropdown-divider"/>
                     </li>
                     <li>
-                        <a class="dropdown-item" th:href="@{'/profile/' + ${#authentication.name}}">Profile</a>
+                        <a class="dropdown-item" th:href="@{'/profile/' + ${#authentication.name}}"><i class="fas fa-user"></i> Profile</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="#">Study</a>
+                        <a class="dropdown-item" th:href="@{/notifications}"><i class="fas fa-bell"></i> Notifications</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" th:href="@{/notifications}">Notifications</a>
+                        <a class="dropdown-item" th:href="@{'/studyList/' + ${#authentication.name}}"><i class="fas fa-book"></i> Study list</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#"><i class="fas fa-edit"></i> Meeting list</a>
                     </li>
                     <li>
                         <div class="dropdown-divider"/>
                     </li>
                     <li>
-                        <a class="dropdown-item" th:href="@{/settings/profile}">Settings</a>
+                        <a class="dropdown-item" th:href="@{/settings/profile}"><i class="fas fa-cogs"></i> Settings</a>
                     </li>
                     <li>
                         <form th:action="@{/logout}" method="post">
-                            <button class="dropdown-item" type="submit">Logout</button>
+                            <button class="dropdown-item" type="submit"><i class="fas fa-sign-out-alt"></i> Logout</button>
                         </form>
                     </li>
                 </ul>
@@ -346,13 +369,40 @@
 <div th:fragment="menu (currentMenu)" class="row justify-content-center col-10 mx-auto px-3 mt-2">
     <ul th:if="${currentMenu == 'profile'}" class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link active" th:href="@{'/profile/' + ${profile.username}}" href="#profile">
+            <a class="nav-link active" th:href="@{'/profile/' + ${profile.username}}" href="#">
                 <i class="fas fa-user-alt"></i> <strong>Profile</strong>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#studyList">
+            <a class="nav-link" th:href="@{'/studyList/' + ${profile.username}}" href="#">
                 <i class="fas fa-book"></i> <strong>Study List</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="fas fa-edit"></i> <strong>Meeting List</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:if="${isOwner}" class="nav-link" th:href="@{/settings/profile}" href="#">
+                <i class="fas fa-cogs"></i> <strong>Settings</strong>
+            </a>
+        </li>
+    </ul>
+    <ul th:if="${currentMenu == 'studyList'}" class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{'/profile/' + ${profile.username}}" href="#">
+                <i class="fas fa-user-alt"></i> <strong>Profile</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" th:href="@{'/studyList/' + ${profile.username}}" href="#">
+                <i class="fas fa-book"></i> <strong>Study List</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="fas fa-edit"></i> <strong>Meeting List</strong>
             </a>
         </li>
         <li class="nav-item">
@@ -363,13 +413,18 @@
     </ul>
     <ul th:if="${currentMenu == 'settings'}" class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link" th:href="@{'/profile/' + ${account.username}}" href="#profile">
+            <a class="nav-link" th:href="@{'/profile/' + ${account.username}}" href="#">
                 <i class="fas fa-user-alt"></i> <strong>Profile</strong>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#studyList">
+            <a class="nav-link" th:href="@{'/studyList/' + ${account.username}}" href="#">
                 <i class="fas fa-book"></i> <strong>Study List</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="fas fa-edit"></i> <strong>Meeting List</strong>
             </a>
         </li>
         <li class="nav-item">
@@ -961,6 +1016,9 @@
         });
         $(".weekday").text(function (index, dateTime) {
             return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('dddd');
+        });
+        $(".days").text(function (index, dateTime) {
+            return moment().subtract(9, 'days').calendar();
         });
         $(".time").text(function (index, dateTime) {
             return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LT');

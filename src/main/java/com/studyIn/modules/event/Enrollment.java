@@ -10,8 +10,14 @@ import java.time.LocalDateTime;
 
 @NamedEntityGraph(
         name = "Enrollment.withEventAndStudy",
-        attributeNodes = {@NamedAttributeNode(value = "event", subgraph = "study")},
-        subgraphs = @NamedSubgraph(name = "study", attributeNodes = @NamedAttributeNode("study"))
+        attributeNodes = {
+                @NamedAttributeNode(value = "event", subgraph = "study")
+        },
+
+        subgraphs = @NamedSubgraph(
+                name = "study",
+                attributeNodes = @NamedAttributeNode("study")
+        )
 )
 
 @Entity

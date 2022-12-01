@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-10 mx-auto">
+            <h5 class="fw-bold mb-3">게시판 목록 <i class="fas fa-angle-right"></i></h5>
+
+            <a th:href="@{/community/new-writing}">
+                <span class="btn btn-primary fw-bold mb-2" style="display: inline-block; margin: 5px;  float: right;">
+                <i class="fas fa-pen"></i> 글 쓰기
+            </span>
+            </a>
+
+            <table class="table align-middle mb-0 bg-white">
+                <thead class="bg-light">
+                <tr>
+                    <th>글 번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>날짜</th>
+                    <th>조회</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="board: ${boardPage.getContent()}">
+                    <td>
+                        <div th:text="${board.seq}"></div>
+                    </td>
+                    <td>
+                        <a class="text-dark" th:href="@{'/community/read/' + ${board.id}}">
+                            <div th:text="${board.title}"></div>
+                        </a>
+                    </td>
+                    <td>
+                        <img th:src="${board.writer.profileImage}"
+                             class="rounded-circle"
+                             width="25" height="25"
+                        />
+                        <span th:text="${board.writer.nickname}"></span>
+                    </td>
+                    <td>
+                        <div class="date-time small" th:text="${board.dateCreated}"></div>
+                    </td>
+                    <td>
+                        <div th:text="${board.views}"></div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+<script th:replace="fragments.html :: date-time"></script>
+</body>
+</html>

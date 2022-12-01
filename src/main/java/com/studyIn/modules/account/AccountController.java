@@ -6,7 +6,14 @@ import com.studyIn.modules.account.form.SignUpForm;
 import com.studyIn.modules.account.validator.ChangePasswordFormValidator;
 import com.studyIn.modules.account.validator.EmailFormValidator;
 import com.studyIn.modules.account.validator.SignUpFormValidator;
+import com.studyIn.modules.study.Study;
+import com.studyIn.modules.study.StudyList;
+import com.studyIn.modules.study.StudyRepository;
+import com.studyIn.modules.study.StudyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -18,12 +25,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Set;
+
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Controller
 @RequiredArgsConstructor
 public class AccountController {
 
     private final AccountService accountService;
+    private final StudyService studyService;
     private final SignUpFormValidator signUpFormValidator;
     private final EmailFormValidator emailFormValidator;
     private final ChangePasswordFormValidator changePasswordFormValidator;
@@ -107,6 +119,19 @@ public class AccountController {
         model.addAttribute("isOwner", findAccount.equals(account));
         model.addAttribute("profile", findAccount);
         return "account/profile";
+    }
+
+    @GetMapping("/studyList/{username}")
+    public String viewStudyList(@PageableDefault(size = 9, sort = "publishedDateTime", direction = DESC) Pageable pageable,
+                                @CurrentAccount Account account, @PathVariable String username, Model model) {
+        Account findAccount = accountService.findByUsername(username);
+        StudyList studyList = studyService.getStudyListByMemberAndManager(findAccount, false);
+        model.addAttribute(account);
+        model.addAttribute("profile", findAccount);
+        model.addAttribute("studyListMemberOf", studyList.getStudyListMemberOf());
+        model.addAttribute("studyListManagerOf", studyList.getStudyListManagerOf());
+        model.addAttribute("isOwner", findAccount.equals(account));
+        return "account/study-list";
     }
 
     @GetMapping("find-password")
