@@ -18,7 +18,6 @@ thymeleaf, bootstrap, html, css, javaScript
 #### index-logged-in
 ![index-logged-in](https://user-images.githubusercontent.com/68460507/205230143-43163b77-839e-4063-a02e-7d4fd3007578.PNG)
 
-백엔드도 그렇지만 프론트엔드 쪽은 매우 미흡하다...<br/>
 
 mdbootstrap 5<br/>
 https://mdbootstrap.com/docs/standard/<br/>
