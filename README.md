@@ -12,6 +12,7 @@ thymeleaf, bootstrap, html, css, javaScript
 </pre>
 <br/>
 
+#### ERD
 ![erd](https://user-images.githubusercontent.com/68460507/205228422-f0f89e41-677b-45cd-9b21-572327fd9472.PNG)
 
 
