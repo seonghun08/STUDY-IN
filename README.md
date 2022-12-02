@@ -15,7 +15,8 @@ thymeleaf, bootstrap, html, css, javaScript
 #### ERD
 ![erd](https://user-images.githubusercontent.com/68460507/205228422-f0f89e41-677b-45cd-9b21-572327fd9472.PNG)
 
-
+#### index-logged-in
+![index-logged-in](https://user-images.githubusercontent.com/68460507/205230143-43163b77-839e-4063-a02e-7d4fd3007578.PNG)
 
 백엔드도 그렇지만 프론트엔드 쪽은 매우 미흡하다...<br/>
 
