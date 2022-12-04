@@ -31,7 +31,7 @@ public class BoardController {
     private final ModelMapper modelMapper;
 
     @GetMapping("/community")
-    public String viewCommunity(@PageableDefault(size = 16, sort = "seq", direction = DESC) Pageable pageable,
+    public String viewCommunity(@PageableDefault(size = 10, sort = "seq", direction = DESC) Pageable pageable,
                                 @CurrentAccount Account account, Model model) {
         if (account != null) {
             model.addAttribute(account);
@@ -52,7 +52,6 @@ public class BoardController {
     @PostMapping("/community/new-writing")
     public String newWriting(@CurrentAccount Account account, @Valid BoardForm boardForm,
                              Errors errors, Model model) {
-
         Account findAccount = accountService.findByUsername(account.getUsername());
 
         if (errors.hasErrors()) {
@@ -66,10 +65,9 @@ public class BoardController {
 
     @GetMapping("/community/read/{id}")
     public String boardRead(@CurrentAccount Account account, @PathVariable("id") Board board, Model model) {
-
-        Board findBoard = boardRepository.findById(board.getId()).orElseThrow();
+        Board readBoard = boardService.readBoard(board);
         model.addAttribute(account);
-        model.addAttribute("board", findBoard);
+        model.addAttribute("board", readBoard);
         return "board/read";
     }
 }

@@ -4,10 +4,12 @@ import com.studyIn.modules.account.Account;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class BoardService {
 
@@ -20,5 +22,11 @@ public class BoardService {
         board.setDateCreated(LocalDateTime.now());
         board.writerRegistering(account);
         return boardRepository.save(board);
+    }
+
+    public Board readBoard(Board board) {
+        Board readBoard = boardRepository.findById(board.getId()).orElseThrow();
+        readBoard.increaseInViews();
+        return readBoard;
     }
 }

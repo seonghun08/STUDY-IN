@@ -5,30 +5,80 @@
 <body>
 <nav th:replace="fragments.html :: main-nav"></nav>
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-10 mx-auto">
-
-            <div class="col-1">
-                <a th:href="@{/community}">
-                   <button class="btn btn-primary btn-sm">
-                       <i class="fas fa-arrow-left"></i>
-                   </button>
-                </a>
-            </div>
-
-            <span class="col-6">
-                <div th:text="${board.title}"></div>
-                <div th:text="${board.writer.nickname}"></div>
-                <div th:utext="${board.content}"></div>
-                <div class="date-time" th:text="${board.dateCreated}"></div>
-            </span>
-
-
+    <div class="row col-10 mx-auto">
+        <div class="col-md-2">
+            <a th:href="@{/community}" class="d-md-flex justify-content-md-center">
+                <button class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </a>
         </div>
+        <div class="col-md-8">
+            <h2 th:text="${board.title}"></h2>
+            <a th:href="@{'/profile/' + ${board.writer.username}}" th:text="${board.writer.nickname}"></a>
+            <div class="date-time text-muted" th:text="${board.dateCreated}"></div>
+            <hr/>
+            <div th:utext="${board.content}"></div>
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-primary mx-auto fw-bold mb-1" style="width: 7.5em">
+                <i class="far fa-thumbs-up"></i> 추천
+            </button>
+            <button class="btn btn-primary d-md-flex justify-content-md-center fw-bold" style="width: 7.5em">
+                <i class="fas fa-share-alt"></i> 공유
+            </button>
+        </div>
+    </div>
+    <div class="row col-10 mx-auto mt-5">
+        <div class="col-md-9 mx-auto">
+            <form>
+                <div class="card shadow-2">
+                    <div class="card-body">
+
+
+                        <h6 class="mb-3" style="margin-left: 1.5em">
+                            <img th:src="${board.writer.profileImage}"
+                                 class="rounded-circle"
+                                 width="40" height="40"
+                            />
+                            <span class="fw-bold" th:text="${board.writer.nickname}"></span>님 답글을 남겨보세요!
+                        </h6>
+                        <textarea class="editor form-control"
+                                  id="fullDescription"
+                                  required
+                        >
+                        </textarea>
+
+                        <div class="d-md-flex justify-content-md-end mt-3">
+                            <button class="btn btn-primary fw-bold" type="submit">답변 등록</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+
     </div>
 </div>
 <footer th:replace="fragments.html :: footer"></footer>
 <script th:replace="fragments.html :: mdb-js"></script>
 <script th:replace="fragments.html :: date-time"></script>
+<script>
+    $('.editor').summernote({
+        placeholder: '원하시는 내용을 입력해주세요.',
+        height: 150,
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['link', 'picture']],
+            ['view', ['help']],
+        ],
+    });
+</script>
 </body>
 </html>

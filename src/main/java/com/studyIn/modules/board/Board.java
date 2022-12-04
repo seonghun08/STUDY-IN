@@ -34,4 +34,8 @@ public class Board {
         this.writer = account;
         account.getBoards().add(this);
     }
+
+    public void increaseInViews() {
+        this.views++;
+    }
 }
