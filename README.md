@@ -1,8 +1,12 @@
 # STUDYIN
 ### 스터디모임 관리 웹 서비스
+
+#### Board :: 게시판 기능 구현중 ing
 ###### 최근 수정일 - 2022.12.01 03:38
-Back-end dev 준비생의 스프링 기반 포트폴리오 ~ ing<br/>
+Back-end dev 준비생의 스프링 기반 포트폴리오
 example picture - 예시 사진 모음<br/>
+
+
 
 <pre>
 java 11, JUnit5, MVC
