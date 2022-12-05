@@ -32,7 +32,6 @@ public class Board {
 
     public void writerRegistering(Account account) {
         this.writer = account;
-        account.getBoards().add(this);
     }
 
     public void increaseInViews() {

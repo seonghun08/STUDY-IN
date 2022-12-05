@@ -87,8 +87,8 @@ public class Account {
     @ManyToMany
     private Set<Location> locations = new HashSet<>();
 
-    @OneToMany(mappedBy = "writer")
-    private List<Board> boards = new ArrayList<>();
+//    @OneToMany(mappedBy = "writer")
+//    private List<Board> boards = new ArrayList<>();
 
 
     /**
