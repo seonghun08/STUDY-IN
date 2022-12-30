@@ -1,5 +1,6 @@
 package com.studyIn.domain.account.entity;
 
+import com.studyIn.domain.account.form.SignUpForm;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,10 +21,6 @@ public class Profile {
 
     private String nickname;
 
-    public Profile(String nickname) {
-        this.nickname = nickname;
-    }
-
     private String bio;
 
     private String url;
@@ -32,4 +29,11 @@ public class Profile {
 
     @Lob @Basic(fetch = FetchType.LAZY)
     private String image;
+
+    //== 생성 메서드 ==//
+    public static Profile createProfile(SignUpForm form) {
+        Profile profile = new Profile();
+        profile.nickname = form.getNickname();
+        return profile;
+    }
 }

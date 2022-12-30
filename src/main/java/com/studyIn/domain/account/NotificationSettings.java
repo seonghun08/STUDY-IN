@@ -1,8 +1,6 @@
 package com.studyIn.domain.account;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
 
@@ -10,16 +8,22 @@ import javax.persistence.Embeddable;
 @Getter
 public class NotificationSettings {
 
+    /**
+     * email 알림 설정
+     */
     private boolean studyCreatedByEmail;
     private boolean studyEnrollmentResultByEmail;
     private boolean studyUpdatedByEmail;
 
+    /**
+     * web 알림 설정
+     */
     private boolean studyCreatedByWeb;
     private boolean studyEnrollmentResultByWeb;
     private boolean studyUpdatedByWeb;
 
     /**
-     * 임시
+     * 임시 생성자
      */
     public NotificationSettings() {
         this.studyCreatedByEmail = false;

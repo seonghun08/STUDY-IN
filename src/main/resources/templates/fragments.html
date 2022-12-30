@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <title>StudyIn</title>
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          rel="stylesheet"/>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+          rel="stylesheet"/>
+
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.css"
+          rel="stylesheet"/>
+
+    <!-- Bootstrap JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+            crossorigin="anonymous">
+    </script>
+
+    <style>
+        .box {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .box2 {
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+
+        }
+
+        .mask {
+            background: linear-gradient(45deg, rgba(251, 251, 251, 0.6), rgba(18, 102, 241, 0.2) 100%);
+        }
+
+        .rounded-circle {
+            border-radius: 50% !important;
+        }
+
+        .card {
+            box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+        }
+
+        .card .card-header {
+            font-weight: 500;
+        }
+
+        .card-header:first-child {
+            border-radius: 0.35rem 0.35rem 0 0;
+        }
+
+        .card-header {
+            padding: 1rem 1.35rem;
+            margin-bottom: 0;
+            background-color: rgba(33, 40, 50, 0.03);
+            border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+        }
+
+        .nav-borders .nav-link.active {
+            color: #0061f2;
+            border-bottom-color: #0061f2;
+        }
+
+        .nav-borders .nav-link {
+            color: #69707a;
+            border-bottom-width: 0.125rem;
+            border-bottom-style: solid;
+            border-bottom-color: transparent;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
+
+        .tagify--outside {
+            border: 0;
+        }
+
+        .tagify--outside .tagify__input {
+            order: -1;
+            flex: 100%;
+            border: 1px solid var(--tags-border-color);
+            margin-bottom: 1em;
+            transition: .1s;
+        }
+
+        .tagify--outside .tagify__input:hover {
+            border-color: var(--tags-hover-border-color);
+        }
+
+        .tagify--outside.tagify--focus .tagify__input {
+            transition: 0s;
+            border-color: var(--tags-focus-border-color);
+        }
+
+        body {
+            font-family: Roboto, "Noto Sans KR", "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+
+        body,
+        input,
+        button,
+        select,
+        optgroup,
+        textarea,
+        .tooltip,
+        .popover {
+            font-family: Roboto, "Noto Sans KR", "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+
+        #btn-back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: none;
+        }
+
+        .carousel-inner img {
+
+            max-height: 400px;
+        }
+
+    </style>
+</head>
+<body>
+<!--  Navbar  -->
+<nav th:fragment="main-nav" class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">
+            <img class="d-inline-block"
+                 src="/images/logo_sm.png"
+                 width="45" height="45"
+            />
+            STUDYIN
+        </a>
+        <button class="navbar-toggler"
+                type="button"
+                data-mdb-toggle="collapse"
+                data-mdb-target="#navbarButtonsExample"
+                aria-controls="navbarButtonsExample"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+        >
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link"
+                       aria-current="page"
+                       href="#"
+                    >
+                        Study
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                       aria-current="page"
+                       th:href="@{/community}" href="#"
+                    >
+                        Community
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle"
+                       href="#"
+                       id="navbarDropdown"
+                       role="button"
+                       data-mdb-toggle="dropdown"
+                       aria-expanded="false"
+                    >
+                        Menu
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">List of studies</a></li>
+                        <li><a class="dropdown-item" href="#">List of meetings</a></li>
+                        <li><a class="dropdown-item" href="#">Road map</a></li>
+                        <li>
+                            <hr class="dropdown-divider"/>
+                        </li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <form th:action="@{/search/study}"
+              class="input-group hover-shadow w-auto mx-4"
+              method="get"
+        >
+            <div id="navbar-search-autocomplete" class="form-outline">
+                <input class="form-control"
+                       id="form1"
+                       type="search"
+                       name="keyword"
+                />
+                <label class="form-label" for="form1">
+                    Study search
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+        <div sec:authorize="!isAuthenticated()" class="d-flex align-items-center">
+            <a class="btn btn-link px-3 me-2"
+               th:href="@{/login}"
+               type="button"
+            >
+                Login
+            </a>
+            <a class="btn btn-primary me-3"
+               th:href="@{/sign-up}"
+               type="button"
+            >
+                Sign up for free
+            </a>
+        </div>
+        <div sec:authorize="isAuthenticated()" class="d-flex align-items-center">
+            <a class="btn btn-primary px-3 me-4"
+               th:href="@{/new-study}"
+               type="button"
+               data-mdb-ripple-color="dark"
+            >
+                <i class="fas fa-dove"></i>
+                create a Study
+            </a>
+            <a class="me-3" th:href="@{/shoppingBasket}">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
+            <a class="me-3" th:href="@{/notifications}">
+                <i class="fas fa-bell"></i>
+                <span class="badge rounded-pill badge-notification bg-danger">3</span>
+            </a>
+            <!--            <a th:if="${notificationCount} == 0" class="me-3" th:href="@{/notifications}">-->
+            <!--            <i class="far fa-bell"></i>-->
+            <!--            </a>-->
+            <!--            <a th:if="${notificationCount} > 0" class="me-3" th:href="@{/notifications}">-->
+            <!--                <i class="fas fa-bell"></i>-->
+            <!--                <span th:text="${notificationCount}" class="badge rounded-pill badge-notification bg-danger">3</span>-->
+            <!--            </a>-->
+            <div class="dropdown">
+                <a class="dropdown-toggle d-flex align-items-center hidden-arrow"
+                   id="navbarDropdownMenuAvatar"
+                   role="button"
+                   data-mdb-toggle="dropdown"
+                   aria-expanded="false"
+                >
+<!--                    <svg th:if="${#strings.isEmpty(account?.profileImage)}"-->
+<!--                         th:data-jdenticon-value="${#authentication.name}"-->
+<!--                         class="rounded-circle"-->
+<!--                         width="25" height="25"-->
+<!--                    />-->
+<!--                    <img th:if="${!#strings.isEmpty(account?.profileImage)}"-->
+<!--                         th:src="${account.profileImage}"-->
+<!--                         class="rounded-circle"-->
+<!--                         width="25" height="25"-->
+<!--                    />-->
+                    프로필
+                    <i class="fas fa-caret-down mx-1"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                    <li>
+                        <div class="dropdown-header">
+                            Signed in as<br/>
+                            <strong><span sec:authentication="name">username</span></strong>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="dropdown-divider"/>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" th:href="@{'/profile/' + ${#authentication.name}}"><i
+                                class="fas fa-user"></i> Profile</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" th:href="@{/notifications}"><i class="fas fa-bell"></i>
+                            Notifications</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" th:href="@{'/studyList/' + ${#authentication.name}}"><i
+                                class="fas fa-book"></i> Study list</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#"><i class="fas fa-edit"></i> Meeting list</a>
+                    </li>
+                    <li>
+                        <div class="dropdown-divider"/>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" th:href="@{/settings/profile}"><i class="fas fa-cogs"></i> Settings</a>
+                    </li>
+                    <li>
+                        <form th:action="@{/logout}" method="post">
+                            <button class="dropdown-item" type="submit"><i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Footer -->
+<footer th:fragment="footer" class="text-center text-lg-start bg-white text-muted mt-5">
+
+    <!-- Back to top button -->
+    <button class="btn btn-primary btn-floating btn-lg"
+            type="button"
+            id="btn-back-to-top"
+    >
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script type="application/javascript">
+        //Get the button
+        let mybutton = document.getElementById("btn-back-to-top");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () {
+            scrollFunction();
+        };
+
+        function scrollFunction() {
+            if (
+                document.body.scrollTop > 20 ||
+                document.documentElement.scrollTop > 20
+            ) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        mybutton.addEventListener("click", backToTop);
+
+        function backToTop() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+    <!-- Section: Social media -->
+    <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+        <!-- Left -->
+        <div class="me-5 d-none d-lg-block">
+            <span>Get connected with us on social networks:</span>
+        </div>
+        <!-- Left -->
+
+        <!-- Right -->
+        <div>
+            <a href="" class="me-4 link-secondary">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="" class="me-4 link-secondary">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="" class="me-4 link-secondary">
+                <i class="fab fa-google"></i>
+            </a>
+            <a href="" class="me-4 link-secondary">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="" class="me-4 link-secondary">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="https://github.com/seonghun08?tab=repositories" class="me-4 link-secondary">
+                <i class="fab fa-github"></i>
+            </a>
+        </div>
+        <!-- Right -->
+    </section>
+    <!-- Section: Social media -->
+
+    <!-- Section: Links  -->
+    <section class="">
+        <div class="container text-center text-md-start mt-5">
+            <!-- Grid row -->
+            <div class="row mt-3">
+                <!-- Grid column -->
+                <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+                    <!-- Content -->
+                    <h6 class="fw-bold mb-4">
+                        <i class="fas fa-gem me-2 text-secondary"></i>STUDYIN.Co
+                    </h6>
+                    <p>
+                        StudyIn web service wants to provide opportunities to learn and grow together with many people.
+                    </p>
+                </div>
+                <!-- Grid column -->
+
+                <!-- Grid column -->
+                <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+                    <!-- Links -->
+                    <h6 class="text-uppercase fw-bold mb-4">
+                        Products
+                    </h6>
+                    <p>
+                        <a href="#!" class="text-reset">Spring Boot</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Spring Security</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">JPA</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Thymeleaf</a>
+                    </p>
+                </div>
+                <!-- Grid column -->
+
+                <!-- Grid column -->
+                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+                    <!-- Links -->
+                    <h6 class="text-uppercase fw-bold mb-4">
+                        Useful links
+                    </h6>
+                    <p>
+                        <a href="#!" class="text-reset">Pricing</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Settings</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Orders</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Help</a>
+                    </p>
+                </div>
+                <!-- Grid column -->
+
+                <!-- Grid column -->
+                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+                    <!-- Links -->
+                    <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+
+                    <p>
+                        <i class="fas fa-home me-3 text-secondary"></i>
+                        Republic of Korea
+                    </p>
+
+                    <p>
+                        <i class="fas fa-envelope me-3 text-secondary"></i>
+                        shajh2210@gmail.com
+                    </p>
+
+                    <p>
+                        <i class="fas fa-phone me-3 text-secondary"></i>
+                        + 010 4349 4349
+                    </p>
+
+                    <p>
+                        <i class="fas fa-print me-3 text-secondary"></i>
+                        + 032 4349 4349
+                    </p>
+
+                </div>
+                <!-- Grid column -->
+            </div>
+            <!-- Grid row -->
+        </div>
+    </section>
+    <!-- Section: Links  -->
+
+    <!-- Copyright -->
+    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.025);">
+        © 2023 Copyright
+        <a class="text-reset fw-bold" href="http://localhost:8080/">StudyIn.com</a>
+        :: All Rights Reserved:
+    </div>
+    <!-- Copyright -->
+</footer>
+
+<!-- MDB -->
+<script th:fragment="mdb-js"
+        type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.js"
+></script>
+
+</body>
+</html>
