@@ -1,7 +1,7 @@
 package com.studyIn.domain.account.service;
 
 import com.studyIn.domain.account.Gender;
-import com.studyIn.domain.account.form.SignUpForm;
+import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Account;
 
 import com.studyIn.domain.account.repository.AccountRepository;
@@ -9,7 +9,6 @@ import com.studyIn.domain.account.repository.AuthenticationRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -69,6 +68,7 @@ class AccountServiceTest {
         //given
         SignUpForm form = getSignUpForm();
         Account account = accountService.signUp(form);
+
         String username = account.getUsername();
         String email = account.getAuthentication().getEmail();
         String token = account.getAuthentication().getEmailCheckToken();
@@ -79,13 +79,33 @@ class AccountServiceTest {
         em.clear();
 
         //then
-        Account updateAccount = accountRepository.findWithAllByUsername(username).orElseThrow();
+        Account updateAccount = accountRepository.findByUsername(username).orElseThrow();
         /**
          * "completeSignUp" =>
          *  email, token 값이 정상적으로 들어갔다면 인증 완료 및 인증 완료일 업데이트가 되어야 한다.
          */
         assertThat(updateAccount.getAuthentication().isEmailVerified()).isTrue();
         assertThat(updateAccount.getAuthentication().getEmailVerifiedDate()).isAfter(LocalDateTime.now().minusMinutes(1));
+    }
+
+    @Test
+    public void resendSignUpConfirmEmail() throws Exception {
+        //given
+        SignUpForm form = getSignUpForm();
+        Account account = accountService.signUp(form);
+        String oldToken = account.getAuthentication().getEmailCheckToken();
+        LocalDateTime oldTokenDate = account.getAuthentication().getEmailCheckTokenGeneratedDate();
+
+        //when
+        accountService.resendSignUpConfirmEmail(account.getId());
+
+        //then
+        Account findAccount = accountRepository.findByEmail(account.getAuthentication().getEmail()).orElseThrow();
+        String newToken = findAccount.getAuthentication().getEmailCheckToken();
+        LocalDateTime newTokenDate = findAccount.getAuthentication().getEmailCheckTokenGeneratedDate();
+
+        assertThat(oldToken).isNotEqualTo(newToken);
+        assertThat(oldTokenDate).isBefore(newTokenDate);
     }
 
     private SignUpForm getSignUpForm() {

@@ -18,11 +18,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.css"
           rel="stylesheet"/>
 
-    <!-- Bootstrap JavaScript Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
-            crossorigin="anonymous">
-    </script>
+    <!--  jquery  -->
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+
+    <!--  jDentition  -->
+    <script src="/node_modules/jdenticon/dist/jdenticon.min.js"></script>
 
     <style>
         .box {
@@ -255,17 +255,16 @@
                    data-mdb-toggle="dropdown"
                    aria-expanded="false"
                 >
-<!--                    <svg th:if="${#strings.isEmpty(account?.profileImage)}"-->
-<!--                         th:data-jdenticon-value="${#authentication.name}"-->
-<!--                         class="rounded-circle"-->
-<!--                         width="25" height="25"-->
-<!--                    />-->
-<!--                    <img th:if="${!#strings.isEmpty(account?.profileImage)}"-->
-<!--                         th:src="${account.profileImage}"-->
-<!--                         class="rounded-circle"-->
-<!--                         width="25" height="25"-->
-<!--                    />-->
-                    프로필
+                    <svg th:if="${#strings.isEmpty(accountInfo?.profileImage)}"
+                         th:data-jdenticon-value="${#authentication.name}"
+                         class="rounded-circle"
+                         width="25" height="25"
+                    />
+                    <img th:if="${!#strings.isEmpty(accountInfo?.profileImage)}"
+                         th:src="${accountInfo.profileImage}"
+                         class="rounded-circle"
+                         width="25" height="25"
+                    />
                     <i class="fas fa-caret-down mx-1"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
@@ -488,8 +487,8 @@
 <!-- MDB -->
 <script th:fragment="mdb-js"
         type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.js"
-></script>
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.js">
+</script>
 
 </body>
 </html>

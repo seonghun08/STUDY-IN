@@ -1,7 +1,7 @@
 package com.studyIn.domain.account.entity;
 
 import com.studyIn.domain.BaseTimeEntity;
-import com.studyIn.domain.account.form.SignUpForm;
+import com.studyIn.domain.account.dto.form.SignUpForm;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -48,7 +48,7 @@ public class Account extends BaseTimeEntity {
     }
 
     /**
-     * 패스워드 암호화
+     * "PasswordEncoder" 패스워드 암호화
      */
     public void encodePassword(PasswordEncoder passwordEncoder){
         this.password = passwordEncoder.encode(password);

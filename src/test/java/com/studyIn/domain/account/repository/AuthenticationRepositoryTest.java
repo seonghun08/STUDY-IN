@@ -3,9 +3,7 @@ package com.studyIn.domain.account.repository;
 import com.studyIn.domain.account.Gender;
 import com.studyIn.domain.account.NotificationSettings;
 import com.studyIn.domain.account.entity.Authentication;
-import com.studyIn.domain.account.form.SignUpForm;
-import com.studyIn.domain.account.service.AccountService;
-import org.assertj.core.api.Assertions;
+import com.studyIn.domain.account.dto.form.SignUpForm;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,7 +13,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest

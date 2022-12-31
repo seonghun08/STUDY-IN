@@ -1,30 +1,28 @@
 package com.studyIn.domain.account.entity;
 
-import com.studyIn.domain.account.form.SignUpForm;
+import com.studyIn.domain.BaseTimeEntity;
+import com.studyIn.domain.account.dto.form.SignUpForm;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "account_profile")
-public class Profile {
+public class Profile extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "profile_id")
     private Long id;
 
+    @Column(nullable = false)
     private String nickname;
 
     private String bio;
-
     private String url;
-
     private String occupation;
 
     @Lob @Basic(fetch = FetchType.LAZY)

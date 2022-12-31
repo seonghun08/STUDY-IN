@@ -1,18 +1,15 @@
 package com.studyIn.domain.account.repository.query;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.studyIn.domain.account.Gender;
 import com.studyIn.domain.account.dto.AccountDTO;
-import com.studyIn.domain.account.form.SignUpForm;
+import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.service.AccountService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest

@@ -1,10 +1,12 @@
 package com.studyIn.domain.account.controller;
 
+import com.studyIn.domain.account.AccountInfo;
+import com.studyIn.domain.account.CurrentAccount;
 import com.studyIn.domain.account.controller.validator.SignUpFormValidator;
 import com.studyIn.domain.account.dto.AccountDTO;
 import com.studyIn.domain.account.entity.Account;
+import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Authentication;
-import com.studyIn.domain.account.form.SignUpForm;
 import com.studyIn.domain.account.repository.AccountRepository;
 import com.studyIn.domain.account.repository.AuthenticationRepository;
 import com.studyIn.domain.account.repository.query.AccountQueryRepository;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -30,6 +31,7 @@ public class AccountController {
     private final SignUpFormValidator signUpFormValidator;
     private final AccountService accountService;
     private final AccountRepository accountRepository;
+    private final AuthenticationRepository authenticationRepository;
     private final AccountQueryRepository accountQueryRepository;
     private final LoginService loginService;
 
@@ -72,5 +74,21 @@ public class AccountController {
         return view;
     }
 
+    @GetMapping("/check-email")
+    public String checkEmail(@CurrentAccount AccountInfo accountInfo, Model model) {
+        model.addAttribute("email", accountInfo.getEmail());
+        return "account/check-email";
+    }
 
+    @GetMapping("/resend-confirm-email")
+    public String resendConfirmEmail(@CurrentAccount AccountInfo accountInfo, Model model) {
+        if (!accountInfo.canSendConfirmEmail()) {
+            model.addAttribute("error", "인증 이메일은 1~2분 마다 한번 씩 보낼 수 있습니다.");
+            model.addAttribute("email", accountInfo.getEmail());
+            return "account/check-email";
+        }
+
+        accountService.resendSignUpConfirmEmail(accountInfo.getAccountId());
+        return "redirect:/";
+    }
 }

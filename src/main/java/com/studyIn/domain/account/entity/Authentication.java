@@ -1,9 +1,10 @@
 package com.studyIn.domain.account.entity;
 
+import com.studyIn.domain.BaseTimeEntity;
 import com.studyIn.domain.account.Gender;
 import com.studyIn.domain.account.Address;
 import com.studyIn.domain.account.NotificationSettings;
-import com.studyIn.domain.account.form.SignUpForm;
+import com.studyIn.domain.account.dto.form.SignUpForm;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,7 +15,7 @@ import java.util.UUID;
 @Getter @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "account_authentication")
-public class Authentication {
+public class Authentication extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "authentication_id")
@@ -41,11 +42,16 @@ public class Authentication {
     private NotificationSettings notificationSettings;
 
     /**
-     * email 인증 절차
+     * emailVerified 이메일 인증 확인
+     * emailVerifiedDate 이메일 인증 날짜
+     * emailCheckToken 이메일 인증 토큰
+     * emailCheckTokenGeneratedDate 이메일 인증 토큰 생성 날짜
      */
     private boolean emailVerified;
     private LocalDateTime emailVerifiedDate;
     private String emailCheckToken;
+    private LocalDateTime emailCheckTokenGeneratedDate;
+
 
     //== 생성 메서드 ==//
     public static Authentication createAuthentication(SignUpForm form, NotificationSettings notificationSettings) {
@@ -58,8 +64,12 @@ public class Authentication {
         return auth;
     }
 
+    /**
+     * 인증 토큰 UUID 생성
+     */
     public void generateEmailToken() {
         this.emailCheckToken = UUID.randomUUID().toString();
+        this.emailCheckTokenGeneratedDate = LocalDateTime.now();
     }
 
     /**
@@ -76,4 +86,5 @@ public class Authentication {
         this.emailVerified = true;
         this.emailVerifiedDate = LocalDateTime.now();
     }
+
 }

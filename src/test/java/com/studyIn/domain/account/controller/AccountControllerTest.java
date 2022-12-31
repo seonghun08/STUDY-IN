@@ -1,11 +1,8 @@
 package com.studyIn.domain.account.controller;
 
 import com.studyIn.domain.account.Gender;
-import com.studyIn.domain.account.NotificationSettings;
 import com.studyIn.domain.account.entity.Account;
-import com.studyIn.domain.account.entity.Authentication;
-import com.studyIn.domain.account.entity.Profile;
-import com.studyIn.domain.account.form.SignUpForm;
+import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.repository.AuthenticationRepository;
 import com.studyIn.domain.account.repository.AccountRepository;
 import com.studyIn.domain.account.service.AccountService;
@@ -20,12 +17,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -100,7 +94,7 @@ class AccountControllerTest {
                 .andExpect(view().name("redirect:/"))
                 .andExpect(authenticated());
 
-        Account account = accountRepository.findWithAllByUsername("username").orElseThrow();
+        Account account = accountRepository.findByUsername("username").orElseThrow();
         assertThat(account.getPassword()).isNotEqualTo("1234567890");
         assertThat(passwordEncoder.matches("1234567890", account.getPassword())).isTrue();
         assertThat(account.getAuthentication().getEmail()).isEqualTo("email@studyIn.com");

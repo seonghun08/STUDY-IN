@@ -12,12 +12,12 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     boolean existsByUsername(String username);
 
-    @EntityGraph(attributePaths = {"profile", "authentication"})
-    Optional<Account> findWithAllById(Long id);
+    @EntityGraph(attributePaths = {"authentication"})
+    Optional<Account> findWithAuthenticationById(Long id);
 
-    @EntityGraph(attributePaths = {"profile", "authentication"})
-    Optional<Account> findWithAllByUsername(String username);
+    @Query("select a from Account a join fetch a.authentication au join fetch a.profile where a.username = :username")
+    Optional<Account> findByUsername(@Param("username") String username);
 
-    @Query("select a from Account a join fetch a.profile p where a.id = :id")
-    Optional<Account> findWithProfileById(@Param("id") Long id);
+    @Query("select a from Account a join fetch a.authentication au join fetch a.profile where au.email = :email")
+    Optional<Account> findByEmail(@Param("email") String email);
 }

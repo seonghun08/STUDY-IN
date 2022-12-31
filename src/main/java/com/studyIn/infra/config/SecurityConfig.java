@@ -27,10 +27,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeRequests(authorize -> authorize
-                        .mvcMatchers(
-                                "/", "/login", "/sign-up", "check-email",
-                                "/check-email-token", "/find-password", "/login-by-email"
-                        ).permitAll()
+                        .mvcMatchers("/", "/login", "/sign-up", "/check-email-token", "/find-password", "/login-by-email").permitAll()
                         .mvcMatchers(HttpMethod.GET, "profile/*").permitAll())
                 .formLogin(login -> login
                         .loginPage("/login").permitAll()
@@ -42,10 +39,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain resources(HttpSecurity http) throws Exception {
-        return http.requestMatchers(matchers ->
-                        matchers.mvcMatchers("/node_modules/**"))
-                .authorizeHttpRequests(authorize ->
-                        authorize.anyRequest().permitAll())
+        return http
+                .requestMatchers(matchers -> matchers
+                        .mvcMatchers("/node_modules/**"))
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll())
                 .requestCache().disable()
                 .securityContext().disable()
                 .sessionManagement().disable()

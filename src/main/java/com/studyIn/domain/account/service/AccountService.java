@@ -1,7 +1,7 @@
 package com.studyIn.domain.account.service;
 
 import com.studyIn.domain.account.NotificationSettings;
-import com.studyIn.domain.account.form.SignUpForm;
+import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.entity.Profile;
 import com.studyIn.domain.account.entity.Account;
@@ -28,6 +28,9 @@ public class AccountService {
     private final JavaMailSender javaMailSender;
     private final LoginService loginService;
 
+    /**
+     * 회원가입
+     */
     public Account signUp(SignUpForm form) {
         Account account = createAccount(form);
         sendSignUpConfirmEmail(account);
@@ -48,7 +51,7 @@ public class AccountService {
     }
 
     /**
-     * 임시 인증 메일 보내기
+     * 인증 메일 보내기
      */
     private void sendSignUpConfirmEmail(Account account) {
         Authentication authentication = account.getAuthentication();
@@ -56,27 +59,31 @@ public class AccountService {
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(account.getAuthentication().getEmail());
-        mailMessage.setSubject("회원 가입 인증");
+        mailMessage.setSubject("회원가입 인증");
         mailMessage.setText("/check-email-token?"
                 + "&email=" + authentication.getEmail()
                 + "&token=" + authentication.getEmailCheckToken());
         javaMailSender.send(mailMessage);
     }
 
+    public void resendSignUpConfirmEmail(Long accountId) {
+        Account account = accountRepository.findWithAuthenticationById(accountId).orElseThrow();
+        sendSignUpConfirmEmail(account);
+    }
+
     /**
      * email 존재 여부 확인 후, 토근이 일치하면 인증 정보 업데이트
      */
     public boolean completeSignUp(String email, String token) {
-        Optional<Authentication> authentication = authenticationRepository.findWithAccountByEmail(email);
+        Optional<Account> account = accountRepository.findByEmail(email);
         AtomicBoolean check = new AtomicBoolean(false);
-        authentication.ifPresent(auth -> {
-            if (auth.isValidToken(token)) {
-                auth.confirmEmailAuthentication();
-                loginService.login(auth.getAccount());
+        account.ifPresent(a -> {
+            if (a.getAuthentication().isValidToken(token)) {
+                a.getAuthentication().confirmEmailAuthentication();
+                loginService.login(a);
                 check.set(true);
             }
         });
         return check.get();
     }
-
 }

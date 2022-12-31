@@ -1,4 +1,4 @@
-package com.studyIn.domain.account.form;
+package com.studyIn.domain.account.dto.form;
 
 import com.studyIn.domain.account.Gender;
 import lombok.Data;

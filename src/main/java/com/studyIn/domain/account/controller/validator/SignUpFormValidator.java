@@ -1,6 +1,6 @@
 package com.studyIn.domain.account.controller.validator;
 
-import com.studyIn.domain.account.form.SignUpForm;
+import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.repository.AuthenticationRepository;
 import com.studyIn.domain.account.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;

@@ -11,6 +11,8 @@ public interface AuthenticationRepository extends JpaRepository<Authentication, 
 
     boolean existsByEmail(String email);
 
+    Optional<Authentication> findByEmail(String email);
+
     @Query("select au from Authentication au join fetch au.account a where au.email = :email")
     Optional<Authentication> findWithAccountByEmail(@Param("email") String email);
 }
