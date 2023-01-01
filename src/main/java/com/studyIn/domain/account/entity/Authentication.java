@@ -1,9 +1,9 @@
 package com.studyIn.domain.account.entity;
 
 import com.studyIn.domain.BaseTimeEntity;
-import com.studyIn.domain.account.Gender;
-import com.studyIn.domain.account.Address;
-import com.studyIn.domain.account.NotificationSettings;
+import com.studyIn.domain.account.value.Gender;
+import com.studyIn.domain.account.value.Address;
+import com.studyIn.domain.account.value.NotificationSettings;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import lombok.*;
 
@@ -65,26 +65,27 @@ public class Authentication extends BaseTimeEntity {
     }
 
     /**
-     * 인증 토큰 UUID 생성
+     * Email 인증 메서드
+     * generateEmailToken 인증 토큰 UUID 생성
+     * isValidToken 인증 토큰 일치 검증
+     * confirmEmailAuthentication 인증 확인 완료
+     * canSendConfirmEmail 이메일 전송 가능 여부
      */
     public void generateEmailToken() {
         this.emailCheckToken = UUID.randomUUID().toString();
         this.emailCheckTokenGeneratedDate = LocalDateTime.now();
     }
 
-    /**
-     * 인증 토큰 일치 검증
-     */
     public boolean isValidToken(String token) {
         return this.emailCheckToken.equals(token);
     }
 
-    /**
-     * 이메일 인증 확인
-     */
     public void confirmEmailAuthentication() {
         this.emailVerified = true;
         this.emailVerifiedDate = LocalDateTime.now();
     }
 
+    public boolean canSendConfirmEmail() {
+        return this.emailCheckTokenGeneratedDate.isBefore(LocalDateTime.now().minusMinutes(1));
+    }
 }

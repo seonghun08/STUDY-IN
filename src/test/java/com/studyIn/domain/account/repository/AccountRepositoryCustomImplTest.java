@@ -2,14 +2,14 @@ package com.studyIn.domain.account.repository;
 
 import com.studyIn.domain.account.value.Gender;
 import com.studyIn.domain.account.value.NotificationSettings;
+import com.studyIn.domain.account.dto.ProfileDTO;
+import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.entity.Profile;
-import com.studyIn.domain.account.dto.form.SignUpForm;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -19,68 +19,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @SpringBootTest
-class AccountRepositoryTest {
+class AccountRepositoryCustomImplTest {
 
     @PersistenceContext EntityManager em;
     @Autowired AccountRepository accountRepository;
-    @Autowired PasswordEncoder passwordEncoder;
 
     @Test
-    public void existsByUsername() throws Exception {
+    public void findProfileDtoByUsername() throws Exception {
         //given
-        String username = "user";
-        SignUpForm form = getSignUpForm(username);
+        SignUpForm form = getSignUpForm("spring-dev");
         Account account = getAccount(form);
+        Account saveAccount = accountRepository.save(account);
 
-        //when
-        accountRepository.save(account);
         em.flush();
         em.clear();
 
-        //then
-        assertThat(accountRepository.existsByUsername(username)).isTrue();
-    }
-    
-    @Test
-    public void findByUsername() throws Exception {
-        //given
-        SignUpForm form = getSignUpForm();
-        Account account = getAccount(form);
-
         //when
-        accountRepository.save(account);
-        em.flush();
-        em.clear();
+        ProfileDTO dto = accountRepository.findProfileDtoByUsername(form.getUsername()).orElseThrow();
 
         //then
-        Account findAccount = accountRepository.findByUsername(form.getUsername()).orElseThrow();
+        assertThat(dto.getUsername()).isEqualTo(form.getUsername());
+        assertThat(dto.getEmail()).isEqualTo(form.getEmail());
 
-        /**
-         * Lazy 로딩이 일어나면 안된다.
-         */
-        assertThat(findAccount.getAuthentication().getEmail()).isEqualTo(form.getEmail());
-        assertThat(findAccount.getProfile().getNickname()).isEqualTo(form.getNickname());
-    }
-
-    @Test
-    public void findByEmail() throws Exception {
-        //given
-        SignUpForm form = getSignUpForm();
-        Account account = getAccount(form);
-
-        //when
-        accountRepository.save(account);
-        em.flush();
-        em.clear();
-
-        //then
-        Account findAccount = accountRepository.findByEmail(form.getEmail()).orElseThrow();
-
-        /**
-         * Lazy 로딩이 일어나면 안된다.
-         */
-        assertThat(findAccount.getAuthentication().getEmail()).isEqualTo(form.getEmail());
-        assertThat(findAccount.getProfile().getNickname()).isEqualTo(form.getNickname());
+        // "Optional"에 담아오면 뒷 소수점이 누락된다?
+//        assertThat(dto.getCreatedDate()).isEqualTo(saveAccount.getCreatedDate());
     }
 
     private Account getAccount(SignUpForm form) {

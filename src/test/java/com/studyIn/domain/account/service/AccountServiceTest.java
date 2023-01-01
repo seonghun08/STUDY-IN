@@ -1,6 +1,6 @@
 package com.studyIn.domain.account.service;
 
-import com.studyIn.domain.account.Gender;
+import com.studyIn.domain.account.value.Gender;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Account;
 
@@ -116,7 +116,7 @@ class AccountServiceTest {
         signUpForm.setNickname("nickname");
         signUpForm.setCellPhone("01012341234");
         signUpForm.setGender(Gender.MAN);
-        signUpForm.setBirthday("19970830");
+        signUpForm.setBirthday("1997-08-30");
         return signUpForm;
     }
 }

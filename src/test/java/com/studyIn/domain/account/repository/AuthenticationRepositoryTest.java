@@ -1,7 +1,7 @@
 package com.studyIn.domain.account.repository;
 
-import com.studyIn.domain.account.Gender;
-import com.studyIn.domain.account.NotificationSettings;
+import com.studyIn.domain.account.value.Gender;
+import com.studyIn.domain.account.value.NotificationSettings;
 import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import org.junit.jupiter.api.Test;

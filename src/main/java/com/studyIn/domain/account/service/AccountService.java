@@ -1,19 +1,24 @@
 package com.studyIn.domain.account.service;
 
-import com.studyIn.domain.account.NotificationSettings;
+import com.studyIn.domain.account.UserAccount;
+import com.studyIn.domain.account.value.NotificationSettings;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.entity.Profile;
 import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.repository.AccountRepository;
-import com.studyIn.domain.account.repository.AuthenticationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -23,10 +28,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class AccountService {
 
     private final AccountRepository accountRepository;
-    private final AuthenticationRepository authenticationRepository;
+    private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender javaMailSender;
-    private final LoginService loginService;
 
     /**
      * 회원가입
@@ -34,6 +38,7 @@ public class AccountService {
     public Account signUp(SignUpForm form) {
         Account account = createAccount(form);
         sendSignUpConfirmEmail(account);
+        setAuthSession(account, form.getPassword());
         return account;
     }
 
@@ -72,6 +77,19 @@ public class AccountService {
     }
 
     /**
+     * "UserAccount" session 등록
+     */
+    private void setAuthSession(Account account, String password) {
+        var authenticate = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(
+                        new UserAccount(account),
+                        password,
+                        List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                ));
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+    }
+
+    /**
      * email 존재 여부 확인 후, 토근이 일치하면 인증 정보 업데이트
      */
     public boolean completeSignUp(String email, String token) {
@@ -80,7 +98,6 @@ public class AccountService {
         account.ifPresent(a -> {
             if (a.getAuthentication().isValidToken(token)) {
                 a.getAuthentication().confirmEmailAuthentication();
-                loginService.login(a);
                 check.set(true);
             }
         });

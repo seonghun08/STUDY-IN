@@ -1,4 +1,4 @@
-package com.studyIn.domain.account;
+package com.studyIn.domain.account.value;
 
 import lombok.Getter;
 

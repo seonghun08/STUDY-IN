@@ -37,6 +37,10 @@ public class Account extends BaseTimeEntity {
         authentication.setAccount(this);
     }
 
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+
     //== 생성 메서드 ==//
     public static Account createUser(SignUpForm signUpForm, Profile profile, Authentication authentication) {
         Account account = new Account();

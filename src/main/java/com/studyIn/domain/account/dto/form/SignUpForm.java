@@ -1,6 +1,6 @@
 package com.studyIn.domain.account.dto.form;
 
-import com.studyIn.domain.account.Gender;
+import com.studyIn.domain.account.value.Gender;
 import lombok.Data;
 
 import javax.validation.constraints.*;

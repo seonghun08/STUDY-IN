@@ -1,12 +1,13 @@
 package com.studyIn.domain.account.controller;
 
-import com.studyIn.domain.account.Gender;
+import com.studyIn.domain.account.value.Gender;
 import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.repository.AuthenticationRepository;
 import com.studyIn.domain.account.repository.AccountRepository;
 import com.studyIn.domain.account.service.AccountService;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.TestExecutionEvent;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.persistence.EntityManager;
@@ -36,7 +39,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class AccountControllerTest {
 
-    @PersistenceContext EntityManager em;
     @MockBean JavaMailSender javaMailSender;
 
     @Autowired MockMvc mvc;
@@ -45,8 +47,21 @@ class AccountControllerTest {
     @Autowired AuthenticationRepository authenticationRepository;
     @Autowired PasswordEncoder passwordEncoder;
 
+    @BeforeEach
+    void beforeEach() {
+        SignUpForm signUpForm = new SignUpForm();
+        signUpForm.setUsername("user");
+        signUpForm.setEmail("user@email.com");
+        signUpForm.setPassword("1234567890");
+        signUpForm.setNickname("nickname");
+        signUpForm.setCellPhone("01012341234");
+        signUpForm.setGender(Gender.MAN);
+        signUpForm.setBirthday("1997-08-30");
+        accountService.signUp(signUpForm);
+    }
+
     @AfterEach
-    public void afterEach() {
+    void afterEach() {
         accountRepository.deleteAll();
     }
 
@@ -102,10 +117,11 @@ class AccountControllerTest {
         then(javaMailSender).should().send(any(SimpleMailMessage.class));
     }
 
-    @DisplayName("인증 메인 확인 - 입력값 오류")
+    @DisplayName("email 인증 확인 - 입력값 오류")
     @Test
-    void checkEmailToken_with_wrong_input() throws Exception {
-        createAccount();
+    void checkEmailToken_fail() throws Exception {
+        Account account = createAccount();
+        System.out.println(":: emailCheckToken = " + account.getAuthentication().getEmailCheckToken());
 
         mvc.perform(get("/check-email-token")
                         .param("token", "dh6nsf24dsf1ds")
@@ -116,9 +132,9 @@ class AccountControllerTest {
                 .andExpect(unauthenticated());
     }
 
-    @DisplayName("인증 메인 확인 - 입력값 정상")
+    @DisplayName("email 인증 확인 - 입력값 정상")
     @Test
-    void checkEmailToken_with_correct_input() throws Exception {
+    void checkEmailToken_success() throws Exception {
         Account account = createAccount();
         System.out.println(":: emailCheckToken = " + account.getAuthentication().getEmailCheckToken());
 
@@ -131,6 +147,41 @@ class AccountControllerTest {
                 .andExpect(model().attributeExists("numberOfUser"))
                 .andExpect(view().name("account/checked-email"))
                 .andExpect(authenticated().withUsername("user"));
+    }
+
+    @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("이메일 재전송 화면 보이는지 테스트")
+    @Test
+    public void checkEmail() throws Exception {
+        mvc.perform(get("/check-email"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("account/check-email"))
+                .andExpect(model().attributeExists("email"))
+                .andExpect(authenticated().withUsername("user"));
+    }
+
+    @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("이메일 재전송은 1~2분마다 한번만 가능 - 실패")
+    @Test
+    public void resendConfirmEmail_fail() throws Exception {
+        mvc.perform(get("/resend-confirm-email"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("error"))
+                .andExpect(model().attributeExists("email"))
+                .andExpect(view().name("account/check-email"))
+                .andExpect(authenticated().withUsername("user"));
+    }
+
+    @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("프로필 화면 보이는지 테스트")
+    @Test
+    public void viewProfile() throws Exception {
+        String username = "user";
+        mvc.perform(get("/profile/" + username))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("profile"))
+                .andExpect(model().attributeExists("isOwner"))
+                .andExpect(view().name("account/profile"));
     }
 
     private Account createAccount() {

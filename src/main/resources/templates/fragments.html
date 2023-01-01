@@ -22,7 +22,10 @@
     <script src="/node_modules/jquery/dist/jquery.min.js"></script>
 
     <!--  jDentition  -->
-    <script src="/node_modules/jdenticon/dist/jdenticon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js" async
+            integrity="sha384-yBhgDqxM50qJV5JPdayci8wCfooqvhFYbIKhv0hTtLvfeeyJMJCscRfFNKIxt43M"
+            crossorigin="anonymous">
+    </script>
 
     <style>
         .box {
@@ -132,7 +135,7 @@
     </style>
 </head>
 <body>
-<!--  Navbar  -->
+<!--  navbar  -->
 <nav th:fragment="main-nav" class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
         <a class="navbar-brand" th:href="@{/}">
@@ -310,7 +313,136 @@
     </div>
 </nav>
 
-<!-- Footer -->
+<!--  redirect: message  -->
+<div th:fragment="message"
+     th:if="${message}"
+     class="alert alert-primary text-center alert-dismissible"
+     role="alert"
+>
+    <span th:text="${message}">message</span>
+    <button class="btn-close"
+            type="button"
+            data-mdb-dismiss="alert"
+    >
+    </button>
+</div>
+
+<!--  profile menu  -->
+<div th:fragment="profile-menu (currentMenu)" class="row justify-content-center col-10 mx-auto px-3 mt-2">
+    <ul th:if="${currentMenu == 'profile'}" class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" th:href="@{'/profile/' + ${profile.username}}" href="#">
+                <i class="fas fa-user-alt"></i> <strong>Profile</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{'/studyList/' + ${profile.username}}" href="#">
+                <i class="fas fa-book"></i> <strong>Study List</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="fas fa-edit"></i> <strong>Meeting List</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:if="${isOwner}" class="nav-link" th:href="@{/settings/profile}" href="#">
+                <i class="fas fa-cogs"></i> <strong>Settings</strong>
+            </a>
+        </li>
+    </ul>
+    <ul th:if="${currentMenu == 'studyList'}" class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{'/profile/' + ${profile.username}}" href="#">
+                <i class="fas fa-user-alt"></i> <strong>Profile</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" th:href="@{'/studyList/' + ${profile.username}}" href="#">
+                <i class="fas fa-book"></i> <strong>Study List</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="fas fa-edit"></i> <strong>Meeting List</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:if="${isOwner}" class="nav-link" th:href="@{/settings/profile}" href="#">
+                <i class="fas fa-cogs"></i> <strong>Settings</strong>
+            </a>
+        </li>
+    </ul>
+    <ul th:if="${currentMenu == 'settings'}" class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{'/profile/' + ${accountInfo.username}}" href="#">
+                <i class="fas fa-user-alt"></i> <strong>Profile</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{'/studyList/' + ${accountInfo.username}}" href="#">
+                <i class="fas fa-book"></i> <strong>Study List</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="fas fa-edit"></i> <strong>Meeting List</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" th:href="@{/settings/profile}" href="#">
+                <i class="fas fa-cogs"></i> <strong>Settings</strong>
+            </a>
+        </li>
+    </ul>
+    <hr/>
+</div>
+
+<!--  profile settings-menu  -->
+<div th:fragment="settings-menu (currentMenu)"
+     class="card shadow-sm list-group mb-4"
+     role="tablist"
+>
+    <div class="list-group-item list-group-item bg-light">Settings</div>
+    <a class="list-group-item list-group-item-action"
+       th:classappend="${currentMenu == 'profile'}? active"
+       th:href="@{/settings/profile}" href="#"
+    >
+        Profile
+    </a>
+    <a class="list-group-item list-group-item-action "
+       th:classappend="${currentMenu == 'password'}? active"
+       th:href="@{/settings/password}"
+    >
+        Password
+    </a>
+    <a class="list-group-item list-group-item-action "
+       th:classappend="${currentMenu == 'notifications'}? active"
+       th:href="@{/settings/notifications}" href="#"
+    >
+        Notifications
+    </a>
+    <a class="list-group-item list-group-item-action "
+       th:classappend="${currentMenu == 'tags'}? active"
+       th:href="@{/settings/tags}" href="#"
+    >
+        Tags
+    </a>
+    <a class="list-group-item list-group-item-action "
+       th:classappend="${currentMenu == 'locations'}? active"
+       th:href="@{/settings/locations}" href="#"
+    >
+        Locations
+    </a>
+    <a class="list-group-item list-group-item-action list-group-item-danger"
+       th:classappend="${currentMenu == 'account'}? active"
+       th:href="@{/settings/account}" href="#"
+    >
+        Account
+    </a>
+</div>
+
+<!-- footer -->
 <footer th:fragment="footer" class="text-center text-lg-start bg-white text-muted mt-5">
 
     <!-- Back to top button -->
@@ -489,6 +621,5 @@
         type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.js">
 </script>
-
 </body>
 </html>

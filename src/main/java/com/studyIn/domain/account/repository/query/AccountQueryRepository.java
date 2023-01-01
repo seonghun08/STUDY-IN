@@ -1,6 +1,5 @@
 package com.studyIn.domain.account.repository.query;
 
-
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.studyIn.domain.account.dto.AccountDTO;
 import lombok.RequiredArgsConstructor;

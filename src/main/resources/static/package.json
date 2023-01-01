@@ -9,7 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "jdenticon": "^3.2.0",
-    "jquery": "^3.6.3"
+    "cropper": "^4.1.0",
+    "jquery": "^3.6.3",
+    "jquery-cropper": "^1.0.1"
   }
 }

@@ -1,6 +1,10 @@
 package com.studyIn.domain.account.repository;
 
-import com.studyIn.domain.account.entity.Account;
+import com.studyIn.domain.account.dto.ProfileDTO;
 
-public class AccountRepositoryCustom {
+import java.util.Optional;
+
+public interface AccountRepositoryCustom {
+
+    Optional<ProfileDTO> findProfileDtoByUsername(String username);
 }

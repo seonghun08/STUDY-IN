@@ -1,6 +1,6 @@
 package com.studyIn.domain.account.repository.query;
 
-import com.studyIn.domain.account.Gender;
+import com.studyIn.domain.account.value.Gender;
 import com.studyIn.domain.account.dto.AccountDTO;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.service.AccountService;

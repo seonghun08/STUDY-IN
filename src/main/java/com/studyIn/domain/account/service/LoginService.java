@@ -3,7 +3,9 @@ package com.studyIn.domain.account.service;
 import com.studyIn.domain.account.UserAccount;
 import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.repository.AccountRepository;
+import com.studyIn.domain.account.repository.AuthenticationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,23 +24,20 @@ public class LoginService implements UserDetailsService {
 
     private final AccountRepository accountRepository;
 
-    public void login(Account account) {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                new UserAccount(account),
-                account.getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_USER")));
-        SecurityContextHolder.getContext().setAuthentication(token);
-    }
-
     @Override
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-        Optional<Account> account = accountRepository.findByUsername(usernameOrEmail);
+        Optional<Account> account;
 
-        if (account.isEmpty()) {
+        if (accountRepository.existsByUsername(usernameOrEmail)) {
+            account = accountRepository.findByUsername(usernameOrEmail);
+        } else {
             account = accountRepository.findByEmail(usernameOrEmail);
         }
 
-        return null;
-    }
+        if (account.isEmpty()) {
+            throw new UsernameNotFoundException(usernameOrEmail);
+        }
 
+        return new UserAccount(account.get());
+    }
 }

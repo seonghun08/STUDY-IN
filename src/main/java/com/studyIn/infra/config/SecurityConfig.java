@@ -1,27 +1,34 @@
 package com.studyIn.infra.config;
 
+import com.studyIn.domain.account.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
+import javax.sql.DataSource;
 
 
 /**
  * @EnableWebSecurity => "Spring Boot"를 사용하는 경우
- * "SecurityAutoConfiguration"에서 "import"되는 "WebSecurityEnablerConfiguration"에 의해 자동으로 세팅된다.
+ * "SecurityAutoConfiguration"에서 "import"되는 "WebSecurityEnablerConfiguration"에 의해 자동 세팅된다.
  */
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final LoginService loginService;
+    private final DataSource dataSource;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -34,11 +41,43 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/"))
                 .logout(logout -> logout
                         .logoutSuccessUrl("/"))
+                .rememberMe(remember -> remember
+                        .userDetailsService(loginService)
+                        .tokenRepository(tokenRepository()))
+                .sessionManagement(session -> session
+                        .maximumSessions(1)
+                        .maxSessionsPreventsLogin(false))
                 .build();
     }
 
     @Bean
-    public SecurityFilterChain resources(HttpSecurity http) throws Exception {
+    public AuthenticationManager authenticationManager() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder());
+        provider.setUserDetailsService(loginService);
+        return new ProviderManager(provider);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    /**
+     * "rememberMe" cookies 토큰 생성
+     */
+    @Bean
+    public PersistentTokenRepository tokenRepository() {
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        jdbcTokenRepository.setDataSource(dataSource);
+        return jdbcTokenRepository;
+    }
+
+    /**
+     * .../node_modules/** => security 무시
+     */
+    @Bean
+    public SecurityFilterChain node_modules(HttpSecurity http) throws Exception {
         return http
                 .requestMatchers(matchers -> matchers
                         .mvcMatchers("/node_modules/**"))
