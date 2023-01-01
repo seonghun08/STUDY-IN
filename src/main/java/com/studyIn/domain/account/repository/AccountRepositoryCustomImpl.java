@@ -3,8 +3,6 @@ package com.studyIn.domain.account.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.studyIn.domain.account.dto.ProfileDTO;
-import com.studyIn.domain.account.entity.QAccount;
-import com.studyIn.domain.account.entity.QProfile;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;

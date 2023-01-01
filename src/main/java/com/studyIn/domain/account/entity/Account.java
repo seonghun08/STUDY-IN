@@ -2,7 +2,9 @@ package com.studyIn.domain.account.entity;
 
 import com.studyIn.domain.BaseTimeEntity;
 import com.studyIn.domain.account.dto.form.SignUpForm;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -31,6 +33,12 @@ public class Account extends BaseTimeEntity {
     @JoinColumn(name = "authentication_id")
     private Authentication authentication;
 
+    //== 수정 메서드 ==//
+    public void updatePassword(PasswordEncoder passwordEncoder, String newPassword) {
+        this.password = newPassword;
+        this.encodePassword(passwordEncoder);
+    }
+
     //== 연관관계 메서드 ==//
     public void setAuthentication(Authentication authentication) {
         this.authentication = authentication;
@@ -46,13 +54,13 @@ public class Account extends BaseTimeEntity {
         Account account = new Account();
         account.username = signUpForm.getUsername();
         account.password = signUpForm.getPassword();
-        account.profile = profile;
+        account.setProfile(profile);
         account.setAuthentication(authentication);
         return account;
     }
 
     /**
-     * "PasswordEncoder" 패스워드 암호화
+     * PasswordEncoder 패스워드 암호화
      */
     public void encodePassword(PasswordEncoder passwordEncoder){
         this.password = passwordEncoder.encode(password);

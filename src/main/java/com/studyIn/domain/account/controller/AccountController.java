@@ -5,16 +5,13 @@ import com.studyIn.domain.account.CurrentAccount;
 import com.studyIn.domain.account.controller.validator.SignUpFormValidator;
 import com.studyIn.domain.account.dto.AccountDTO;
 import com.studyIn.domain.account.dto.ProfileDTO;
-import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.repository.AccountRepository;
 import com.studyIn.domain.account.repository.AuthenticationRepository;
 import com.studyIn.domain.account.repository.query.AccountQueryRepository;
 import com.studyIn.domain.account.service.AccountService;
-import com.studyIn.domain.account.service.LoginService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -25,7 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
-import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor

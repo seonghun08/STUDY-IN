@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 @Profile("local")
 @Component
@@ -25,7 +23,9 @@ public class InitAccount {
     }
 
     /**
-     * 스프링 라이프 사이클에서 @PostConstruct, @Transactional 같이 두면 안되고 분리해줘야 한다.
+     * @PostConstruct
+     * @Transactional
+     * 스프링 "lifeCycle"에서 서로 같이 놓으면 떄문에 분리해줘야 한다.
      */
     @Component
     @RequiredArgsConstructor
@@ -43,9 +43,7 @@ public class InitAccount {
             form.setCellPhone("01066064349");
             form.setGender(Gender.MAN);
             form.setBirthday("1997-08-30");
-
             accountService.signUp(form);
         }
-
     }
 }

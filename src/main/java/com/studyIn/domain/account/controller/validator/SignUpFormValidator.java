@@ -1,8 +1,8 @@
 package com.studyIn.domain.account.controller.validator;
 
 import com.studyIn.domain.account.dto.form.SignUpForm;
-import com.studyIn.domain.account.repository.AuthenticationRepository;
 import com.studyIn.domain.account.repository.AccountRepository;
+import com.studyIn.domain.account.repository.AuthenticationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

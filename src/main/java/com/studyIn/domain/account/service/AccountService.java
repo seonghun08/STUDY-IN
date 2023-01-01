@@ -1,12 +1,12 @@
 package com.studyIn.domain.account.service;
 
 import com.studyIn.domain.account.UserAccount;
-import com.studyIn.domain.account.value.NotificationSettings;
 import com.studyIn.domain.account.dto.form.SignUpForm;
+import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.entity.Profile;
-import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.repository.AccountRepository;
+import com.studyIn.domain.account.value.NotificationSettings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -77,7 +77,7 @@ public class AccountService {
     }
 
     /**
-     * "UserAccount" session 등록
+     * "UserAccount" 세션 등록
      */
     private void setAuthSession(Account account, String password) {
         var authenticate = authenticationManager

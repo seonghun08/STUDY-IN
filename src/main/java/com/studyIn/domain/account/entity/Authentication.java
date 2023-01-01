@@ -1,11 +1,14 @@
 package com.studyIn.domain.account.entity;
 
 import com.studyIn.domain.BaseTimeEntity;
-import com.studyIn.domain.account.value.Gender;
-import com.studyIn.domain.account.value.Address;
-import com.studyIn.domain.account.value.NotificationSettings;
 import com.studyIn.domain.account.dto.form.SignUpForm;
-import lombok.*;
+import com.studyIn.domain.account.value.Address;
+import com.studyIn.domain.account.value.Gender;
+import com.studyIn.domain.account.value.NotificationSettings;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

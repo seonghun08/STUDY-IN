@@ -1,11 +1,8 @@
 package com.studyIn.domain.account;
 
 import com.studyIn.domain.account.entity.Account;
+import com.studyIn.domain.account.entity.Profile;
 import lombok.Data;
-
-import javax.persistence.Basic;
-import javax.persistence.Lob;
-import java.time.LocalDateTime;
 
 @Data
 public class AccountInfo {
@@ -27,8 +24,8 @@ public class AccountInfo {
      * Profile
      */
     private Long profileId;
-    private String profileImage;
     private String nickname;
+    private String profileImage;
 
     public AccountInfo(Account account) {
         this.accountId = account.getId();
@@ -41,5 +38,10 @@ public class AccountInfo {
         this.profileId = account.getProfile().getId();
         this.nickname = account.getProfile().getNickname();
         this.profileImage = account.getProfile().getProfileImage();
+    }
+
+    public void updateProfile(Profile profile) {
+        this.nickname = profile.getNickname();
+        this.profileImage = profile.getProfileImage();
     }
 }

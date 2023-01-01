@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -21,4 +20,7 @@ public interface AccountRepository extends JpaRepository<Account, Long>, Account
 
     @Query("select a from Account a join fetch a.authentication au join fetch a.profile where au.email = :email")
     Optional<Account> findByEmail(@Param("email") String email);
+
+    @Query("select a.password from Account a where a.username = :username")
+    String findPasswordByUsername(@Param("username") String username);
 }
