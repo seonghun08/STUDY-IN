@@ -6,6 +6,7 @@ import com.studyIn.domain.account.dto.form.SignUpForm;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 
 import javax.persistence.*;
 
@@ -37,7 +38,7 @@ public class Profile extends BaseTimeEntity {
         return profile;
     }
 
-    //== 업데이트 메서드 ==//
+    //== 수정 메서드 ==//
     public void updateProfile(ProfileForm form) {
         this.nickname = form.getNickname();
         this.bio = form.getBio();

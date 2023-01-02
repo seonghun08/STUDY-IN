@@ -1,10 +1,11 @@
 package com.studyIn.domain.account.entity;
 
 import com.studyIn.domain.BaseTimeEntity;
+import com.studyIn.domain.account.dto.form.NotificationsSettingForm;
 import com.studyIn.domain.account.dto.form.SignUpForm;
-import com.studyIn.domain.account.value.Address;
-import com.studyIn.domain.account.value.Gender;
-import com.studyIn.domain.account.value.NotificationSettings;
+import com.studyIn.domain.account.entity.value.Address;
+import com.studyIn.domain.account.entity.value.Gender;
+import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,7 +43,7 @@ public class Authentication extends BaseTimeEntity {
     private Address address;
 
     @Embedded
-    private NotificationSettings notificationSettings;
+    private NotificationsSetting notificationsSetting;
 
     /**
      * emailVerified 이메일 인증 확인
@@ -57,14 +58,19 @@ public class Authentication extends BaseTimeEntity {
 
 
     //== 생성 메서드 ==//
-    public static Authentication createAuthentication(SignUpForm form, NotificationSettings notificationSettings) {
+    public static Authentication createAuthentication(SignUpForm form, NotificationsSetting notificationsSetting) {
         Authentication auth = new Authentication();
         auth.email = form.getEmail();
         auth.cellPhone = form.getCellPhone();
         auth.birthday = form.getBirthday();
         auth.gender = form.getGender();
-        auth.notificationSettings = notificationSettings;
+        auth.notificationsSetting = notificationsSetting;
         return auth;
+    }
+
+    //== 수정 메서드 ==//
+    public void updateNotificationsSetting(NotificationsSettingForm notificationsSettingForm) {
+        this.notificationsSetting.update(notificationsSettingForm);
     }
 
     /**

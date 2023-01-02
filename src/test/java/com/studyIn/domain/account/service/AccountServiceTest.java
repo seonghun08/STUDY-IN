@@ -1,6 +1,6 @@
 package com.studyIn.domain.account.service;
 
-import com.studyIn.domain.account.value.Gender;
+import com.studyIn.domain.account.entity.value.Gender;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Account;
 

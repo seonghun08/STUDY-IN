@@ -1,11 +1,14 @@
 package com.studyIn.domain.account.controller;
 
-import com.studyIn.domain.account.value.Gender;
+import com.studyIn.domain.account.entity.Authentication;
+import com.studyIn.domain.account.entity.Profile;
+import com.studyIn.domain.account.entity.value.Gender;
 import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.repository.AuthenticationRepository;
 import com.studyIn.domain.account.repository.AccountRepository;
 import com.studyIn.domain.account.service.AccountService;
+import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,13 +19,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,29 +41,54 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AccountControllerTest {
 
     @MockBean JavaMailSender javaMailSender;
-
     @Autowired MockMvc mvc;
     @Autowired AccountService accountService;
     @Autowired AccountRepository accountRepository;
     @Autowired AuthenticationRepository authenticationRepository;
+    @Autowired AuthenticationManager authenticationManager;
     @Autowired PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void beforeEach() {
-        SignUpForm signUpForm = new SignUpForm();
-        signUpForm.setUsername("user");
-        signUpForm.setEmail("user@email.com");
-        signUpForm.setPassword("1234567890");
-        signUpForm.setNickname("nickname");
-        signUpForm.setCellPhone("01012341234");
-        signUpForm.setGender(Gender.MAN);
-        signUpForm.setBirthday("1997-08-30");
-        accountService.signUp(signUpForm);
+        SignUpForm form = createSignUpForm("user");
+        NotificationsSetting notificationsSetting = new NotificationsSetting();
+        Authentication authentication = Authentication.createAuthentication(form, notificationsSetting);
+        Profile profile = Profile.createProfile(form);
+        Account account = Account.createUser(form, profile, authentication);
+        account.encodePassword(passwordEncoder);
+
+        /* 임시 토근 생성 */
+        account.getAuthentication().generateEmailToken();
+        accountRepository.save(account);
     }
 
     @AfterEach
     void afterEach() {
         accountRepository.deleteAll();
+    }
+
+    private Account createAccount(SignUpForm form) {
+        NotificationsSetting notificationsSetting = new NotificationsSetting();
+        Authentication authentication = Authentication.createAuthentication(form, notificationsSetting);
+        Profile profile = Profile.createProfile(form);
+        Account account = Account.createUser(form, profile, authentication);
+        account.encodePassword(passwordEncoder);
+
+        /* 임시 토근 생성 */
+        account.getAuthentication().generateEmailToken();
+        return accountRepository.save(account);
+    }
+
+    private SignUpForm createSignUpForm(String username) {
+        SignUpForm form = new SignUpForm();
+        form.setUsername(username);
+        form.setEmail(username + "@email.com");
+        form.setPassword("1234567890");
+        form.setNickname("nick-" + username);
+        form.setCellPhone("01012341234");
+        form.setGender(Gender.MAN);
+        form.setBirthday("1997-08-30");
+        return form;
     }
 
     @DisplayName("회원 가입 화면이 보이는지 테스트")
@@ -80,10 +106,10 @@ class AccountControllerTest {
     @Test
     void signUp_fail() throws Exception {
         mvc.perform(post("/sign-up")
-                        .param("username", "username")
+                        .param("username", "new-username")
                         .param("email", "xxxx")
                         .param("password", "1234567890")
-                        .param("nickname", "nickname")
+                        .param("nickname", "new-nickname")
                         .param("gender", String.valueOf(Gender.MAN))
                         .param("birthday", "1997-08-30")
                         .param("cellPhone", "01012341234")
@@ -97,11 +123,11 @@ class AccountControllerTest {
     @Test
     void signUp_success() throws Exception {
         mvc.perform(post("/sign-up")
-                        .param("username", "username")
-                        .param("email", "email@studyIn.com")
+                        .param("username", "new-username")
+                        .param("email", "email@new.com")
                         .param("password", "1234567890")
-                        .param("nickname", "nickname")
-                        .param("gender", String.valueOf(Gender.MAN))
+                        .param("nickname", "new-nickname")
+                        .param("gender", String.valueOf(Gender.NONE))
                         .param("birthday", "1997-08-30")
                         .param("cellPhone", "01012341234")
                         .with(csrf()))
@@ -109,18 +135,19 @@ class AccountControllerTest {
                 .andExpect(view().name("redirect:/"))
                 .andExpect(authenticated());
 
-        Account account = accountRepository.findByUsername("username").orElseThrow();
+        Account account = accountRepository.findByUsername("new-username").orElseThrow();
         assertThat(account.getPassword()).isNotEqualTo("1234567890");
         assertThat(passwordEncoder.matches("1234567890", account.getPassword())).isTrue();
-        assertThat(account.getAuthentication().getEmail()).isEqualTo("email@studyIn.com");
-        assertThat(account.getProfile().getNickname()).isEqualTo("nickname");
+        assertThat(account.getAuthentication().getEmail()).isEqualTo("email@new.com");
+        assertThat(account.getProfile().getNickname()).isEqualTo("new-nickname");
         then(javaMailSender).should().send(any(SimpleMailMessage.class));
     }
 
     @DisplayName("email 인증 확인 - 입력값 오류")
     @Test
     void checkEmailToken_fail() throws Exception {
-        Account account = createAccount();
+        SignUpForm form = createSignUpForm("test");
+        Account account = createAccount(form);
         System.out.println(":: emailCheckToken = " + account.getAuthentication().getEmailCheckToken());
 
         mvc.perform(get("/check-email-token")
@@ -135,7 +162,8 @@ class AccountControllerTest {
     @DisplayName("email 인증 확인 - 입력값 정상")
     @Test
     void checkEmailToken_success() throws Exception {
-        Account account = createAccount();
+        SignUpForm form = createSignUpForm("test");
+        Account account = createAccount(form);
         System.out.println(":: emailCheckToken = " + account.getAuthentication().getEmailCheckToken());
 
         mvc.perform(get("/check-email-token")
@@ -145,8 +173,7 @@ class AccountControllerTest {
                 .andExpect(model().attributeDoesNotExist("error"))
                 .andExpect(model().attributeExists("nickname"))
                 .andExpect(model().attributeExists("numberOfUser"))
-                .andExpect(view().name("account/checked-email"))
-                .andExpect(authenticated().withUsername("user"));
+                .andExpect(view().name("account/checked-email"));
     }
 
     @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
@@ -182,17 +209,5 @@ class AccountControllerTest {
                 .andExpect(model().attributeExists("profile"))
                 .andExpect(model().attributeExists("isOwner"))
                 .andExpect(view().name("account/profile"));
-    }
-
-    private Account createAccount() {
-        SignUpForm form = new SignUpForm();
-        form.setUsername("user");
-        form.setEmail("user@email.com");
-        form.setPassword("1234567890");
-        form.setNickname("nickname");
-        form.setCellPhone("01012341234");
-        form.setGender(Gender.MAN);
-        form.setBirthday("19970830");
-        return accountService.signUp(form);
     }
 }

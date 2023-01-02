@@ -6,6 +6,7 @@ import com.studyIn.domain.account.controller.validator.SignUpFormValidator;
 import com.studyIn.domain.account.dto.AccountDTO;
 import com.studyIn.domain.account.dto.ProfileDTO;
 import com.studyIn.domain.account.dto.form.SignUpForm;
+import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.repository.AccountRepository;
 import com.studyIn.domain.account.repository.AuthenticationRepository;
@@ -27,11 +28,11 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class AccountController {
 
-    private final SignUpFormValidator signUpFormValidator;
     private final AccountService accountService;
     private final AccountRepository accountRepository;
     private final AccountQueryRepository accountQueryRepository;
     private final AuthenticationRepository authenticationRepository;
+    private final SignUpFormValidator signUpFormValidator;
 
     @InitBinder("signUpForm")
     public void signUpFormInitBinder(WebDataBinder webDataBinder) {
@@ -50,7 +51,8 @@ public class AccountController {
             return "account/sign-up";
         }
 
-        accountService.signUp(signUpForm);
+        Account account = accountService.signUp(signUpForm);
+        accountService.setAuthSession(account, signUpForm.getPassword());
         return "redirect:/";
     }
 

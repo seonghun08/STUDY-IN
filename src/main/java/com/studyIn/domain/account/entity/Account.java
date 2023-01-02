@@ -33,12 +33,6 @@ public class Account extends BaseTimeEntity {
     @JoinColumn(name = "authentication_id")
     private Authentication authentication;
 
-    //== 수정 메서드 ==//
-    public void updatePassword(PasswordEncoder passwordEncoder, String newPassword) {
-        this.password = newPassword;
-        this.encodePassword(passwordEncoder);
-    }
-
     //== 연관관계 메서드 ==//
     public void setAuthentication(Authentication authentication) {
         this.authentication = authentication;
@@ -57,6 +51,12 @@ public class Account extends BaseTimeEntity {
         account.setProfile(profile);
         account.setAuthentication(authentication);
         return account;
+    }
+
+    //== 수정 메서드 ==//
+    public void updatePassword(PasswordEncoder passwordEncoder, String newPassword) {
+        this.password = newPassword;
+        this.encodePassword(passwordEncoder);
     }
 
     /**

@@ -6,7 +6,7 @@ import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.entity.Profile;
 import com.studyIn.domain.account.repository.AccountRepository;
-import com.studyIn.domain.account.value.NotificationSettings;
+import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -38,7 +38,6 @@ public class AccountService {
     public Account signUp(SignUpForm form) {
         Account account = createAccount(form);
         sendSignUpConfirmEmail(account);
-        setAuthSession(account, form.getPassword());
         return account;
     }
 
@@ -46,8 +45,8 @@ public class AccountService {
      * 계정 생성
      */
     private Account createAccount(SignUpForm form) {
-        NotificationSettings notificationSettings = new NotificationSettings();
-        Authentication authentication = Authentication.createAuthentication(form, notificationSettings);
+        NotificationsSetting notificationsSetting = new NotificationsSetting();
+        Authentication authentication = Authentication.createAuthentication(form, notificationsSetting);
         Profile profile = Profile.createProfile(form);
         Account account = Account.createUser(form, profile, authentication);
         account.encodePassword(passwordEncoder);
@@ -79,7 +78,7 @@ public class AccountService {
     /**
      * "UserAccount" 세션 등록
      */
-    private void setAuthSession(Account account, String password) {
+    public void setAuthSession(Account account, String password) {
         var authenticate = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(
                         new UserAccount(account),

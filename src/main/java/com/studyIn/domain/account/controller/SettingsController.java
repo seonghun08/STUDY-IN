@@ -1,11 +1,17 @@
 package com.studyIn.domain.account.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.studyIn.domain.account.AccountInfo;
 import com.studyIn.domain.account.CurrentAccount;
 import com.studyIn.domain.account.controller.validator.PasswordFormValidator;
+import com.studyIn.domain.account.dto.form.NotificationsSettingForm;
 import com.studyIn.domain.account.dto.form.PasswordForm;
 import com.studyIn.domain.account.dto.form.ProfileForm;
+import com.studyIn.domain.account.entity.Account;
+import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.entity.Profile;
+import com.studyIn.domain.account.entity.value.NotificationsSetting;
+import com.studyIn.domain.account.repository.AuthenticationRepository;
 import com.studyIn.domain.account.repository.ProfileRepository;
 import com.studyIn.domain.account.service.SettingsService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/settings")
@@ -29,6 +37,7 @@ public class SettingsController {
 
     private final SettingsService settingsService;
     private final ProfileRepository profileRepository;
+    private final AuthenticationRepository authenticationRepository;
     private final ModelMapper modelMapper;
     private final PasswordFormValidator passwordFormValidator;
 
@@ -39,7 +48,8 @@ public class SettingsController {
 
     @GetMapping("/profile")
     public String updateProfileForm(@CurrentAccount AccountInfo accountInfo, Model model) {
-        Profile profile = profileRepository.findById(accountInfo.getProfileId()).orElseThrow();
+        Profile profile = profileRepository.findById(accountInfo.getProfileId())
+                .orElseThrow(IllegalArgumentException::new);
         model.addAttribute(accountInfo);
         model.addAttribute(modelMapper.map(profile, ProfileForm.class));
         return "account/settings/profile";
@@ -77,4 +87,33 @@ public class SettingsController {
         attributes.addFlashAttribute("message", "패스워드를 수정했습니다.");
         return "redirect:/settings/password";
     }
+
+    @GetMapping("/notifications")
+    public String updateNotificationsForm(@CurrentAccount AccountInfo accountInfo, Model model) {
+        NotificationsSetting notificationsSetting = authenticationRepository
+                .findNotificationsSettingById(accountInfo.getAuthenticationId())
+                .orElseThrow(IllegalArgumentException::new);
+        model.addAttribute(accountInfo);
+        model.addAttribute(modelMapper.map(notificationsSetting, NotificationsSettingForm.class));
+        return "account/settings/notifications";
+    }
+
+    @PostMapping("/notifications")
+    public String notificationsUpdate(@CurrentAccount AccountInfo accountInfo, @Valid NotificationsSettingForm notificationsSettingForm,
+                                      Errors errors, Model model, RedirectAttributes attributes) {
+        if (errors.hasErrors()) {
+            model.addAttribute(accountInfo);
+            return "account/settings/notifications";
+        }
+
+        settingsService.updateNotificationsSetting(notificationsSettingForm, accountInfo);
+        attributes.addFlashAttribute("message", "알림을 수정했습니다.");
+        return "redirect:/settings/notifications";
+    }
+
+    /*********************************************************************************************************************/
+    /*********************************************************************************************************************/
+    /*********************************************************************************************************************/
+
+
 }

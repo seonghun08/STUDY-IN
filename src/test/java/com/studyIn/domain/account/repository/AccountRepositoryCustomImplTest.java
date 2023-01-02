@@ -1,7 +1,7 @@
 package com.studyIn.domain.account.repository;
 
-import com.studyIn.domain.account.value.Gender;
-import com.studyIn.domain.account.value.NotificationSettings;
+import com.studyIn.domain.account.entity.value.Gender;
+import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import com.studyIn.domain.account.dto.ProfileDTO;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Account;
@@ -47,7 +47,7 @@ class AccountRepositoryCustomImplTest {
 
     private Account getAccount(SignUpForm form) {
         Profile profile = Profile.createProfile(form);
-        Authentication authentication = Authentication.createAuthentication(form, new NotificationSettings());
+        Authentication authentication = Authentication.createAuthentication(form, new NotificationsSetting());
         return Account.createUser(form, profile, authentication);
     }
 

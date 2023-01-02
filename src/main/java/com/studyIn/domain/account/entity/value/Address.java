@@ -1,4 +1,4 @@
-package com.studyIn.domain.account.value;
+package com.studyIn.domain.account.entity.value;
 
 import lombok.AccessLevel;
 import lombok.Getter;

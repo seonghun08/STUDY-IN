@@ -1,7 +1,9 @@
 package com.studyIn.domain.account.repository;
 
-import com.studyIn.domain.account.value.Gender;
-import com.studyIn.domain.account.value.NotificationSettings;
+import com.studyIn.domain.account.entity.Account;
+import com.studyIn.domain.account.service.AccountService;
+import com.studyIn.domain.account.entity.value.Gender;
+import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import org.junit.jupiter.api.Test;
@@ -20,13 +22,14 @@ class AuthenticationRepositoryTest {
 
     @PersistenceContext EntityManager em;
     @Autowired AuthenticationRepository authenticationRepository;
+    @Autowired AccountService accountService;
 
     @Test
     public void existsByEmail() throws Exception {
         //given
         String email = "user@email.com";
         SignUpForm signUpForm = getSignUpForm(email);
-        Authentication authentication = Authentication.createAuthentication(signUpForm, new NotificationSettings());
+        Authentication authentication = Authentication.createAuthentication(signUpForm, new NotificationsSetting());
 
         //when
         authenticationRepository.save(authentication);
@@ -35,6 +38,24 @@ class AuthenticationRepositoryTest {
 
         //then
         assertThat(authenticationRepository.existsByEmail(email)).isTrue();
+    }
+
+    @Test
+    public void findNotificationsSettingById() throws Exception {
+        //given
+        SignUpForm form = getSignUpForm("user@email.com");
+        Account account = accountService.signUp(form);
+        em.flush();
+        em.clear();
+
+        //when
+        NotificationsSetting notificationsSetting = authenticationRepository.findNotificationsSettingById(account.getAuthentication().getId())
+                .orElseThrow();
+
+        //then
+        assertThat(notificationsSetting.isStudyCreatedByWeb()).isTrue();
+        assertThat(notificationsSetting.isStudyEnrollmentResultByWeb()).isTrue();
+        assertThat(notificationsSetting.isStudyUpdatedByWeb()).isTrue();
     }
 
     private SignUpForm getSignUpForm(String email) {
