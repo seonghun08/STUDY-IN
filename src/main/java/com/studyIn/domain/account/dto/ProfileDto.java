@@ -7,7 +7,7 @@ import javax.persistence.Lob;
 import java.time.LocalDateTime;
 
 @Data
-public class ProfileDTO {
+public class ProfileDto {
 
     /**
      * Account
@@ -40,7 +40,7 @@ public class ProfileDTO {
         return this.username.equals(username);
     }
 
-    public ProfileDTO(String username, LocalDateTime createdDate, String email, boolean emailVerified,
+    public ProfileDto(String username, LocalDateTime createdDate, String email, boolean emailVerified,
                       String nickname, String occupation, String location, String bio, String link, String profileImage) {
         this.username = username;
         this.createdDate = createdDate;

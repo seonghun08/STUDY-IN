@@ -4,7 +4,6 @@
 <body>
 <nav th:replace="fragments.html :: main-nav"></nav>
 <div class="text-center" style="background-color: #f5f7ff;">
-
     <div th:if="${accountInfo != null && !accountInfo.emailVerified}"
          class="alert alert-warning text-center"
          role="alert"
@@ -21,7 +20,6 @@
     </p>
     <a th:href="@{/login}" class="btn btn-primary mb-3">login</a>
 </div>
-
 <div class="container mt-5">
     <h5 class="text-center text-primary fw-bold">서로 배우고, 나누고, 성장하세요.</h5>
     <form th:action="@{/search/study}"

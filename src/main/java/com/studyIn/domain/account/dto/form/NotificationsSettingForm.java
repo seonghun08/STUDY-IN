@@ -6,14 +6,14 @@ import lombok.Data;
 public class NotificationsSettingForm {
 
     /**
-     * email 알림 설정
+     * email settings
      */
     private boolean studyCreatedByEmail;
     private boolean studyEnrollmentResultByEmail;
     private boolean studyUpdatedByEmail;
 
     /**
-     * web 알림 설정
+     * web settings
      */
     private boolean studyCreatedByWeb;
     private boolean studyEnrollmentResultByWeb;

@@ -6,14 +6,13 @@ import com.studyIn.domain.account.dto.form.SignUpForm;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.modelmapper.ModelMapper;
 
 import javax.persistence.*;
 
 @Entity
+@Table(name = "account_profile")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "account_profile")
 public class Profile extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)

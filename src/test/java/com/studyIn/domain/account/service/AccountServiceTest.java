@@ -1,14 +1,21 @@
 package com.studyIn.domain.account.service;
 
+import com.studyIn.domain.account.entity.Authentication;
+import com.studyIn.domain.account.entity.Profile;
 import com.studyIn.domain.account.entity.value.Gender;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Account;
 
+import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import com.studyIn.domain.account.repository.AccountRepository;
 import com.studyIn.domain.account.repository.AuthenticationRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -17,22 +24,36 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.then;
 
 @Transactional
 @SpringBootTest
 class AccountServiceTest {
 
-    @PersistenceContext
-    EntityManager em;
-
+    @PersistenceContext EntityManager em;
+    @MockBean JavaMailSender javaMailSender;
     @Autowired AccountService accountService;
     @Autowired AccountRepository accountRepository;
     @Autowired AuthenticationRepository authenticationRepository;
+    @Autowired PasswordEncoder passwordEncoder;
+
+    private SignUpForm createSignUpForm(String username) {
+        SignUpForm form = new SignUpForm();
+        form.setUsername(username);
+        form.setEmail(username + "@email.com");
+        form.setPassword("1234567890");
+        form.setNickname("nick-" + username);
+        form.setCellPhone("01012341234");
+        form.setGender(Gender.MAN);
+        form.setBirthday("1997-08-30");
+        return form;
+    }
 
     @Test
-    public void signUp() throws Exception {
+    void signUp() throws Exception {
         //given
-        SignUpForm form = getSignUpForm();
+        SignUpForm form = createSignUpForm("spring-dev");
 
         //when
         Account account = accountService.signUp(form);
@@ -61,12 +82,13 @@ class AccountServiceTest {
         assertThat(findAccount.getAuthentication().getGender()).isEqualTo(form.getGender());
         assertThat(findAccount.getAuthentication().getBirthday()).isEqualTo(form.getBirthday());
         assertThat(findAccount.getProfile().getNickname()).isEqualTo(form.getNickname());
+        then(javaMailSender).should().send(any(SimpleMailMessage.class));
     }
 
     @Test
-    public void completeSignUp() throws Exception {
+    void completeSignUp() throws Exception {
         //given
-        SignUpForm form = getSignUpForm();
+        SignUpForm form = createSignUpForm("spring-dev");
         Account account = accountService.signUp(form);
 
         String username = account.getUsername();
@@ -89,15 +111,15 @@ class AccountServiceTest {
     }
 
     @Test
-    public void resendSignUpConfirmEmail() throws Exception {
+    void resendSignUpConfirmEmail() throws Exception {
         //given
-        SignUpForm form = getSignUpForm();
+        SignUpForm form = createSignUpForm("spring-dev");
         Account account = accountService.signUp(form);
         String oldToken = account.getAuthentication().getEmailCheckToken();
         LocalDateTime oldTokenDate = account.getAuthentication().getEmailCheckTokenGeneratedDate();
 
         //when
-        accountService.resendSignUpConfirmEmail(account.getId());
+        accountService.sendSignUpConfirmEmail(account.getId());
 
         //then
         Account findAccount = accountRepository.findByEmail(account.getAuthentication().getEmail()).orElseThrow();
@@ -108,15 +130,4 @@ class AccountServiceTest {
         assertThat(oldTokenDate).isBefore(newTokenDate);
     }
 
-    private SignUpForm getSignUpForm() {
-        SignUpForm signUpForm = new SignUpForm();
-        signUpForm.setUsername("user");
-        signUpForm.setEmail("user@email.com");
-        signUpForm.setPassword("1234567890");
-        signUpForm.setNickname("nickname");
-        signUpForm.setCellPhone("01012341234");
-        signUpForm.setGender(Gender.MAN);
-        signUpForm.setBirthday("1997-08-30");
-        return signUpForm;
-    }
 }

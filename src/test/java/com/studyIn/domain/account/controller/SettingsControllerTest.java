@@ -28,10 +28,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SettingsControllerTest {
 
     @Autowired MockMvc mvc;
-    @Autowired ObjectMapper objectMapper;
-    @Autowired PasswordEncoder passwordEncoder;
     @Autowired AccountService accountService;
     @Autowired AccountRepository accountRepository;
+    @Autowired ObjectMapper objectMapper;
+    @Autowired PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void beforeEach() {
@@ -217,4 +217,8 @@ class SettingsControllerTest {
         assertThat(account.getAuthentication().getNotificationsSetting().isStudyUpdatedByEmail()).isTrue();
         assertThat(account.getAuthentication().getNotificationsSetting().isStudyEnrollmentResultByEmail()).isTrue();
     }
+
+    /**
+     * 태그 테스트
+     */
 }

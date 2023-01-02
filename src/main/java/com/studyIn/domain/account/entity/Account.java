@@ -8,11 +8,13 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@Table(name = "account")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "account")
 public class Account extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,6 +35,10 @@ public class Account extends BaseTimeEntity {
     @JoinColumn(name = "authentication_id")
     private Authentication authentication;
 
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private List<AccountTag> accountTags = new ArrayList<>();
+
+
     //== 연관관계 메서드 ==//
     public void setAuthentication(Authentication authentication) {
         this.authentication = authentication;
@@ -42,6 +48,12 @@ public class Account extends BaseTimeEntity {
     public void setProfile(Profile profile) {
         this.profile = profile;
     }
+
+    public void addAccountTag(AccountTag accountTag) {
+        this.accountTags.add(accountTag);
+        accountTag.setAccount(this);
+    }
+
 
     //== 생성 메서드 ==//
     public static Account createUser(SignUpForm signUpForm, Profile profile, Authentication authentication) {
@@ -53,11 +65,13 @@ public class Account extends BaseTimeEntity {
         return account;
     }
 
+
     //== 수정 메서드 ==//
     public void updatePassword(PasswordEncoder passwordEncoder, String newPassword) {
         this.password = newPassword;
         this.encodePassword(passwordEncoder);
     }
+
 
     /**
      * PasswordEncoder 패스워드 암호화

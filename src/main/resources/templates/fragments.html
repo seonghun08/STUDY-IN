@@ -21,6 +21,11 @@
     <!--  jquery  -->
     <script src="/node_modules/jquery/dist/jquery.min.js"></script>
 
+    <!--  tagify  -->
+    <link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css"/>
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+
     <!--  jDentition  -->
     <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js" async
             integrity="sha384-yBhgDqxM50qJV5JPdayci8wCfooqvhFYbIKhv0hTtLvfeeyJMJCscRfFNKIxt43M"
@@ -429,10 +434,10 @@
         Tags
     </a>
     <a class="list-group-item list-group-item-action "
-       th:classappend="${currentMenu == 'locations'}? active"
-       th:href="@{/settings/locations}" href="#"
+       th:classappend="${currentMenu == 'zones'}? active"
+       th:href="@{/settings/zones}" href="#"
     >
-        Locations
+        Zones
     </a>
     <a class="list-group-item list-group-item-action list-group-item-danger"
        th:classappend="${currentMenu == 'account'}? active"
@@ -621,5 +626,60 @@
         type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.js">
 </script>
+
+<!--  Ajax csrf-header -->
+<script th:fragment="ajax-csrf-header" th:inline="javascript" type="application/javascript">
+    $(function () {
+        var csrfToken = /*[[${_csrf.token}]]*/ null;
+        var csrfHeader = /*[[${_csrf.headerName}]]*/ null;
+        $(document).ajaxSend(function (e, xhr, options) {
+            xhr.setRequestHeader(csrfHeader, csrfToken);
+        });
+    });
+</script>
+
+<!--  update-tags  -->
+<script th:fragment="update-tags (baseUrl)" type="application/javascript">
+    $(function () {
+        function tagRequest(url, title) {
+            $.ajax({
+                dataType: "json",
+                autocomplete: {
+                    enabled: true,
+                    rightKey: true,
+                },
+                contentType: "application/json; charset=utf-8",
+                method: "POST",
+                url: "[(${baseUrl})]" + url,
+                data: JSON.stringify({'title': title})
+            }).done(function (data, status) {
+                console.log("${data} and status is ${status}");
+            });
+        }
+
+        function onAdd(e) {
+            tagRequest("/add", e.detail.data.value);
+        }
+
+        function onRemove(e) {
+            tagRequest("/remove", e.detail.data.value);
+        }
+
+        var input = document.querySelector('input[name=tags]')
+
+        var tagify = new Tagify(input, {
+            pattern: /^.{0,20}$/,
+            whitelist: JSON.parse(document.querySelector("#savedList").textContent),
+            dropdown: {
+                position: "input",
+                enabled: 0
+            }
+        });
+
+        tagify.on("add", onAdd);
+        tagify.on("remove", onRemove);
+    });
+</script>
+
 </body>
 </html>

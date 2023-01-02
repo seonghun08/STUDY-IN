@@ -1,7 +1,7 @@
 package com.studyIn.domain.account.repository.query;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.studyIn.domain.account.dto.AccountDTO;
+import com.studyIn.domain.account.dto.TotalCountAndNicknameDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +15,7 @@ public class AccountQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public AccountDTO findCountAndNicknameByEmail(String email) {
+    public TotalCountAndNicknameDto findCountAndNicknameByEmail(String email) {
 
         String nickname = queryFactory
                 .select(profile.nickname.as("nickname"))
@@ -30,6 +30,6 @@ public class AccountQueryRepository {
                 .from(account)
                 .fetchOne();
 
-        return new AccountDTO(totalCount, nickname);
+        return new TotalCountAndNicknameDto(totalCount, nickname);
     }
 }

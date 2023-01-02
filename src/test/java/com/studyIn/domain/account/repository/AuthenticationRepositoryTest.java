@@ -1,6 +1,7 @@
 package com.studyIn.domain.account.repository;
 
 import com.studyIn.domain.account.entity.Account;
+import com.studyIn.domain.account.entity.Profile;
 import com.studyIn.domain.account.service.AccountService;
 import com.studyIn.domain.account.entity.value.Gender;
 import com.studyIn.domain.account.entity.value.NotificationsSetting;
@@ -9,6 +10,7 @@ import com.studyIn.domain.account.dto.form.SignUpForm;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -21,15 +23,42 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AuthenticationRepositoryTest {
 
     @PersistenceContext EntityManager em;
-    @Autowired AuthenticationRepository authenticationRepository;
     @Autowired AccountService accountService;
+    @Autowired AccountRepository accountRepository;
+    @Autowired AuthenticationRepository authenticationRepository;
+    @Autowired PasswordEncoder passwordEncoder;
+
+    private Account createAccount(SignUpForm form) {
+        NotificationsSetting notificationsSetting = new NotificationsSetting();
+        Authentication authentication = Authentication.createAuthentication(form, notificationsSetting);
+        Profile profile = Profile.createProfile(form);
+        Account account = Account.createUser(form, profile, authentication);
+        account.encodePassword(passwordEncoder);
+
+        /* 임시 토근 생성 */
+        account.getAuthentication().generateEmailToken();
+        return accountRepository.save(account);
+    }
+    private SignUpForm createSignUpForm(String username) {
+        SignUpForm form = new SignUpForm();
+        form.setUsername(username);
+        form.setEmail(username + "@email.com");
+        form.setPassword("1234567890");
+        form.setNickname("nick-" + username);
+        form.setCellPhone("01012341234");
+        form.setGender(Gender.MAN);
+        form.setBirthday("1997-08-30");
+        return form;
+    }
 
     @Test
-    public void existsByEmail() throws Exception {
+    void existsByEmail() throws Exception {
         //given
+        SignUpForm form = createSignUpForm("spring-dev");
+
         String email = "user@email.com";
-        SignUpForm signUpForm = getSignUpForm(email);
-        Authentication authentication = Authentication.createAuthentication(signUpForm, new NotificationsSetting());
+        form.setEmail(email);
+        Authentication authentication = Authentication.createAuthentication(form, new NotificationsSetting());
 
         //when
         authenticationRepository.save(authentication);
@@ -41,16 +70,16 @@ class AuthenticationRepositoryTest {
     }
 
     @Test
-    public void findNotificationsSettingById() throws Exception {
+    void findNotificationsSettingById() throws Exception {
         //given
-        SignUpForm form = getSignUpForm("user@email.com");
-        Account account = accountService.signUp(form);
+        SignUpForm form = createSignUpForm("spring-dev");
+        Account account = createAccount(form);
         em.flush();
         em.clear();
 
         //when
-        NotificationsSetting notificationsSetting = authenticationRepository.findNotificationsSettingById(account.getAuthentication().getId())
-                .orElseThrow();
+        NotificationsSetting notificationsSetting = authenticationRepository
+                .findNotificationsSettingById(account.getAuthentication().getId()).orElseThrow();
 
         //then
         assertThat(notificationsSetting.isStudyCreatedByWeb()).isTrue();
@@ -58,15 +87,4 @@ class AuthenticationRepositoryTest {
         assertThat(notificationsSetting.isStudyUpdatedByWeb()).isTrue();
     }
 
-    private SignUpForm getSignUpForm(String email) {
-        SignUpForm signUpForm = new SignUpForm();
-        signUpForm.setUsername("username");
-        signUpForm.setEmail(email);
-        signUpForm.setPassword("1234567890");
-        signUpForm.setNickname("nickname");
-        signUpForm.setCellPhone("01012341234");
-        signUpForm.setGender(Gender.MAN);
-        signUpForm.setBirthday("1997-08-30");
-        return signUpForm;
-    }
 }

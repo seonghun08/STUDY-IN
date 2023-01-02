@@ -1,34 +1,36 @@
 package com.studyIn.domain.account.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studyIn.domain.account.AccountInfo;
 import com.studyIn.domain.account.CurrentAccount;
 import com.studyIn.domain.account.controller.validator.PasswordFormValidator;
 import com.studyIn.domain.account.dto.form.NotificationsSettingForm;
 import com.studyIn.domain.account.dto.form.PasswordForm;
 import com.studyIn.domain.account.dto.form.ProfileForm;
-import com.studyIn.domain.account.entity.Account;
-import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.entity.Profile;
 import com.studyIn.domain.account.entity.value.NotificationsSetting;
+import com.studyIn.domain.account.repository.AccountRepository;
 import com.studyIn.domain.account.repository.AuthenticationRepository;
 import com.studyIn.domain.account.repository.ProfileRepository;
 import com.studyIn.domain.account.service.SettingsService;
+import com.studyIn.domain.tag.dto.TagForm;
+import com.studyIn.domain.tag.entity.Tag;
+import com.studyIn.domain.tag.repository.TagRepository;
+import com.studyIn.domain.tag.service.TagService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/settings")
@@ -36,10 +38,16 @@ import java.util.Set;
 public class SettingsController {
 
     private final SettingsService settingsService;
-    private final ProfileRepository profileRepository;
+    private final TagService tagService;
+    private final AccountRepository accountRepository;
     private final AuthenticationRepository authenticationRepository;
+    private final ProfileRepository profileRepository;
+    private final TagRepository tagRepository;
     private final ModelMapper modelMapper;
+    private final ObjectMapper objectMapper;
     private final PasswordFormValidator passwordFormValidator;
+
+
 
     @InitBinder("passwordForm")
     public void passwordFormInitBinder(WebDataBinder webDataBinder) {
@@ -77,7 +85,7 @@ public class SettingsController {
 
     @PostMapping("/password")
     public String updatePassword(@CurrentAccount AccountInfo accountInfo, @Valid PasswordForm passwordForm, Errors errors,
-                               Model model, RedirectAttributes attributes) {
+                                 Model model, RedirectAttributes attributes) {
         if (errors.hasErrors()) {
             model.addAttribute(accountInfo);
             return "account/settings/password";
@@ -111,9 +119,25 @@ public class SettingsController {
         return "redirect:/settings/notifications";
     }
 
-    /*********************************************************************************************************************/
-    /*********************************************************************************************************************/
-    /*********************************************************************************************************************/
+    @GetMapping("/tags")
+    public String updateTagsForm(@CurrentAccount AccountInfo accountInfo, Model model) throws JsonProcessingException {
+        List<String> tags = accountRepository.findTagTitleByAccountId(accountInfo.getAccountId());
+        List<String> allTags = tagRepository.findAll().stream()
+                .map(Tag::getTitle).collect(Collectors.toList());
+
+        model.addAttribute(accountInfo);
+        model.addAttribute("tags", tags);
+        model.addAttribute("savedList", objectMapper.writeValueAsString(allTags));
+        return "account/settings/tags";
+    }
+
+    @PostMapping("/tags/add")
+    @ResponseBody
+    public ResponseEntity addTag(@CurrentAccount AccountInfo accountInfo, @RequestBody TagForm tagForm) {
+        Tag tag = tagService.findExistingTagOrElseCreateTag(tagForm);
+        settingsService.addTag(tag, accountInfo);
+        return ResponseEntity.ok().build();
+    }
 
 
 }

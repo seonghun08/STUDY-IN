@@ -78,7 +78,6 @@ class AccountControllerTest {
         account.getAuthentication().generateEmailToken();
         return accountRepository.save(account);
     }
-
     private SignUpForm createSignUpForm(String username) {
         SignUpForm form = new SignUpForm();
         form.setUsername(username);
@@ -179,7 +178,7 @@ class AccountControllerTest {
     @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("이메일 재전송 화면 보이는지 테스트")
     @Test
-    public void checkEmail() throws Exception {
+    void checkEmail() throws Exception {
         mvc.perform(get("/check-email"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("account/check-email"))
@@ -190,7 +189,7 @@ class AccountControllerTest {
     @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("이메일 재전송은 1~2분마다 한번만 가능 - 실패")
     @Test
-    public void resendConfirmEmail_fail() throws Exception {
+    void resendConfirmEmail_fail() throws Exception {
         mvc.perform(get("/resend-confirm-email"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("error"))
@@ -202,7 +201,7 @@ class AccountControllerTest {
     @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("프로필 화면 보이는지 테스트")
     @Test
-    public void viewProfile() throws Exception {
+    void viewProfile() throws Exception {
         String username = "user";
         mvc.perform(get("/profile/" + username))
                 .andExpect(status().isOk())

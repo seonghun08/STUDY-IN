@@ -16,9 +16,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@Table(name = "account_authentication")
 @Getter @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "account_authentication")
 public class Authentication extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
@@ -68,10 +68,12 @@ public class Authentication extends BaseTimeEntity {
         return auth;
     }
 
+
     //== 수정 메서드 ==//
     public void updateNotificationsSetting(NotificationsSettingForm notificationsSettingForm) {
         this.notificationsSetting.update(notificationsSettingForm);
     }
+
 
     /**
      * Email 인증 메서드

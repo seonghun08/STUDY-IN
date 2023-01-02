@@ -1,8 +1,8 @@
 package com.studyIn;
 
 import com.studyIn.domain.account.dto.form.SignUpForm;
-import com.studyIn.domain.account.service.AccountService;
 import com.studyIn.domain.account.entity.value.Gender;
+import com.studyIn.domain.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ public class InitAccount {
 
     @PostConstruct
     public void init() {
-        initAccountService.init();
+//        initAccountService.init();
     }
 
     /**

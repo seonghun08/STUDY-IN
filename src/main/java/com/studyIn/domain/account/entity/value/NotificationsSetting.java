@@ -10,7 +10,7 @@ import javax.persistence.Embeddable;
 public class NotificationsSetting {
 
     /**
-     * email 알림 설정
+     * email settings
      */
     private boolean studyCreatedByEmail;
     private boolean studyUpdatedByEmail;
@@ -18,7 +18,7 @@ public class NotificationsSetting {
 
 
     /**
-     * web 알림 설정
+     * web settings
      */
     private boolean studyCreatedByWeb;
     private boolean studyUpdatedByWeb;

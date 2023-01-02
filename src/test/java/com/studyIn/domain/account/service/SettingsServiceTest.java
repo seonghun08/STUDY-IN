@@ -39,6 +39,11 @@ class SettingsServiceTest {
     @Autowired AccountRepository accountRepository;
     @Autowired PasswordEncoder passwordEncoder;
 
+    @AfterEach
+    void afterEach() {
+        accountRepository.deleteAll();
+    }
+
     private Account createAccount(SignUpForm form) {
         NotificationsSetting notificationsSetting = new NotificationsSetting();
         Authentication authentication = Authentication.createAuthentication(form, notificationsSetting);
@@ -47,7 +52,6 @@ class SettingsServiceTest {
         account.encodePassword(passwordEncoder);
         return accountRepository.save(account);
     }
-
     private SignUpForm createSignUpForm(String username) {
         SignUpForm form = new SignUpForm();
         form.setUsername(username);
@@ -58,11 +62,6 @@ class SettingsServiceTest {
         form.setGender(Gender.MAN);
         form.setBirthday("1997-08-30");
         return form;
-    }
-
-    @AfterEach
-    void afterEach() {
-        accountRepository.deleteAll();
     }
 
     @Test

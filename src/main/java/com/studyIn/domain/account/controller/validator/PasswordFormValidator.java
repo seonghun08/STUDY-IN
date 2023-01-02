@@ -35,10 +35,16 @@ public class PasswordFormValidator implements Validator {
         }
     }
 
+    /**
+     * 새 패스워드와 확인 패스워드가 서로 일치하는가
+     */
     private boolean isEqualsNewPasswordAndConfirmPassword(PasswordForm passwordForm) {
         return passwordForm.getNewPassword().equals(passwordForm.getConfirmPassword());
     }
 
+    /**
+     * 계정이 가지고 있는 패스워드와 입력한 패스워드가 서로 일치 하는가
+     */
     private boolean isEqualsCurrentPassword(String currentPassword) {
         String username = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         return passwordEncoder.matches(currentPassword, accountRepository.findPasswordByUsername(username));

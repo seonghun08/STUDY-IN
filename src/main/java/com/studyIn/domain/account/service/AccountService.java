@@ -1,12 +1,14 @@
 package com.studyIn.domain.account.service;
 
 import com.studyIn.domain.account.UserAccount;
+import com.studyIn.domain.account.dto.form.EmailForm;
+import com.studyIn.domain.account.dto.form.ResetPasswordForm;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.entity.Profile;
-import com.studyIn.domain.account.repository.AccountRepository;
 import com.studyIn.domain.account.entity.value.NotificationsSetting;
+import com.studyIn.domain.account.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -37,7 +39,7 @@ public class AccountService {
      */
     public Account signUp(SignUpForm form) {
         Account account = createAccount(form);
-        sendSignUpConfirmEmail(account);
+        sendConfirmEmail(account, "verify");
         return account;
     }
 
@@ -57,35 +59,42 @@ public class AccountService {
     /**
      * 인증 메일 보내기
      */
-    private void sendSignUpConfirmEmail(Account account) {
+    public void sendSignUpConfirmEmail(Long accountId) {
+        Account account = accountRepository.findWithAuthenticationById(accountId)
+                .orElseThrow(IllegalArgumentException::new);
+        sendConfirmEmail(account, "verify");
+    }
+
+    public void sendLoginLinkConfirmEmail(EmailForm emailForm) {
+        Account account = accountRepository.findWithAuthenticationByEmail(emailForm.getEmail())
+                .orElseThrow(IllegalArgumentException::new);
+        sendConfirmEmail(account, "loginLink");
+    }
+
+    private void sendConfirmEmail(Account account, String subject) {
         Authentication authentication = account.getAuthentication();
         authentication.generateEmailToken();
 
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(account.getAuthentication().getEmail());
-        mailMessage.setSubject("회원가입 인증");
-        mailMessage.setText("/check-email-token?"
-                + "&email=" + authentication.getEmail()
-                + "&token=" + authentication.getEmailCheckToken());
-        javaMailSender.send(mailMessage);
-    }
+        if (subject.equals("verify")) {
+            SimpleMailMessage mailMessage = new SimpleMailMessage();
+            mailMessage.setTo(account.getAuthentication().getEmail());
+            mailMessage.setSubject("회원가입 인증");
+            mailMessage.setText("/check-email-token?"
+                    + "email=" + authentication.getEmail()
+                    + "&token=" + authentication.getEmailCheckToken());
+            javaMailSender.send(mailMessage);
+        }
 
-    public void resendSignUpConfirmEmail(Long accountId) {
-        Account account = accountRepository.findWithAuthenticationById(accountId).orElseThrow();
-        sendSignUpConfirmEmail(account);
-    }
+        if (subject.equals("loginLink")) {
+            SimpleMailMessage mailMessage = new SimpleMailMessage();
+            mailMessage.setTo(account.getAuthentication().getEmail());
+            mailMessage.setSubject("스터디인 로그인 링크");
+            mailMessage.setText("/find-by-email?"
+                    + "email=" + authentication.getEmail()
+                    + "&token=" + authentication.getEmailCheckToken());
+            javaMailSender.send(mailMessage);
+        }
 
-    /**
-     * "UserAccount" 세션 등록
-     */
-    public void setAuthSession(Account account, String password) {
-        var authenticate = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(
-                        new UserAccount(account),
-                        password,
-                        List.of(new SimpleGrantedAuthority("ROLE_USER"))
-                ));
-        SecurityContextHolder.getContext().setAuthentication(authenticate);
     }
 
     /**
@@ -101,5 +110,30 @@ public class AccountService {
             }
         });
         return check.get();
+    }
+
+    /**
+     * 새로운 패스워드로 변경 후 로그인, 재사용 방지 인증 토큰 값 초기화
+     */
+    public void resetPassword(ResetPasswordForm resetPasswordForm) {
+        Account account = accountRepository.findByEmail(resetPasswordForm.getEmail())
+                .orElseThrow(IllegalArgumentException::new);
+
+        account.updatePassword(passwordEncoder, resetPasswordForm.getPassword());
+        account.getAuthentication().generateEmailToken();
+        setAuthSession(account, resetPasswordForm.getPassword());
+    }
+
+    /**
+     * "UserAccount" 세션 등록, 로그인
+     */
+    public void setAuthSession(Account account, String password) {
+        var authenticate = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(
+                        new UserAccount(account),
+                        password,
+                        List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                ));
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
     }
 }

@@ -66,7 +66,7 @@ class MainControllerTest {
 
     @DisplayName("로그인 없이 home 화면")
     @Test
-    public void home() throws Exception {
+    void home() throws Exception {
         mvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("index"))
@@ -77,7 +77,7 @@ class MainControllerTest {
     @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("로그인 시 home 화면")
     @Test
-    public void login_home() throws Exception {
+    void login_home() throws Exception {
         mvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("index"))
@@ -87,7 +87,7 @@ class MainControllerTest {
 
     @DisplayName("username 로그인 성공")
     @Test
-    public void login_with_username() throws Exception {
+    void login_with_username() throws Exception {
         mvc.perform(post("/login")
                         .param("username", "user")
                         .param("password", "1234567890")
@@ -99,7 +99,7 @@ class MainControllerTest {
 
     @DisplayName("email 로그인 성공")
     @Test
-    public void login_with_email() throws Exception {
+    void login_with_email() throws Exception {
         mvc.perform(post("/login")
                         .param("username", "user@email.com")
                         .param("password", "1234567890")
@@ -111,7 +111,7 @@ class MainControllerTest {
 
     @DisplayName("로그인 실패")
     @Test
-    public void login_fail() throws Exception {
+    void login_fail() throws Exception {
         mvc.perform(post("/login")
                         .param("username", "user")
                         .param("password", "xxxx")
@@ -124,7 +124,7 @@ class MainControllerTest {
     @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("로그아웃")
     @Test
-    public void logout() throws Exception {
+    void logout() throws Exception {
         mvc.perform(post("/logout")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())

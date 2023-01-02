@@ -74,7 +74,7 @@ public class SecurityConfig {
     }
 
     /**
-     * .../node_modules/** => security 무시
+     * .../node_modules/** => security filter 무시
      */
     @Bean
     public SecurityFilterChain node_modules(HttpSecurity http) throws Exception {

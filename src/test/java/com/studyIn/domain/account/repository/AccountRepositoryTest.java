@@ -6,6 +6,7 @@ import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.entity.Profile;
 import com.studyIn.domain.account.dto.form.SignUpForm;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,30 +26,51 @@ class AccountRepositoryTest {
     @Autowired AccountRepository accountRepository;
     @Autowired PasswordEncoder passwordEncoder;
 
+    private Account createAccount(SignUpForm form) {
+        NotificationsSetting notificationsSetting = new NotificationsSetting();
+        Authentication authentication = Authentication.createAuthentication(form, notificationsSetting);
+        Profile profile = Profile.createProfile(form);
+        Account account = Account.createUser(form, profile, authentication);
+        account.encodePassword(passwordEncoder);
+
+        /* 임시 토근 생성 */
+        account.getAuthentication().generateEmailToken();
+        return accountRepository.save(account);
+    }
+    private SignUpForm createSignUpForm(String username) {
+        SignUpForm form = new SignUpForm();
+        form.setUsername(username);
+        form.setEmail(username + "@email.com");
+        form.setPassword("1234567890");
+        form.setNickname("nick-" + username);
+        form.setCellPhone("01012341234");
+        form.setGender(Gender.MAN);
+        form.setBirthday("1997-08-30");
+        return form;
+    }
+
     @Test
-    public void existsByUsername() throws Exception {
+    void existsByUsername() throws Exception {
         //given
         String username = "user";
-        SignUpForm form = getSignUpForm(username);
-        Account account = getAccount(form);
+        SignUpForm form = createSignUpForm(username);
 
         //when
-        accountRepository.save(account);
+        createAccount(form);
         em.flush();
         em.clear();
 
         //then
         assertThat(accountRepository.existsByUsername(username)).isTrue();
     }
-    
+
     @Test
-    public void findByUsername() throws Exception {
+    void findByUsername() throws Exception {
         //given
-        SignUpForm form = getSignUpForm();
-        Account account = getAccount(form);
+        SignUpForm form = createSignUpForm("spring-dev");
 
         //when
-        accountRepository.save(account);
+        createAccount(form);
         em.flush();
         em.clear();
 
@@ -63,13 +85,12 @@ class AccountRepositoryTest {
     }
 
     @Test
-    public void findByEmail() throws Exception {
+    void findByEmail() throws Exception {
         //given
-        SignUpForm form = getSignUpForm();
-        Account account = getAccount(form);
+        SignUpForm form = createSignUpForm("spring-dec");
 
         //when
-        accountRepository.save(account);
+        createAccount(form);
         em.flush();
         em.clear();
 
@@ -81,35 +102,5 @@ class AccountRepositoryTest {
          */
         assertThat(findAccount.getAuthentication().getEmail()).isEqualTo(form.getEmail());
         assertThat(findAccount.getProfile().getNickname()).isEqualTo(form.getNickname());
-    }
-
-    private Account getAccount(SignUpForm form) {
-        Profile profile = Profile.createProfile(form);
-        Authentication authentication = Authentication.createAuthentication(form, new NotificationsSetting());
-        return Account.createUser(form, profile, authentication);
-    }
-
-    private SignUpForm getSignUpForm() {
-        SignUpForm signUpForm = new SignUpForm();
-        signUpForm.setUsername("username");
-        signUpForm.setEmail("username@email.com");
-        signUpForm.setPassword("1234567890");
-        signUpForm.setNickname("nickname");
-        signUpForm.setCellPhone("01012341234");
-        signUpForm.setGender(Gender.MAN);
-        signUpForm.setBirthday("1997-08-30");
-        return signUpForm;
-    }
-
-    private SignUpForm getSignUpForm(String username) {
-        SignUpForm signUpForm = new SignUpForm();
-        signUpForm.setUsername(username);
-        signUpForm.setEmail("username@email.com");
-        signUpForm.setPassword("1234567890");
-        signUpForm.setNickname("nickname");
-        signUpForm.setCellPhone("01012341234");
-        signUpForm.setGender(Gender.MAN);
-        signUpForm.setBirthday("1997-08-30");
-        return signUpForm;
     }
 }
