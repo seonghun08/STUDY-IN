@@ -1,17 +1,17 @@
 package com.studyIn.domain.account.service;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.studyIn.domain.account.AccountInfo;
 import com.studyIn.domain.account.dto.form.NotificationsSettingForm;
 import com.studyIn.domain.account.dto.form.PasswordForm;
 import com.studyIn.domain.account.dto.form.ProfileForm;
 import com.studyIn.domain.account.dto.form.SignUpForm;
-import com.studyIn.domain.account.entity.Account;
-import com.studyIn.domain.account.entity.Authentication;
-import com.studyIn.domain.account.entity.Profile;
+import com.studyIn.domain.account.entity.*;
 import com.studyIn.domain.account.entity.value.Gender;
 import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import com.studyIn.domain.account.repository.AccountRepository;
 import com.studyIn.domain.account.repository.AuthenticationRepository;
+import com.studyIn.domain.tag.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,10 +34,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class SettingsServiceTest {
 
     @PersistenceContext EntityManager em;
-    @Autowired SettingsService settingsService;
     @Autowired AccountService accountService;
+    @Autowired SettingsService settingsService;
+    @Autowired TagService tagService;
     @Autowired AccountRepository accountRepository;
+    @Autowired TagRepository tagRepository;
     @Autowired PasswordEncoder passwordEncoder;
+    @Autowired JPAQueryFactory jpaQueryFactory;
 
     @AfterEach
     void afterEach() {
@@ -134,5 +137,60 @@ class SettingsServiceTest {
         assertThat(findAccount.getAuthentication().getNotificationsSetting().isStudyCreatedByEmail()).isTrue();
         assertThat(findAccount.getAuthentication().getNotificationsSetting().isStudyUpdatedByEmail()).isTrue();
         assertThat(findAccount.getAuthentication().getNotificationsSetting().isStudyEnrollmentResultByEmail()).isTrue();
+    }
+
+    @Test
+    void addTag() {
+        //given
+        SignUpForm form = createSignUpForm("tag");
+        Account account = createAccount(form);
+        AccountInfo accountInfo = new AccountInfo(account);
+
+        TagForm tagForm = new TagForm();
+        tagForm.setTitle("spring boot");
+        Tag tag = tagService.findExistingTagOrElseCreateTag(tagForm);
+
+        //when
+        settingsService.addTag(tag, accountInfo);
+        em.flush();
+        em.clear();
+
+        //then
+        AccountTag accountTag = jpaQueryFactory
+                .selectFrom(QAccountTag.accountTag)
+                .join(QAccountTag.accountTag.account, QAccount.account).fetchJoin()
+                .join(QAccountTag.accountTag.tag, QTag.tag).fetchJoin()
+                .where(QAccount.account.username.eq(account.getUsername()))
+                .fetchOne();
+
+        assertThat(accountTag.getTag().getTitle()).isEqualTo(tagForm.getTitle());
+    }
+
+    @Test
+    void removeTag() {
+        //given
+        SignUpForm form = createSignUpForm("tag");
+        Account account = createAccount(form);
+        AccountInfo accountInfo = new AccountInfo(account);
+
+        TagForm tagForm = new TagForm();
+        tagForm.setTitle("spring boot");
+        Tag tag = tagService.findExistingTagOrElseCreateTag(tagForm);
+        settingsService.addTag(tag, accountInfo);
+        em.flush();
+        em.clear();
+
+        //then
+        settingsService.removeTag(tag, accountInfo);
+
+        //then
+        AccountTag accountTag = jpaQueryFactory
+                .selectFrom(QAccountTag.accountTag)
+                .join(QAccountTag.accountTag.account, QAccount.account).fetchJoin()
+                .join(QAccountTag.accountTag.tag, QTag.tag).fetchJoin()
+                .where(QAccount.account.username.eq(account.getUsername()))
+                .fetchOne();
+
+        assertThat(accountTag == null).isTrue();
     }
 }

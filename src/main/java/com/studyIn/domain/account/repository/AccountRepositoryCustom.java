@@ -1,8 +1,10 @@
 package com.studyIn.domain.account.repository;
 
 import com.studyIn.domain.account.dto.ProfileDto;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import com.studyIn.domain.account.entity.AccountLocation;
+import com.studyIn.domain.account.entity.AccountTag;
+import com.studyIn.domain.location.Location;
+import com.studyIn.domain.tag.Tag;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +13,13 @@ public interface AccountRepositoryCustom {
 
     Optional<ProfileDto> findProfileDtoByUsername(String username);
 
-    List<String> findTagTitleByAccountId(@Param("id") Long accountId);
+    String findPasswordByUsername(String username);
 
-    String findPasswordByUsername(@Param("username") String username);
+    List<Tag> findTagListByAccountId(Long accountId);
+
+    List<Location> findLocationListById(Long accountId);
+
+    Long deleteAccountTag(Long tagId, Long accountId);
+
+    Long deleteAccountLocation(Long locationId, Long accountId);
 }

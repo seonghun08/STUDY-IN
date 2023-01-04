@@ -1,6 +1,5 @@
-package com.studyIn.domain.tag.repository;
+package com.studyIn.domain.tag;
 
-import com.studyIn.domain.tag.entity.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

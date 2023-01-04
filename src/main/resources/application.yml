@@ -6,15 +6,9 @@ spring:
     user:
       password: dsad97dsadsdsjak!#
 
-  datasource:
-    url: jdbc:h2:tcp://localhost/~/studyIn
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         #show_sql: true

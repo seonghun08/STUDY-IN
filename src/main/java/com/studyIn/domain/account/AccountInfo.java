@@ -41,7 +41,7 @@ public class AccountInfo {
     }
 
     /**
-     * 프로필을 수정 시 "DB"에서만 변경되기 때문에 세션도 같이 수정해야 한다.
+     * 프로필 수정 시 "DB"에서만 변경되기 때문에 세션도 같이 수정해야 한다.
      */
     public void updateProfile(Profile profile) {
         this.nickname = profile.getNickname();

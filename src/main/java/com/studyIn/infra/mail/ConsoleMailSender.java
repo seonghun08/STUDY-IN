@@ -15,6 +15,7 @@ import java.io.InputStream;
 @Component
 @Slf4j
 public class ConsoleMailSender implements JavaMailSender {
+
     @Override
     public MimeMessage createMimeMessage() {
         return null;

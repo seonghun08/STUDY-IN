@@ -19,7 +19,7 @@ public class InitAccount {
 
     @PostConstruct
     public void init() {
-//        initAccountService.init();
+        initAccountService.init();
     }
 
     /**

@@ -13,11 +13,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "account")
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
     private Long id;
 
@@ -38,6 +37,9 @@ public class Account extends BaseTimeEntity {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<AccountTag> accountTags = new ArrayList<>();
 
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private List<AccountLocation> accountLocations = new ArrayList<>();
+
 
     //== 연관관계 메서드 ==//
     public void setAuthentication(Authentication authentication) {
@@ -47,11 +49,6 @@ public class Account extends BaseTimeEntity {
 
     public void setProfile(Profile profile) {
         this.profile = profile;
-    }
-
-    public void addAccountTag(AccountTag accountTag) {
-        this.accountTags.add(accountTag);
-        accountTag.setAccount(this);
     }
 
 
@@ -67,11 +64,27 @@ public class Account extends BaseTimeEntity {
 
 
     //== 수정 메서드 ==//
+    public void updateUsername(String newUsername) {
+        this.username = newUsername;
+    }
+
     public void updatePassword(PasswordEncoder passwordEncoder, String newPassword) {
         this.password = newPassword;
         this.encodePassword(passwordEncoder);
     }
 
+    public void addAccountTag(AccountTag accountTag) {
+        this.accountTags.add(accountTag);
+        accountTag.setAccount(this);
+    }
+    public void removeAccountTag(AccountTag accountTag) {
+        this.accountTags.remove(accountTag);
+    }
+
+    public void addAccountLocation(AccountLocation accountLocation) {
+        this.accountLocations.add(accountLocation);
+        accountLocation.setAccount(this);
+    }
 
     /**
      * PasswordEncoder 패스워드 암호화

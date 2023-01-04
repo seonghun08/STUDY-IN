@@ -1,4 +1,4 @@
-package com.studyIn.domain.tag.entity;
+package com.studyIn.domain.tag;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,8 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "tag")
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)

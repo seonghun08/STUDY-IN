@@ -76,13 +76,14 @@ public class AccountController {
 
     @GetMapping("/check-email-token")
     public String checkEmailToken(@CurrentAccount AccountInfo accountInfo, String email, String token, Model model) {
-        if (accountInfo != null) {
-            model.addAttribute(accountInfo);
-        }
-
         if (!accountService.completeSignUp(email, token)) {
             model.addAttribute("error", "잘못된 접근입니다.");
             return "account/checked-email";
+        }
+
+        if (accountInfo != null) {
+            model.addAttribute(accountInfo);
+            accountInfo.setEmailVerified(true);
         }
 
         TotalCountAndNicknameDto dto = accountQueryRepository.findCountAndNicknameByEmail(email);
@@ -140,7 +141,7 @@ public class AccountController {
     }
 
     @GetMapping("/find-by-email")
-    public String changePasswordForm(String email, String token, Model model) {
+    public String resetPasswordForm(String email, String token, Model model) {
         Optional<Authentication> authentication = authenticationRepository.findByEmail(email);
 
         if (authentication.isEmpty()) {

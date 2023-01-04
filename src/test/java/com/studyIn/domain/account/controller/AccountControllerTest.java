@@ -101,24 +101,7 @@ class AccountControllerTest {
                 .andExpect(unauthenticated());
     }
 
-    @DisplayName("회원 가입 처리 - 입력값 오류")
-    @Test
-    void signUp_fail() throws Exception {
-        mvc.perform(post("/sign-up")
-                        .param("username", "new-username")
-                        .param("email", "xxxx")
-                        .param("password", "1234567890")
-                        .param("nickname", "new-nickname")
-                        .param("gender", String.valueOf(Gender.MAN))
-                        .param("birthday", "1997-08-30")
-                        .param("cellPhone", "01012341234")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("account/sign-up"))
-                .andExpect(unauthenticated());
-    }
-
-    @DisplayName("회원 가입 처리 - 입력값 정상")
+    @DisplayName("회원가입 실패 - 입력값 오류")
     @Test
     void signUp_success() throws Exception {
         mvc.perform(post("/sign-up")
@@ -142,7 +125,24 @@ class AccountControllerTest {
         then(javaMailSender).should().send(any(SimpleMailMessage.class));
     }
 
-    @DisplayName("email 인증 확인 - 입력값 오류")
+    @DisplayName("회원가입 성공")
+    @Test
+    void signUp_fail() throws Exception {
+        mvc.perform(post("/sign-up")
+                        .param("username", "new-username")
+                        .param("email", "xxxx")
+                        .param("password", "1234567890")
+                        .param("nickname", "new-nickname")
+                        .param("gender", String.valueOf(Gender.MAN))
+                        .param("birthday", "1997-08-30")
+                        .param("cellPhone", "01012341234")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("account/sign-up"))
+                .andExpect(unauthenticated());
+    }
+
+    @DisplayName("email 인증 실패 - 입력값 오류")
     @Test
     void checkEmailToken_fail() throws Exception {
         SignUpForm form = createSignUpForm("test");
@@ -150,15 +150,15 @@ class AccountControllerTest {
         System.out.println(":: emailCheckToken = " + account.getAuthentication().getEmailCheckToken());
 
         mvc.perform(get("/check-email-token")
-                        .param("token", "dh6nsf24dsf1ds")
-                        .param("email", "xxxx@xxxx.xxx"))
+                        .param("email", "xxxx@xxxx.xxx")
+                        .param("token", "dh6nsf24dsf1ds"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("error"))
                 .andExpect(view().name("account/checked-email"))
                 .andExpect(unauthenticated());
     }
 
-    @DisplayName("email 인증 확인 - 입력값 정상")
+    @DisplayName("email 인증 성공")
     @Test
     void checkEmailToken_success() throws Exception {
         SignUpForm form = createSignUpForm("test");
@@ -187,7 +187,7 @@ class AccountControllerTest {
     }
 
     @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
-    @DisplayName("이메일 재전송은 1~2분마다 한번만 가능 - 실패")
+    @DisplayName("이메일 재전송 실패 - 이메일 재전송은 1~2분마다 한번만 가능")
     @Test
     void resendConfirmEmail_fail() throws Exception {
         mvc.perform(get("/resend-confirm-email"))
@@ -208,5 +208,52 @@ class AccountControllerTest {
                 .andExpect(model().attributeExists("profile"))
                 .andExpect(model().attributeExists("isOwner"))
                 .andExpect(view().name("account/profile"));
+    }
+
+    @DisplayName("패스워드 찾기 화면 보이는지 테스트")
+    @Test
+    void findPasswordForm() throws Exception {
+        mvc.perform(get("/find-password"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("emailForm"))
+                .andExpect(view().name("account/find-password"));
+    }
+
+    @DisplayName("패스워드 찾기 이메일 실패 - 이메일 재전송은 1~2분마다 한번만 가능")
+    @Test
+    void findPassword() throws Exception {
+        mvc.perform(post("/find-password")
+                        .param("email", "user@email.com")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("account/find-password"));
+    }
+
+    @DisplayName("email 인증 실패 시, 패스워드 변경 불가")
+    @Test
+    void resetPasswordForm_fail() throws Exception {
+        SignUpForm form = createSignUpForm("test");
+        Account account = createAccount(form);
+
+        mvc.perform(get("/find-by-email")
+                        .param("email", account.getAuthentication().getEmail())
+                        .param("token", "xxxx"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeDoesNotExist("resetPasswordForm"))
+                .andExpect(view().name("account/find-by-email"));
+    }
+
+    @DisplayName("email 인증 성공 후, 패스워드 변경 화면 보이는지 테스트")
+    @Test
+    void resetPasswordForm_success() throws Exception {
+        SignUpForm form = createSignUpForm("test");
+        Account account = createAccount(form);
+
+        mvc.perform(get("/find-by-email")
+                        .param("email", account.getAuthentication().getEmail())
+                        .param("token", account.getAuthentication().getEmailCheckToken()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("resetPasswordForm"))
+                .andExpect(view().name("account/find-by-email"));
     }
 }

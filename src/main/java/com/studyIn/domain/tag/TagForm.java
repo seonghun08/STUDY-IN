@@ -1,4 +1,4 @@
-package com.studyIn.domain.tag.dto;
+package com.studyIn.domain.tag;
 
 import lombok.Data;
 

@@ -8,16 +8,20 @@ import com.studyIn.domain.account.controller.validator.PasswordFormValidator;
 import com.studyIn.domain.account.dto.form.NotificationsSettingForm;
 import com.studyIn.domain.account.dto.form.PasswordForm;
 import com.studyIn.domain.account.dto.form.ProfileForm;
+import com.studyIn.domain.account.dto.form.UsernameForm;
 import com.studyIn.domain.account.entity.Profile;
 import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import com.studyIn.domain.account.repository.AccountRepository;
 import com.studyIn.domain.account.repository.AuthenticationRepository;
 import com.studyIn.domain.account.repository.ProfileRepository;
 import com.studyIn.domain.account.service.SettingsService;
-import com.studyIn.domain.tag.dto.TagForm;
-import com.studyIn.domain.tag.entity.Tag;
-import com.studyIn.domain.tag.repository.TagRepository;
-import com.studyIn.domain.tag.service.TagService;
+import com.studyIn.domain.location.Location;
+import com.studyIn.domain.location.LocationForm;
+import com.studyIn.domain.location.LocationRepository;
+import com.studyIn.domain.tag.TagForm;
+import com.studyIn.domain.tag.Tag;
+import com.studyIn.domain.tag.TagRepository;
+import com.studyIn.domain.tag.TagService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +34,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -43,15 +48,22 @@ public class SettingsController {
     private final AuthenticationRepository authenticationRepository;
     private final ProfileRepository profileRepository;
     private final TagRepository tagRepository;
+    private final LocationRepository locationRepository;
+
     private final ModelMapper modelMapper;
     private final ObjectMapper objectMapper;
+
     private final PasswordFormValidator passwordFormValidator;
-
-
+    private final UsernameFormValidator usernameFormValidator;
 
     @InitBinder("passwordForm")
     public void passwordFormInitBinder(WebDataBinder webDataBinder) {
         webDataBinder.addValidators(passwordFormValidator);
+    }
+
+    @InitBinder("usernameForm")
+    public void usernameFormInitBinder(WebDataBinder webDataBinder) {
+        webDataBinder.addValidators(usernameFormValidator);
     }
 
     @GetMapping("/profile")
@@ -71,8 +83,8 @@ public class SettingsController {
             return "account/settings/profile";
         }
 
-        attributes.addFlashAttribute("message", "프로필 수정을 완료했습니다.");
         settingsService.updateProfile(profileForm, accountInfo);
+        attributes.addFlashAttribute("message", "프로필 수정을 완료했습니다.");
         return "redirect:/settings/profile";
     }
 
@@ -107,7 +119,7 @@ public class SettingsController {
     }
 
     @PostMapping("/notifications")
-    public String notificationsUpdate(@CurrentAccount AccountInfo accountInfo, @Valid NotificationsSettingForm notificationsSettingForm,
+    public String updateNotifications(@CurrentAccount AccountInfo accountInfo, @Valid NotificationsSettingForm notificationsSettingForm,
                                       Errors errors, Model model, RedirectAttributes attributes) {
         if (errors.hasErrors()) {
             model.addAttribute(accountInfo);
@@ -121,9 +133,12 @@ public class SettingsController {
 
     @GetMapping("/tags")
     public String updateTagsForm(@CurrentAccount AccountInfo accountInfo, Model model) throws JsonProcessingException {
-        List<String> tags = accountRepository.findTagTitleByAccountId(accountInfo.getAccountId());
+        List<String> tags = accountRepository.findTagListByAccountId(accountInfo.getAccountId()).stream()
+                .map(Tag::getTitle)
+                .collect(Collectors.toList());
         List<String> allTags = tagRepository.findAll().stream()
-                .map(Tag::getTitle).collect(Collectors.toList());
+                .map(Tag::getTitle)
+                .collect(Collectors.toList());
 
         model.addAttribute(accountInfo);
         model.addAttribute("tags", tags);
@@ -139,5 +154,76 @@ public class SettingsController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/tags/remove")
+    @ResponseBody
+    public ResponseEntity removeTag(@CurrentAccount AccountInfo accountInfo, @RequestBody TagForm tagForm) {
+        Optional<Tag> tag = tagRepository.findByTitle(tagForm.getTitle());
 
+        if (tag.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        settingsService.removeTag(tag.get(), accountInfo);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/locations")
+    public String updateLocationsForm(@CurrentAccount AccountInfo accountInfo, Model model) throws JsonProcessingException {
+        List<String> locations = accountRepository.findLocationListById(accountInfo.getAccountId()).stream()
+                .map(Location::toString).collect(Collectors.toList());
+        List<String> allLocations = locationRepository.findAll().stream()
+                .map(Location::toString)
+                .collect(Collectors.toList());
+
+        model.addAttribute(accountInfo);
+        model.addAttribute("locations", locations);
+        model.addAttribute("savedList", objectMapper.writeValueAsString(allLocations));
+        return "account/settings/locations";
+    }
+
+    @PostMapping("/locations/add")
+    @ResponseBody
+    public ResponseEntity addLocation(@CurrentAccount AccountInfo accountInfo, @RequestBody LocationForm locationForm) {
+        Optional<Location> location = locationRepository.findByCityAndProvince(locationForm.getCityName(), locationForm.getProvinceName());
+
+        if (location.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        settingsService.addLocation(location.get(), accountInfo);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/locations/remove")
+    @ResponseBody
+    public ResponseEntity removeLocation(@CurrentAccount AccountInfo accountInfo, @RequestBody LocationForm locationForm) {
+        Optional<Location> location = locationRepository.findByCityAndProvince(locationForm.getCityName(), locationForm.getProvinceName());
+
+        if (location.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        settingsService.removeLocation(location.get(), accountInfo);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/account")
+    public String updateAccountForm(@CurrentAccount AccountInfo accountInfo, Model model) {
+        model.addAttribute(accountInfo);
+        model.addAttribute(modelMapper.map(accountInfo, UsernameForm.class));
+        return "account/settings/account";
+    }
+
+    @PostMapping("/account")
+    public String accountUpdate(@CurrentAccount AccountInfo accountInfo, @Valid UsernameForm usernameForm, Errors errors,
+                                Model model, RedirectAttributes attributes) {
+        if (errors.hasErrors()) {
+            model.addAttribute(accountInfo);
+            return "account/settings/account";
+        }
+
+        settingsService.updateUsername(usernameForm, accountInfo);
+        attributes.addFlashAttribute("message", "계정을 수정했습니다.");
+        return "redirect:/login";
+    }
 }

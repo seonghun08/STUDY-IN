@@ -1,0 +1,29 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/testdb
+    username: testuser
+    password: testpass
+
+  security:
+    user:
+      password: dsad97dsadsdsjak!#
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+
+  mail:
+    protocol: smtp
+    host: smtp.gmail.com
+    port: 587
+    username: shajhTest@gmail.com
+    password: hpuhpitlvbgdqzho
+
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true

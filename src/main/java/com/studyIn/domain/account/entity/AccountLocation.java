@@ -1,5 +1,6 @@
 package com.studyIn.domain.account.entity;
 
+import com.studyIn.domain.location.Location;
 import com.studyIn.domain.tag.Tag;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,13 +10,13 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "account_tag")
+@Table(name = "account_location")
 @Getter @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AccountTag {
+public class AccountLocation {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "account_tag_id")
+    @Column(name = "account_location_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -23,13 +24,13 @@ public class AccountTag {
     private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tag_id")
-    private Tag tag;
+    @JoinColumn(name = "location_id")
+    private Location location;
 
     //== 생성 메서드 ==//
-    public static AccountTag createAccountTag(Tag tag) {
-        AccountTag accountTag = new AccountTag();
-        accountTag.setTag(tag);
-        return accountTag;
+    public static AccountLocation createAccountLocation(Location location) {
+        AccountLocation accountLocation = new AccountLocation();
+        accountLocation.setLocation(location);
+        return accountLocation;
     }
 }

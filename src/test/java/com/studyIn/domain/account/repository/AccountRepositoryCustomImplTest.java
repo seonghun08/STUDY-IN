@@ -1,16 +1,14 @@
 package com.studyIn.domain.account.repository;
 
-import com.studyIn.domain.account.entity.AccountTag;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.studyIn.domain.account.entity.*;
 import com.studyIn.domain.account.entity.value.Gender;
 import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import com.studyIn.domain.account.dto.ProfileDto;
 import com.studyIn.domain.account.dto.form.SignUpForm;
-import com.studyIn.domain.account.entity.Account;
-import com.studyIn.domain.account.entity.Authentication;
-import com.studyIn.domain.account.entity.Profile;
-import com.studyIn.domain.tag.entity.Tag;
-import com.studyIn.domain.tag.repository.TagRepository;
-import org.junit.jupiter.api.AfterEach;
+import com.studyIn.domain.tag.QTag;
+import com.studyIn.domain.tag.Tag;
+import com.studyIn.domain.tag.TagRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +21,9 @@ import javax.persistence.PersistenceContext;
 
 import java.util.List;
 
+import static com.studyIn.domain.account.entity.QAccountTag.accountTag;
+
+import static com.studyIn.domain.tag.QTag.tag;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
@@ -30,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AccountRepositoryCustomImplTest {
 
     @PersistenceContext EntityManager em;
+    @Autowired JPAQueryFactory jpaQueryFactory;
     @Autowired AccountRepository accountRepository;
     @Autowired PasswordEncoder passwordEncoder;
     @Autowired TagRepository tagRepository;
@@ -45,6 +47,7 @@ class AccountRepositoryCustomImplTest {
         account.getAuthentication().generateEmailToken();
         return accountRepository.save(account);
     }
+
     private SignUpForm createSignUpForm(String username) {
         SignUpForm form = new SignUpForm();
         form.setUsername(username);
@@ -110,8 +113,33 @@ class AccountRepositoryCustomImplTest {
                 .setParameter("username", "spring-dev")
                 .getResultList();
 
-        titles.forEach(t-> {
+        titles.forEach(t -> {
             System.out.println("t = " + t);
         });
+    }
+
+    @Test
+    void exTest() {
+        SignUpForm form = createSignUpForm("spring-dev");
+        Account account = createAccount(form);
+
+        Tag t = Tag.createTag("spring boot");
+        tagRepository.save(t);
+
+        AccountTag at = AccountTag.createAccountTag(t);
+        account.addAccountTag(at);
+        account.getAccountTags().forEach(a -> a.getTag());
+        em.flush();
+        em.clear();
+
+
+        AccountTag findAccountTag = jpaQueryFactory
+                .select(accountTag)
+                .from(accountTag)
+                .join(accountTag.tag, tag)
+                .where(tag.title.eq("spring boot"))
+                .fetchOne();
+
+        System.out.println(findAccountTag.getTag().getTitle());
     }
 }

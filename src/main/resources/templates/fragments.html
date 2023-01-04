@@ -333,7 +333,9 @@
 </div>
 
 <!--  profile menu  -->
-<div th:fragment="profile-menu (currentMenu)" class="row justify-content-center col-10 mx-auto px-3 mt-2">
+<div th:fragment="profile-menu (currentMenu)"
+     class="row justify-content-center col-10 mx-auto px-3 mt-2"
+>
     <ul th:if="${currentMenu == 'profile'}" class="nav nav-tabs">
         <li class="nav-item">
             <a class="nav-link active" th:href="@{'/profile/' + ${profile.username}}" href="#">
@@ -434,10 +436,10 @@
         Tags
     </a>
     <a class="list-group-item list-group-item-action "
-       th:classappend="${currentMenu == 'zones'}? active"
-       th:href="@{/settings/zones}" href="#"
+       th:classappend="${currentMenu == 'locations'}? active"
+       th:href="@{/settings/locations}" href="#"
     >
-        Zones
+        Locations
     </a>
     <a class="list-group-item list-group-item-action list-group-item-danger"
        th:classappend="${currentMenu == 'account'}? active"
@@ -678,6 +680,50 @@
 
         tagify.on("add", onAdd);
         tagify.on("remove", onRemove);
+    });
+</script>
+
+<!--  update-locations  -->
+<script th:fragment="update-locations (baseUrl)" type="application/javascript">
+    $(function () {
+        function tagRequest(url, locationName) {
+            $.ajax({
+                dataType: "json",
+                autocomplete: {
+                    enabled: true,
+                    rightKey: true,
+                },
+                contentType: "application/json; charset=utf-8",
+                method: "POST",
+                url: "[(${baseUrl})]" + url,
+                data: JSON.stringify({'locationName': locationName})
+            }).done(function (data, status) {
+                console.log("${data} and status is ${status}");
+            });
+        }
+
+        function onAdd(e) {
+            tagRequest("/add", e.detail.data.value);
+        }
+
+        function onRemove(e) {
+            tagRequest("/remove", e.detail.data.value);
+        }
+
+        var input = document.querySelector('input[name=locations]')
+
+        var tagify = new Tagify(input, {
+            enforceWhitelist: true,
+            whitelist: JSON.parse(document.querySelector("#savedList").textContent),
+            dropdown: {
+                position: "input",
+                enabled: 0
+            }
+        });
+
+        tagify.on("add", onAdd);
+        tagify.on("remove", onRemove);
+
     });
 </script>
 

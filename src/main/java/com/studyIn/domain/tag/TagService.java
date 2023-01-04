@@ -1,8 +1,5 @@
-package com.studyIn.domain.tag.service;
+package com.studyIn.domain.tag;
 
-import com.studyIn.domain.tag.dto.TagForm;
-import com.studyIn.domain.tag.entity.Tag;
-import com.studyIn.domain.tag.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
