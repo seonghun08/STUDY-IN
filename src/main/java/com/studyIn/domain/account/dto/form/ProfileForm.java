@@ -2,6 +2,8 @@ package com.studyIn.domain.account.dto.form;
 
 import lombok.Data;
 
+import javax.persistence.Basic;
+import javax.persistence.Lob;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -26,5 +28,6 @@ public class ProfileForm {
     @Size(max = 50)
     private String location;
 
+    @Lob @Basic
     private String profileImage;
 }

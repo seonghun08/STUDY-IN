@@ -1,13 +1,13 @@
 package com.studyIn.domain.main;
 
+import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.entity.Profile;
 import com.studyIn.domain.account.entity.value.Gender;
-import com.studyIn.domain.account.dto.form.SignUpForm;
+import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import com.studyIn.domain.account.repository.AccountRepository;
 import com.studyIn.domain.account.service.AccountService;
-import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -1,8 +1,6 @@
 package com.studyIn.domain.account.repository;
 
 import com.studyIn.domain.account.dto.ProfileDto;
-import com.studyIn.domain.account.entity.AccountLocation;
-import com.studyIn.domain.account.entity.AccountTag;
 import com.studyIn.domain.location.Location;
 import com.studyIn.domain.tag.Tag;
 

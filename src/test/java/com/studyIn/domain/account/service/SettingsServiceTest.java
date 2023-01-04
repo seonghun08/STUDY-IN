@@ -10,24 +10,18 @@ import com.studyIn.domain.account.entity.*;
 import com.studyIn.domain.account.entity.value.Gender;
 import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import com.studyIn.domain.account.repository.AccountRepository;
-import com.studyIn.domain.account.repository.AuthenticationRepository;
 import com.studyIn.domain.tag.*;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.TestExecutionEvent;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest

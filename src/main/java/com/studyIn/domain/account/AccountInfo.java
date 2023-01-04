@@ -4,8 +4,10 @@ import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.entity.Profile;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class AccountInfo {
+public class AccountInfo implements Serializable {
 
     /**
      * Account

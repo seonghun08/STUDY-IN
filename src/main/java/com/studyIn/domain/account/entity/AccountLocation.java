@@ -1,7 +1,6 @@
 package com.studyIn.domain.account.entity;
 
 import com.studyIn.domain.location.Location;
-import com.studyIn.domain.tag.Tag;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

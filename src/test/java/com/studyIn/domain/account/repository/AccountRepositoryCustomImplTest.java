@@ -1,28 +1,27 @@
 package com.studyIn.domain.account.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.studyIn.domain.account.entity.*;
-import com.studyIn.domain.account.entity.value.Gender;
-import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import com.studyIn.domain.account.dto.ProfileDto;
 import com.studyIn.domain.account.dto.form.SignUpForm;
-import com.studyIn.domain.tag.QTag;
+import com.studyIn.domain.account.entity.Account;
+import com.studyIn.domain.account.entity.AccountTag;
+import com.studyIn.domain.account.entity.Authentication;
+import com.studyIn.domain.account.entity.Profile;
+import com.studyIn.domain.account.entity.value.Gender;
+import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import com.studyIn.domain.tag.Tag;
 import com.studyIn.domain.tag.TagRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import java.util.List;
 
 import static com.studyIn.domain.account.entity.QAccountTag.accountTag;
-
 import static com.studyIn.domain.tag.QTag.tag;
 import static org.assertj.core.api.Assertions.assertThat;
 

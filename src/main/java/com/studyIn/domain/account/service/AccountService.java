@@ -9,9 +9,10 @@ import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.entity.Profile;
 import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import com.studyIn.domain.account.repository.AccountRepository;
+import com.studyIn.infra.config.AppProperties;
+import com.studyIn.infra.mail.EmailMessage;
+import com.studyIn.infra.mail.EmailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,6 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,10 +32,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RequiredArgsConstructor
 public class AccountService {
 
+    private final EmailService emailService;
     private final AccountRepository accountRepository;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
-    private final JavaMailSender javaMailSender;
+    private final TemplateEngine templateEngine;
+    private final AppProperties appProperties;
 
     /**
      * 회원가입
@@ -60,41 +65,50 @@ public class AccountService {
      * 인증 메일 보내기
      */
     public void sendSignUpConfirmEmail(Long accountId) {
-        Account account = accountRepository.findWithAuthenticationById(accountId)
-                .orElseThrow(IllegalArgumentException::new);
-        sendConfirmEmail(account, "verify");
+        accountRepository.findWithAuthenticationById(accountId)
+                .ifPresent(account -> sendConfirmEmail(account, "verify"));
     }
 
     public void sendLoginLinkConfirmEmail(EmailForm emailForm) {
-        Account account = accountRepository.findWithAuthenticationByEmail(emailForm.getEmail())
-                .orElseThrow(IllegalArgumentException::new);
-        sendConfirmEmail(account, "loginLink");
+        accountRepository.findWithAuthenticationByEmail(emailForm.getEmail())
+                .ifPresent(account -> sendConfirmEmail(account, "loginLink"));
     }
 
-    private void sendConfirmEmail(Account account, String subject) {
+    private void sendConfirmEmail(Account account, String type) {
         Authentication authentication = account.getAuthentication();
         authentication.generateEmailToken();
 
-        if (subject.equals("verify")) {
-            SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setTo(account.getAuthentication().getEmail());
-            mailMessage.setSubject("회원가입 인증");
-            mailMessage.setText("/check-email-token?"
+        String subject = "";
+        Context context = new Context();
+        context.setVariable("host", appProperties.getHost());
+        context.setVariable("username", account.getUsername());
+
+        if (type.equals("verify")) {
+            subject = "STUDY IN 회원가입 인증";
+            context.setVariable("link", "/check-email-token?"
                     + "email=" + authentication.getEmail()
                     + "&token=" + authentication.getEmailCheckToken());
-            javaMailSender.send(mailMessage);
+            context.setVariable("linkName", "이메일 인증하기");
+            context.setVariable("message", "스터디인 서비스를 이용하시려면 링크를 클릭하세요.");
         }
-
-        if (subject.equals("loginLink")) {
-            SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setTo(account.getAuthentication().getEmail());
-            mailMessage.setSubject("스터디인 로그인 링크");
-            mailMessage.setText("/find-by-email?"
+        if (type.equals("loginLink")) {
+            subject = "STUDY IN 로그인 링크";
+            context.setVariable("link", "/find-by-email?"
                     + "email=" + authentication.getEmail()
                     + "&token=" + authentication.getEmailCheckToken());
-            javaMailSender.send(mailMessage);
+            context.setVariable("linkName", "패스워드 재설정");
+            context.setVariable("message", "잃어버린 패스워드를 재설정 하시려면 링크를 클릭하세요.");
         }
 
+        if (!subject.isBlank()) {
+            String message = templateEngine.process("mail/mail-link", context);
+            EmailMessage emailMessage = EmailMessage.builder()
+                    .to(authentication.getEmail())
+                    .subject(subject)
+                    .message(message)
+                    .build();
+            emailService.send(emailMessage);
+        }
     }
 
     /**

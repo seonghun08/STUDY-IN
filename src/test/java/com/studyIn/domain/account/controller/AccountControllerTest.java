@@ -1,14 +1,16 @@
 package com.studyIn.domain.account.controller;
 
+import com.studyIn.domain.account.dto.form.SignUpForm;
+import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.entity.Profile;
 import com.studyIn.domain.account.entity.value.Gender;
-import com.studyIn.domain.account.entity.Account;
-import com.studyIn.domain.account.dto.form.SignUpForm;
-import com.studyIn.domain.account.repository.AuthenticationRepository;
-import com.studyIn.domain.account.repository.AccountRepository;
-import com.studyIn.domain.account.service.AccountService;
 import com.studyIn.domain.account.entity.value.NotificationsSetting;
+import com.studyIn.domain.account.repository.AccountRepository;
+import com.studyIn.domain.account.repository.AuthenticationRepository;
+import com.studyIn.domain.account.service.AccountService;
+import com.studyIn.infra.mail.EmailMessage;
+import com.studyIn.infra.mail.EmailService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,8 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.TestExecutionEvent;
@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class AccountControllerTest {
 
-    @MockBean JavaMailSender javaMailSender;
+    @MockBean EmailService emailService;
     @Autowired MockMvc mvc;
     @Autowired AccountService accountService;
     @Autowired AccountRepository accountRepository;
@@ -103,6 +103,23 @@ class AccountControllerTest {
 
     @DisplayName("회원가입 실패 - 입력값 오류")
     @Test
+    void signUp_fail() throws Exception {
+        mvc.perform(post("/sign-up")
+                        .param("username", "new-username")
+                        .param("email", "xxxx")
+                        .param("password", "1234567890")
+                        .param("nickname", "new-nickname")
+                        .param("gender", String.valueOf(Gender.MAN))
+                        .param("birthday", "1997-08-30")
+                        .param("cellPhone", "01012341234")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("account/sign-up"))
+                .andExpect(unauthenticated());
+    }
+
+    @DisplayName("회원가입 성공")
+    @Test
     void signUp_success() throws Exception {
         mvc.perform(post("/sign-up")
                         .param("username", "new-username")
@@ -122,24 +139,7 @@ class AccountControllerTest {
         assertThat(passwordEncoder.matches("1234567890", account.getPassword())).isTrue();
         assertThat(account.getAuthentication().getEmail()).isEqualTo("email@new.com");
         assertThat(account.getProfile().getNickname()).isEqualTo("new-nickname");
-        then(javaMailSender).should().send(any(SimpleMailMessage.class));
-    }
-
-    @DisplayName("회원가입 성공")
-    @Test
-    void signUp_fail() throws Exception {
-        mvc.perform(post("/sign-up")
-                        .param("username", "new-username")
-                        .param("email", "xxxx")
-                        .param("password", "1234567890")
-                        .param("nickname", "new-nickname")
-                        .param("gender", String.valueOf(Gender.MAN))
-                        .param("birthday", "1997-08-30")
-                        .param("cellPhone", "01012341234")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("account/sign-up"))
-                .andExpect(unauthenticated());
+        then(emailService).should().send(any(EmailMessage.class));
     }
 
     @DisplayName("email 인증 실패 - 입력값 오류")

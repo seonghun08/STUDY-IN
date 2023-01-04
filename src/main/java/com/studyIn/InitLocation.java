@@ -2,7 +2,6 @@ package com.studyIn;
 
 import com.studyIn.domain.location.Location;
 import com.studyIn.domain.location.LocationRepository;
-import com.studyIn.domain.location.LocationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;

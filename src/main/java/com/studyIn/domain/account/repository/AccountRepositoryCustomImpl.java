@@ -3,13 +3,7 @@ package com.studyIn.domain.account.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.studyIn.domain.account.dto.ProfileDto;
-import com.studyIn.domain.account.entity.Account;
-import com.studyIn.domain.account.entity.AccountLocation;
-import com.studyIn.domain.account.entity.AccountTag;
-import com.studyIn.domain.account.entity.QAccountLocation;
 import com.studyIn.domain.location.Location;
-import com.studyIn.domain.location.QLocation;
-import com.studyIn.domain.tag.QTag;
 import com.studyIn.domain.tag.Tag;
 import lombok.RequiredArgsConstructor;
 

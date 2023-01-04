@@ -8,13 +8,21 @@ spring:
     username: testuser
     password: testpass
 
+    hikari:
+      auto-commit: false
+
   security:
     user:
       password: dsad97dsadsdsjak!#
 
+  servlet:
+    multipart:
+      max-request-size: 5MB
+      max-file-size: 2MB
+
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     open-in-view: false
 
   mail:

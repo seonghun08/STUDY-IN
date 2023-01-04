@@ -3,6 +3,7 @@ package com.studyIn.domain.account.dto;
 import lombok.Data;
 
 import javax.persistence.Basic;
+import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import java.time.LocalDateTime;
 
@@ -30,7 +31,7 @@ public class ProfileDto {
     private String bio;
     private String link;
 
-    @Lob @Basic
+    @Lob @Basic(fetch = FetchType.LAZY)
     private String profileImage;
 
     /**

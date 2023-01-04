@@ -1,26 +1,21 @@
 package com.studyIn.domain.account.service;
 
-import com.studyIn.domain.account.entity.Authentication;
-import com.studyIn.domain.account.entity.Profile;
-import com.studyIn.domain.account.entity.value.Gender;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Account;
-
-import com.studyIn.domain.account.entity.value.NotificationsSetting;
+import com.studyIn.domain.account.entity.value.Gender;
 import com.studyIn.domain.account.repository.AccountRepository;
 import com.studyIn.domain.account.repository.AuthenticationRepository;
+import com.studyIn.infra.mail.EmailMessage;
+import com.studyIn.infra.mail.EmailService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,7 +27,7 @@ import static org.mockito.BDDMockito.then;
 class AccountServiceTest {
 
     @PersistenceContext EntityManager em;
-    @MockBean JavaMailSender javaMailSender;
+    @MockBean EmailService emailService;
     @Autowired AccountService accountService;
     @Autowired AccountRepository accountRepository;
     @Autowired AuthenticationRepository authenticationRepository;
@@ -82,7 +77,7 @@ class AccountServiceTest {
         assertThat(findAccount.getAuthentication().getGender()).isEqualTo(form.getGender());
         assertThat(findAccount.getAuthentication().getBirthday()).isEqualTo(form.getBirthday());
         assertThat(findAccount.getProfile().getNickname()).isEqualTo(form.getNickname());
-        then(javaMailSender).should().send(any(SimpleMailMessage.class));
+        then(emailService).should().send(any(EmailMessage.class));
     }
 
     @Test

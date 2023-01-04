@@ -1,12 +1,12 @@
 package com.studyIn.domain.account.repository;
 
+import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Account;
+import com.studyIn.domain.account.entity.Authentication;
 import com.studyIn.domain.account.entity.Profile;
-import com.studyIn.domain.account.service.AccountService;
 import com.studyIn.domain.account.entity.value.Gender;
 import com.studyIn.domain.account.entity.value.NotificationsSetting;
-import com.studyIn.domain.account.entity.Authentication;
-import com.studyIn.domain.account.dto.form.SignUpForm;
+import com.studyIn.domain.account.service.AccountService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
