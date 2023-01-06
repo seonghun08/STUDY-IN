@@ -6,5 +6,7 @@ import java.util.Optional;
 
 public interface StudyRepositoryCustom {
 
-    Optional<Study> findByPath(String path);
+    Optional<Study> findAllByPath(String path);
+
+    Optional<Study> findWithManagersByPath(String path);
 }

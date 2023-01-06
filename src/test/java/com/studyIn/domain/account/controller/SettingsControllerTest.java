@@ -9,7 +9,7 @@ import com.studyIn.domain.account.entity.value.Gender;
 import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import com.studyIn.domain.account.repository.AccountRepository;
 import com.studyIn.domain.account.service.AccountService;
-import com.studyIn.domain.account.service.SettingsService;
+import com.studyIn.domain.account.service.AccontSettingsService;
 import com.studyIn.domain.location.Location;
 import com.studyIn.domain.location.LocationForm;
 import com.studyIn.domain.location.LocationRepository;
@@ -46,7 +46,8 @@ class SettingsControllerTest {
     @Autowired MockMvc mvc;
     @Autowired JPAQueryFactory jpaQueryFactory;
     @Autowired AccountService accountService;
-    @Autowired SettingsService settingsService;
+    @Autowired
+    AccontSettingsService accontSettingsService;
     @Autowired AccountRepository accountRepository;
     @Autowired ObjectMapper objectMapper;
     @Autowired PasswordEncoder passwordEncoder;
@@ -306,7 +307,7 @@ class SettingsControllerTest {
         Tag saveTag = tagRepository.save(Tag.createTag("spring boot"));
         Account saveAccount = accountRepository.findByUsername("user").orElseThrow();
         AccountInfo accountInfo = new AccountInfo(saveAccount);
-        settingsService.addTag(saveTag, accountInfo);
+        accontSettingsService.addTag(saveTag, accountInfo);
 
         TagForm tagForm = new TagForm();
         tagForm.setTitle("spring boot");
@@ -371,7 +372,7 @@ class SettingsControllerTest {
         Location location = locationRepository.findByCityAndProvince(testLocation.getCity(), testLocation.getProvince()).orElseThrow();
         Account saveAccount = accountRepository.findByUsername("user").orElseThrow();
         AccountInfo accountInfo = new AccountInfo(saveAccount);
-        settingsService.addLocation(location, accountInfo);
+        accontSettingsService.addLocation(location, accountInfo);
 
         LocationForm locationForm = new LocationForm();
         locationForm.setLocationName(testLocation.toString());

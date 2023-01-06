@@ -2,11 +2,12 @@ package com.studyIn.domain.study.controller;
 
 import com.studyIn.domain.account.AccountInfo;
 import com.studyIn.domain.account.CurrentAccount;
-import com.studyIn.domain.study.entity.Study;
-import com.studyIn.domain.study.service.StudyService;
 import com.studyIn.domain.study.controller.validator.StudyFormValidator;
-import com.studyIn.domain.study.dto.StudyDto;
 import com.studyIn.domain.study.dto.form.StudyForm;
+import com.studyIn.domain.study.entity.Study;
+import com.studyIn.domain.study.repository.query.StudyQueryDto;
+import com.studyIn.domain.study.repository.query.StudyQueryRepository;
+import com.studyIn.domain.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +25,7 @@ import javax.validation.Valid;
 public class StudyController {
 
     private final StudyService studyService;
+    private final StudyQueryRepository studyQueryRepository;
     private final StudyFormValidator studyFormValidator;
 
     @InitBinder("studyForm")
@@ -51,17 +53,17 @@ public class StudyController {
 
     @GetMapping("/study/{path}")
     public String viewStudy(@CurrentAccount AccountInfo accountInfo, @PathVariable String path, Model model) {
-        StudyDto studyDto = studyService.getStudyDtoByPath(path);
+        StudyQueryDto study = studyQueryRepository.findStudyQueryDtoByPath(path);
         model.addAttribute(accountInfo);
-        model.addAttribute("study", studyDto);
+        model.addAttribute("study", study);
         return "study/view";
     }
 
     @GetMapping("study/{path}/members")
     public String viewStudyMembers(@CurrentAccount AccountInfo accountInfo, @PathVariable String path, Model model) {
-        StudyDto studyDto = studyService.getStudyDtoByPath(path);
+        StudyQueryDto study = studyQueryRepository.findStudyQueryDtoByPath(path);
         model.addAttribute(accountInfo);
-        model.addAttribute("study", studyDto);
+        model.addAttribute("study", study);
         return "study/members";
     }
 }

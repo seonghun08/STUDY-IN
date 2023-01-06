@@ -1,6 +1,7 @@
 package com.studyIn.domain.study.entity;
 
 import com.studyIn.domain.BaseTimeEntity;
+import com.studyIn.domain.study.dto.form.DescriptionForm;
 import com.studyIn.domain.study.dto.form.StudyForm;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,9 +11,7 @@ import org.springframework.data.annotation.CreatedBy;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "study")
@@ -93,5 +92,20 @@ public class Study extends BaseTimeEntity {
         study.fullDescription = form.getFullDescription();
         study.setStudyManager(studyManager);
         return study;
+    }
+
+
+    //== 수정 메서드 ==//
+    public void updateDescription(DescriptionForm descriptionForm) {
+        this.shortDescription = descriptionForm.getShortDescription();
+        this.fullDescription = descriptionForm.getFullDescription();
+    }
+
+    public void updateBannerImage(String image) {
+        this.bannerImage = image;
+    }
+
+    public void updateUseBanner(boolean check) {
+        this.useBanner = check;
     }
 }

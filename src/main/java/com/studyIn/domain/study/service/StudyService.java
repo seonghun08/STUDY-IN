@@ -7,7 +7,6 @@ import com.studyIn.domain.study.dto.StudyDto;
 import com.studyIn.domain.study.dto.form.StudyForm;
 import com.studyIn.domain.study.entity.Study;
 import com.studyIn.domain.study.entity.StudyManager;
-import com.studyIn.domain.study.entity.StudyMember;
 import com.studyIn.domain.study.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ public class StudyService {
     }
 
     public StudyDto getStudyDtoByPath(String path) {
-        Study study = studyRepository.findByPath(path)
+        Study study = studyRepository.findAllByPath(path)
                 .orElseThrow(() -> new IllegalArgumentException(path + "해당하는 스터디가 존재하지 않습니다."));
         return new StudyDto(study);
     }

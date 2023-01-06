@@ -25,11 +25,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @SpringBootTest
-class SettingsServiceTest {
+class AccontSettingsServiceTest {
 
     @PersistenceContext EntityManager em;
     @Autowired AccountService accountService;
-    @Autowired SettingsService settingsService;
+    @Autowired
+    AccontSettingsService accontSettingsService;
     @Autowired TagService tagService;
     @Autowired AccountRepository accountRepository;
     @Autowired TagRepository tagRepository;
@@ -75,7 +76,7 @@ class SettingsServiceTest {
         profileForm.setNickname(nickname);
 
         //when
-        settingsService.updateProfile(profileForm, accountInfo);
+        accontSettingsService.updateProfile(profileForm, accountInfo);
         em.flush();
         em.clear();
 
@@ -99,7 +100,7 @@ class SettingsServiceTest {
         passwordForm.setConfirmPassword(password);
 
         //when
-        settingsService.updatePassword(passwordForm, accountInfo);
+        accontSettingsService.updatePassword(passwordForm, accountInfo);
         em.flush();
         em.clear();
 
@@ -122,7 +123,7 @@ class SettingsServiceTest {
         notificationsSettingForm.setStudyEnrollmentResultByEmail(true);
 
         //when
-        settingsService.updateNotificationsSetting(notificationsSettingForm, accountInfo);
+        accontSettingsService.updateNotificationsSetting(notificationsSettingForm, accountInfo);
         em.flush();
         em.clear();
 
@@ -145,7 +146,7 @@ class SettingsServiceTest {
         Tag tag = tagService.findExistingTagOrElseCreateTag(tagForm);
 
         //when
-        settingsService.addTag(tag, accountInfo);
+        accontSettingsService.addTag(tag, accountInfo);
         em.flush();
         em.clear();
 
@@ -170,12 +171,12 @@ class SettingsServiceTest {
         TagForm tagForm = new TagForm();
         tagForm.setTitle("spring boot");
         Tag tag = tagService.findExistingTagOrElseCreateTag(tagForm);
-        settingsService.addTag(tag, accountInfo);
+        accontSettingsService.addTag(tag, accountInfo);
         em.flush();
         em.clear();
 
         //then
-        settingsService.removeTag(tag, accountInfo);
+        accontSettingsService.removeTag(tag, accountInfo);
 
         //then
         AccountTag accountTag = jpaQueryFactory
