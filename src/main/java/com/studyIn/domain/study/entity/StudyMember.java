@@ -25,4 +25,11 @@ public class StudyMember {
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
+
+    //== 생성 메서드 ==//
+    public static StudyMember createStudyMember(Account account) {
+        StudyMember studyMember = new StudyMember();
+        studyMember.account = account;
+        return studyMember;
+    }
 }

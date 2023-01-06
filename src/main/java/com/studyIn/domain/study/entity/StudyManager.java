@@ -25,4 +25,12 @@ public class StudyManager {
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
+
+
+    //== 생성 메서드 ==//
+    public static StudyManager createStudyManager(Account account) {
+        StudyManager studyManager = new StudyManager();
+        studyManager.account = account;
+        return studyManager;
+    }
 }

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div th:replace="/study/fragments-study.html :: study-banner"></div>
+<div class="container">
+    <div th:replace="/study/fragments-study.html :: study-info"></div>
+    <div th:replace="/study/fragments-study.html :: study-menu(studyMenu='members')"></div>
+    <div th:replace="/study/fragments-study.html :: member-list (members=${study.managers}, isManager=${true})"></div>
+    <div th:replace="/study/fragments-study.html :: member-list (members=${study.members}, isManager=${false})"></div>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+</body>
+</html>

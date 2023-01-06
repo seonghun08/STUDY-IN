@@ -9,7 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "account")
@@ -35,10 +37,10 @@ public class Account extends BaseTimeEntity {
     private Authentication authentication;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    private List<AccountTag> accountTags = new ArrayList<>();
+    private Set<AccountTag> accountTags = new HashSet<>();
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    private List<AccountLocation> accountLocations = new ArrayList<>();
+    private Set<AccountLocation> accountLocations = new HashSet<>();
 
 
     //== 연관관계 메서드 ==//

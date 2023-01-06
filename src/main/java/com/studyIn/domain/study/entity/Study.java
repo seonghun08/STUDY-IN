@@ -1,25 +1,36 @@
 package com.studyIn.domain.study.entity;
 
+import com.studyIn.domain.BaseTimeEntity;
+import com.studyIn.domain.study.dto.form.StudyForm;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "study")
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Study {
+public class Study extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_id")
     private Long id;
 
+    /* Account.id */
+    @CreatedBy
+    private Long createdBy;
+
     @Column(nullable = false, unique = true)
     private String path;
+
+    private String title;
 
     private String shortDescription;
 
@@ -61,9 +72,26 @@ public class Study {
     private LocalDateTime closedDateTime;
 
 
+    //== 연관관계 메서드 ==//
+    public void setStudyManager(StudyManager studyManager) {
+        this.managers.add(studyManager);
+        studyManager.setStudy(this);
+    }
+
+    public void setStudyMember(StudyMember studyMember) {
+        this.members.add(studyMember);
+        studyMember.setStudy(this);
+    }
+
+
     //== 생성 메서드 ==//
-    public static Study createStudy() {
+    public static Study createStudy(StudyForm form, StudyManager studyManager) {
         Study study = new Study();
+        study.path = form.getPath();
+        study.title = form.getTitle();
+        study.shortDescription = form.getShortDescription();
+        study.fullDescription = form.getFullDescription();
+        study.setStudyManager(studyManager);
         return study;
     }
 }

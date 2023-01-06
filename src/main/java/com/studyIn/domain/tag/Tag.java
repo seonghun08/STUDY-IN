@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tag_id")
     private Long id;
 

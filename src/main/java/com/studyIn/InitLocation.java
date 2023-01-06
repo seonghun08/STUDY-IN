@@ -25,7 +25,7 @@ public class InitLocation {
 
     @PostConstruct
     public void initLocationData() throws IOException {
-        initLocationService.init();
+//        initLocationService.init();
     }
 
     @Component

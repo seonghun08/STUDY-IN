@@ -15,12 +15,15 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Profile extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "profile_id")
     private Long id;
 
     @Column(nullable = false)
     private String nickname;
+
+    @Column(nullable = false)
+    private String email;
 
     private String bio;
     private String link;
@@ -34,6 +37,7 @@ public class Profile extends BaseTimeEntity {
     public static Profile createProfile(SignUpForm form) {
         Profile profile = new Profile();
         profile.nickname = form.getNickname();
+        profile.email = form.getEmail();
         return profile;
     }
 

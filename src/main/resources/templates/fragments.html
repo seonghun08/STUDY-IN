@@ -727,5 +727,22 @@
     });
 </script>
 
+<!--  summernote  -->
+<script th:fragment="summernote" type="application/javascript">
+    $('.editor').summernote({
+        placeholder: '원하시는 내용을 입력해주세요.',
+        height: 300,
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['link', 'picture']],
+            ['view', ['help']],
+        ],
+    });
+</script>
+
 </body>
 </html>

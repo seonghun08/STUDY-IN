@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head></head>
+<body>
+<!--  study banner  -->
+<div th:fragment="study-banner" th:if="${study.useBanner}" class="row py-3">
+    <img th:src="${study.bannerImage}" width="1920" height="200"/>
+</div>
+
+<!--  study info  -->
+<div th:fragment="study-info">
+    <div class="row justify-content-center pt-4">
+        <div class="col-8">
+            <a class="text-decoration-none" th:href="@{'/study/' + ${study.path}}">
+                <span class="h2" th:text="${study.title}">스터디 이름</span>
+            </a>
+        </div>
+        <div class="col-2 justify-content-end text-right">
+            <span th:if="${!study.published}"
+                  class="d-inline-block"
+                  tabindex="0"
+                  data-mdb-toggle="tooltip"
+                  data-mdb-placement="bottom"
+                  title="스터디 공개 준비중"
+            >
+                <button class="btn btn-primary"
+                        style="pointer-events: none;"
+                        type="button"
+                        disabled
+                >
+                    DRAFT
+                </button>
+            </span>
+            <span th:if="${study.closed}"
+                  class="d-inline-block"
+                  tabindex="0"
+                  data-mdb-toggle="tooltip"
+                  data-mdb-placement="bottom"
+                  title="스터디 종료"
+            >
+                <button class="btn btn-primary"
+                        style="pointer-events: none;"
+                        type="button"
+                        disabled
+                >
+                    CLOSED
+                </button>
+            </span>
+            <span th:if="${!study.recruiting}"
+                  class="d-inline-block ml-1"
+                  tabindex="0"
+                  data-mdb-toggle="tooltip"
+                  data-mdb-placement="bottom"
+                  title="스터티 모집 종료"
+            >
+                <button class="btn btn-primary"
+                        style="pointer-events: none;"
+                        type="button"
+                        disabled
+                >
+                    OFF
+                </button>
+            </span>
+            <span sec:authorize="isAuthenticated()"
+                  th:if="${study.isJoinAble(#authentication.principal)}"
+                  class="btn-group"
+                  role="group"
+                  aria-label="Basic example"
+            >
+                <form th:action="@{'/study/' + ${study.path} + '/join'}"
+                      method="post"
+                      novalidate
+                >
+                    <button class="btn btn-primary" type="submit">
+                        스터디 가입<span class="badge bg-light text-dark ms-2" th:text="${study.members.size()}"></span>
+                    </button>
+                </form>
+            </span>
+            <span sec:authorize="isAuthenticated()"
+                  th:if="${!study.closed && study.isMember(#authentication.principal)}"
+                  class="btn-group"
+                  role="group"
+            >
+                <form th:action="@{'/study/' + ${study.path} + '/leave'}"
+                      method="post"
+                      novalidate
+                >
+                    <button class="btn btn-dark" type="submit">
+                        스터디 탈퇴<span class="badge bg-light text-dark ms-2" th:text="${study.members.size()}"></span>
+                    </button>
+                </form>
+            </span>
+            <span sec:authorize="isAuthenticated()"
+                  th:if="${study.published && !study.closed && study.isManager(#authentication.principal)}"
+            >
+                <a class="btn btn-primary" th:href="@{'/study/' + ${study.path} + '/new-event'}">
+                    <i class="fas fa-plus"></i>
+                     모임 만들기
+                </a>
+            </span>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-10">
+            <p class="lead" th:text="${study.shortDescription}"></p>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-10">
+            <p>
+                <span th:each="tag : ${study.tagTitles}" class="mr-2">
+                    <a class="box badge rounded-pill badge-primary mr-3" th:href="@{'/search/tag/' + ${tag}}">
+                        <i class="fas fa-hashtag"></i>
+                        <span th:text="${tag}">Tag</span>
+                    </a>
+                </span><br/>
+                <span th:each="location: ${study.locationTitles}" class="mr-2">
+                    <a class="box badge rounded-pill badge-success mr-3"
+                       th:href="@{'/search/location/' + ${location}}"
+                    >
+                        <i class="fas fa-globe-asia"></i>
+                        <span th:text="${location}">City</span>
+                    </a>
+                </span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!--  study member-list  -->
+<div th:fragment="member-list (members, isManager)" class="row px-3 justify-content-center">
+    <ul class="list-group list-group-light col-10">
+        <li th:each="member: ${members}" class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <img th:if="${!#strings.isEmpty(member?.profileImage)}"
+                     th:src="${member?.profileImage}"
+                     class="rounded border mr-3"
+                     width="65" height="65"
+                />
+                <svg th:if="${#strings.isEmpty(member?.profileImage)}"
+                     th:data-jdenticon-value="${member.username}"
+                     class="rounded border bg-light mr-3"
+                     width="65" height="65"
+                />
+                <div class="ms-3">
+                    <a class="fw-bold mb-1"
+                       th:href="@{'/profile/' + ${member?.username}}"
+                       style="text-decoration: none"
+                    >
+                        <span th:text="${member.nickname}"></span>
+                    </a>
+                    <span th:if="${isManager}" class="badge rounded-pill badge-primary ms-1">Manager</span>
+                    <p class="text-muted mb-0" th:text="${member.email}">seonghun@email.com</p>
+                    <div th:text="${member.bio}"></div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<!--  study-menu  -->
+<div th:fragment="study-menu (studyMenu)" class="row px-3 justify-content-center col-10 mx-auto">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link"
+               th:classappend="${studyMenu == 'info'}? active"
+               th:href="@{'/study/' + ${study.path}}" href="#"
+            >
+                <i class="fas fa-info-circle"></i> introduce
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+               th:classappend="${studyMenu == 'members'}? active"
+               th:href="@{'/study/' + ${study.path} + '/members'}" href="#"
+            >
+                <i class="fas fa-user"></i> members
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+               th:classappend="${studyMenu == 'events'}? active"
+               th:href="@{'/study/' + ${study.path} + '/events'}" href="#"
+            >
+                <i class="far fa-calendar-alt"></i> schedule
+            </a>
+        </li>
+        <li class="nav-item">
+            <a sec:authorize="isAuthenticated()"
+               th:if="${study.isManager(#authentication.principal)}"
+               th:classappend="${studyMenu == 'settings'}? active"
+               th:href="@{'/study/' + ${study.path} + '/settings/description'}" href="#"
+               class="nav-link"
+            >
+                <i class="fas fa-cogs"></i> settings
+            </a>
+        </li>
+    </ul>
+    <hr/>
+</div>
+
+<!--  study settings-menu  -->
+<div th:fragment="study-settings-menu (currentMenu)"
+     class="card list-group shadow-sm mb-4"
+     role="tablist"
+>
+    <div class="list-group-item list-group-item bg-light">Settings</div>
+    <a class="list-group-item list-group-item-action"
+       th:classappend="${currentMenu == 'description'}? active"
+       th:href="@{'/study/' + ${study.path} + '/settings/description'}" href="#"
+    >
+        Description
+    </a>
+    <a class="list-group-item list-group-item-action "
+       th:classappend="${currentMenu == 'banner'}? active"
+       th:href="@{'/study/' + ${study.path} + '/settings/banner'}" href="#"
+    >
+        Banner
+    </a>
+    <a class="list-group-item list-group-item-action "
+       th:classappend="${currentMenu == 'tags'}? active"
+       th:href="@{'/study/' + ${study.path} + '/settings/tags'}" href="#"
+    >
+        Tag
+    </a>
+    <a class="list-group-item list-group-item-action "
+       th:classappend="${currentMenu == 'locations'}? active"
+       th:href="@{'/study/' + ${study.path} + '/settings/locations'}" href="#"
+    >
+        Location
+    </a>
+    <a class="list-group-item list-group-item-action list-group-item-danger"
+       th:classappend="${currentMenu == 'study'}? active"
+       th:href="@{'/study/' + ${study.path} + '/settings/study'}" href="#"
+    >
+        Study
+    </a>
+</div>
+</body>
+</html>
