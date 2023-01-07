@@ -1,15 +1,11 @@
 package com.studyIn.domain.account.repository;
 
+import com.studyIn.domain.account.AccountFactory;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Account;
-import com.studyIn.domain.account.entity.Authentication;
-import com.studyIn.domain.account.entity.Profile;
-import com.studyIn.domain.account.entity.value.Gender;
-import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -23,83 +19,93 @@ class AccountRepositoryTest {
 
     @PersistenceContext EntityManager em;
     @Autowired AccountRepository accountRepository;
-    @Autowired PasswordEncoder passwordEncoder;
-
-    private Account createAccount(SignUpForm form) {
-        NotificationsSetting notificationsSetting = new NotificationsSetting();
-        Authentication authentication = Authentication.createAuthentication(form, notificationsSetting);
-        Profile profile = Profile.createProfile(form);
-        Account account = Account.createUser(form, profile, authentication);
-        account.encodePassword(passwordEncoder);
-
-        /* 임시 토근 생성 */
-        account.getAuthentication().generateEmailToken();
-        return accountRepository.save(account);
-    }
-    private SignUpForm createSignUpForm(String username) {
-        SignUpForm form = new SignUpForm();
-        form.setUsername(username);
-        form.setEmail(username + "@email.com");
-        form.setPassword("1234567890");
-        form.setNickname("nick-" + username);
-        form.setCellPhone("01012341234");
-        form.setGender(Gender.MAN);
-        form.setBirthday("1997-08-30");
-        return form;
-    }
+    @Autowired AccountFactory accountFactory;
 
     @Test
-    void existsByUsername() throws Exception {
+    void existsByUsername() {
         //given
-        String username = "user";
-        SignUpForm form = createSignUpForm(username);
-
-        //when
-        createAccount(form);
+        SignUpForm form = accountFactory.createSignUpForm("spring-dev");
+        accountFactory.createAccount(form);
         em.flush();
         em.clear();
 
-        //then
-        assertThat(accountRepository.existsByUsername(username)).isTrue();
+        //when, then
+        assertThat(accountRepository.existsByUsername(form.getUsername())).isTrue();
     }
 
     @Test
-    void findByUsername() throws Exception {
+    void findByUsername() {
         //given
-        SignUpForm form = createSignUpForm("spring-dev");
-
-        //when
-        createAccount(form);
+        SignUpForm form = accountFactory.createSignUpForm("spring-dev");
+        accountFactory.createAccount(form);
         em.flush();
         em.clear();
 
-        //then
-        Account findAccount = accountRepository.findByUsername(form.getUsername()).orElseThrow();
-
+        //when, then
+        Account findAccount = accountRepository.findByUsername(form.getUsername())
+                .orElseThrow(IllegalArgumentException::new);
         /**
          * Lazy 로딩이 일어나면 안된다.
+         * Account -> Authentication
+         * Account -> Profile
          */
         assertThat(findAccount.getAuthentication().getEmail()).isEqualTo(form.getEmail());
         assertThat(findAccount.getProfile().getNickname()).isEqualTo(form.getNickname());
     }
 
     @Test
-    void findByEmail() throws Exception {
+    void findByEmail() {
         //given
-        SignUpForm form = createSignUpForm("spring-dec");
-
-        //when
-        createAccount(form);
+        SignUpForm form = accountFactory.createSignUpForm("spring-dev");
+        accountFactory.createAccount(form);
         em.flush();
         em.clear();
 
-        //then
-        Account findAccount = accountRepository.findByEmail(form.getEmail()).orElseThrow();
-
+        //when, then
+        Account findAccount = accountRepository.findByEmail(form.getEmail())
+                .orElseThrow(IllegalArgumentException::new);
         /**
          * Lazy 로딩이 일어나면 안된다.
+         * Account -> Authentication
+         * Account -> Profile
          */
         assertThat(findAccount.getAuthentication().getEmail()).isEqualTo(form.getEmail());
         assertThat(findAccount.getProfile().getNickname()).isEqualTo(form.getNickname());
+    }
+
+    @Test
+    void findWithAuthenticationById() {
+        //given
+        SignUpForm form = accountFactory.createSignUpForm("spring-dev");
+        Account account = accountFactory.createAccount(form);
+        em.flush();
+        em.clear();
+
+        //when, then
+        Account findAccount = accountRepository.findWithAuthenticationById(account.getId())
+                .orElseThrow(IllegalArgumentException::new);
+        /**
+         * Lazy 로딩이 일어나면 안된다.
+         * Account -> Authentication
+         */
+        assertThat(findAccount.getAuthentication().getEmail()).isEqualTo(form.getEmail());
+    }
+
+    @Test
+    void findWithAuthenticationByEmail() {
+        //given
+        SignUpForm form = accountFactory.createSignUpForm("spring-dev");
+        Account account = accountFactory.createAccount(form);
+        em.flush();
+        em.clear();
+
+        //when, then
+        Account findAccount = accountRepository.findWithAuthenticationByEmail(form.getEmail())
+                .orElseThrow(IllegalArgumentException::new);
+        /**
+         * Lazy 로딩이 일어나면 안된다.
+         * Account -> Authentication
+         */
+        assertThat(findAccount.getAuthentication().getEmail()).isEqualTo(form.getEmail());
     }
 }

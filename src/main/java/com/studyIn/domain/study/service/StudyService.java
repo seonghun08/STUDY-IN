@@ -7,11 +7,14 @@ import com.studyIn.domain.study.dto.StudyDto;
 import com.studyIn.domain.study.dto.form.StudyForm;
 import com.studyIn.domain.study.entity.Study;
 import com.studyIn.domain.study.entity.StudyManager;
+import com.studyIn.domain.study.entity.StudyMember;
 import com.studyIn.domain.study.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class StudyService {
 
@@ -29,9 +32,24 @@ public class StudyService {
         return studyRepository.save(study);
     }
 
-    public StudyDto getStudyDtoByPath(String path) {
-        Study study = studyRepository.findAllByPath(path)
-                .orElseThrow(() -> new IllegalArgumentException(path + "해당하는 스터디가 존재하지 않습니다."));
-        return new StudyDto(study);
+    /**
+     * 스터디 회원 등록
+     */
+    public void addMember(AccountInfo accountInfo, String path) {
+        Account account = accountRepository.findById(accountInfo.getAccountId())
+                .orElseThrow(IllegalArgumentException::new);
+        StudyMember studyMember = StudyMember.createStudyMember(account);
+        studyRepository.findWithMembersByPath(path)
+                .ifPresent(study -> {
+                    if (study.isPublished() && study.isRecruiting()) study.setStudyMember(studyMember);
+                });
+    }
+
+    /**
+     * 스터디 회원 취소
+     */
+    public void leaveMember(AccountInfo accountInfo, String path) {
+        studyRepository.findByPath(path)
+                .ifPresent(study -> studyRepository.deleteStudyMember(accountInfo.getAccountId(), study.getId()));
     }
 }

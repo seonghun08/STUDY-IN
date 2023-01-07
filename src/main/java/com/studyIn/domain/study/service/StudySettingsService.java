@@ -9,7 +9,7 @@ import com.studyIn.domain.study.entity.Study;
 import com.studyIn.domain.study.entity.StudyLocation;
 import com.studyIn.domain.study.entity.StudyTag;
 import com.studyIn.domain.study.repository.StudyRepository;
-import com.studyIn.domain.study.repository.query.StudyQueryDto;
+import com.studyIn.domain.study.dto.StudyQueryDto;
 import com.studyIn.domain.study.repository.query.StudyQueryRepository;
 import com.studyIn.domain.tag.Tag;
 import lombok.RequiredArgsConstructor;

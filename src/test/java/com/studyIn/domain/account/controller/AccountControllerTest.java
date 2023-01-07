@@ -1,5 +1,6 @@
 package com.studyIn.domain.account.controller;
 
+import com.studyIn.domain.account.AccountFactory;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.entity.Authentication;
@@ -42,52 +43,18 @@ class AccountControllerTest {
 
     @MockBean EmailService emailService;
     @Autowired MockMvc mvc;
-    @Autowired AccountService accountService;
     @Autowired AccountRepository accountRepository;
-    @Autowired AuthenticationRepository authenticationRepository;
-    @Autowired AuthenticationManager authenticationManager;
+    @Autowired AccountFactory accountFactory;
     @Autowired PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void beforeEach() {
-        SignUpForm form = createSignUpForm("user");
-        NotificationsSetting notificationsSetting = new NotificationsSetting();
-        Authentication authentication = Authentication.createAuthentication(form, notificationsSetting);
-        Profile profile = Profile.createProfile(form);
-        Account account = Account.createUser(form, profile, authentication);
-        account.encodePassword(passwordEncoder);
-
-        /* 임시 토근 생성 */
-        account.getAuthentication().generateEmailToken();
-        accountRepository.save(account);
+        accountFactory.createAccount("user");
     }
 
     @AfterEach
     void afterEach() {
         accountRepository.deleteAll();
-    }
-
-    private Account createAccount(SignUpForm form) {
-        NotificationsSetting notificationsSetting = new NotificationsSetting();
-        Authentication authentication = Authentication.createAuthentication(form, notificationsSetting);
-        Profile profile = Profile.createProfile(form);
-        Account account = Account.createUser(form, profile, authentication);
-        account.encodePassword(passwordEncoder);
-
-        /* 임시 토근 생성 */
-        account.getAuthentication().generateEmailToken();
-        return accountRepository.save(account);
-    }
-    private SignUpForm createSignUpForm(String username) {
-        SignUpForm form = new SignUpForm();
-        form.setUsername(username);
-        form.setEmail(username + "@email.com");
-        form.setPassword("1234567890");
-        form.setNickname("nick-" + username);
-        form.setCellPhone("01012341234");
-        form.setGender(Gender.MAN);
-        form.setBirthday("1997-08-30");
-        return form;
     }
 
     @DisplayName("회원 가입 화면이 보이는지 테스트")
@@ -134,7 +101,8 @@ class AccountControllerTest {
                 .andExpect(view().name("redirect:/"))
                 .andExpect(authenticated());
 
-        Account account = accountRepository.findByUsername("new-username").orElseThrow();
+        Account account = accountRepository.findByUsername("new-username")
+                .orElseThrow(RuntimeException::new);
         assertThat(account.getPassword()).isNotEqualTo("1234567890");
         assertThat(passwordEncoder.matches("1234567890", account.getPassword())).isTrue();
         assertThat(account.getAuthentication().getEmail()).isEqualTo("email@new.com");
@@ -145,8 +113,7 @@ class AccountControllerTest {
     @DisplayName("email 인증 실패 - 입력값 오류")
     @Test
     void checkEmailToken_fail() throws Exception {
-        SignUpForm form = createSignUpForm("test");
-        Account account = createAccount(form);
+        Account account = accountFactory.createAccount("spring-dev");
         System.out.println(":: emailCheckToken = " + account.getAuthentication().getEmailCheckToken());
 
         mvc.perform(get("/check-email-token")
@@ -161,8 +128,7 @@ class AccountControllerTest {
     @DisplayName("email 인증 성공")
     @Test
     void checkEmailToken_success() throws Exception {
-        SignUpForm form = createSignUpForm("test");
-        Account account = createAccount(form);
+        Account account = accountFactory.createAccount("spring-dev");
         System.out.println(":: emailCheckToken = " + account.getAuthentication().getEmailCheckToken());
 
         mvc.perform(get("/check-email-token")
@@ -232,8 +198,7 @@ class AccountControllerTest {
     @DisplayName("email 인증 실패 시, 패스워드 변경 불가")
     @Test
     void resetPasswordForm_fail() throws Exception {
-        SignUpForm form = createSignUpForm("test");
-        Account account = createAccount(form);
+        Account account = accountFactory.createAccount("spring-dev");
 
         mvc.perform(get("/find-by-email")
                         .param("email", account.getAuthentication().getEmail())
@@ -246,8 +211,7 @@ class AccountControllerTest {
     @DisplayName("email 인증 성공 후, 패스워드 변경 화면 보이는지 테스트")
     @Test
     void resetPasswordForm_success() throws Exception {
-        SignUpForm form = createSignUpForm("test");
-        Account account = createAccount(form);
+        Account account = accountFactory.createAccount("spring-dev");
 
         mvc.perform(get("/find-by-email")
                         .param("email", account.getAuthentication().getEmail())

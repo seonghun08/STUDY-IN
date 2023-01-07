@@ -1,10 +1,11 @@
 package com.studyIn.domain.account.service;
 
+import com.studyIn.domain.account.AccountFactory;
+import com.studyIn.domain.account.dto.form.EmailForm;
+import com.studyIn.domain.account.dto.form.ResetPasswordForm;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Account;
-import com.studyIn.domain.account.entity.value.Gender;
 import com.studyIn.domain.account.repository.AccountRepository;
-import com.studyIn.domain.account.repository.AuthenticationRepository;
 import com.studyIn.infra.mail.EmailMessage;
 import com.studyIn.infra.mail.EmailService;
 import org.junit.jupiter.api.Test;
@@ -30,25 +31,13 @@ class AccountServiceTest {
     @MockBean EmailService emailService;
     @Autowired AccountService accountService;
     @Autowired AccountRepository accountRepository;
-    @Autowired AuthenticationRepository authenticationRepository;
+    @Autowired AccountFactory accountFactory;
     @Autowired PasswordEncoder passwordEncoder;
 
-    private SignUpForm createSignUpForm(String username) {
-        SignUpForm form = new SignUpForm();
-        form.setUsername(username);
-        form.setEmail(username + "@email.com");
-        form.setPassword("1234567890");
-        form.setNickname("nick-" + username);
-        form.setCellPhone("01012341234");
-        form.setGender(Gender.MAN);
-        form.setBirthday("1997-08-30");
-        return form;
-    }
-
     @Test
-    void signUp() throws Exception {
+    void signUp() {
         //given
-        SignUpForm form = createSignUpForm("spring-dev");
+        SignUpForm form = accountFactory.createSignUpForm("spring-dev");
 
         //when
         Account account = accountService.signUp(form);
@@ -66,9 +55,8 @@ class AccountServiceTest {
                 .getSingleResult();
         /**
          * PasswordEncoder => "SignUpForm"에 넣은 패스워드와 DB에 저장된 패스워드는 서로 일치하면 안된다.
-         * signUp =>
-         *  "Authentication"에 인증 토큰이 있어야 한다.
-         *  이외에 "SignUpForm"과 DB에 불러온 값과 서로 일치해야 한다.
+         * 이외에 "SignUpForm"과 DB에 불러온 값과 서로 일치해야 한다.
+         * 인증 토큰이 존재해야 한다.
          */
         assertThat(findAccount.getUsername()).isEqualTo(form.getUsername());
         assertThat(findAccount.getPassword()).isNotEqualTo(form.getPassword());
@@ -81,9 +69,9 @@ class AccountServiceTest {
     }
 
     @Test
-    void completeSignUp() throws Exception {
+    void completeSignUp() {
         //given
-        SignUpForm form = createSignUpForm("spring-dev");
+        SignUpForm form = accountFactory.createSignUpForm("spring-dev");
         Account account = accountService.signUp(form);
 
         String username = account.getUsername();
@@ -96,28 +84,30 @@ class AccountServiceTest {
         em.clear();
 
         //then
-        Account updateAccount = accountRepository.findByUsername(username).orElseThrow();
+        Account updateAccount = accountRepository.findByUsername(username)
+                .orElseThrow(IllegalArgumentException::new);
         /**
-         * "completeSignUp" =>
-         *  email, token 값이 정상적으로 들어갔다면 인증 완료 및 인증 완료일 업데이트가 되어야 한다.
+         * completeSignUp => email, token 값이 정상적으로 들어갔다면 인증 완료 및 인증 완료일 업데이트가 되어야 한다.
          */
         assertThat(updateAccount.getAuthentication().isEmailVerified()).isTrue();
         assertThat(updateAccount.getAuthentication().getEmailVerifiedDate()).isAfter(LocalDateTime.now().minusMinutes(1));
     }
 
     @Test
-    void resendSignUpConfirmEmail() throws Exception {
+    void sendSignUpConfirmEmail() {
         //given
-        SignUpForm form = createSignUpForm("spring-dev");
+        SignUpForm form = accountFactory.createSignUpForm("spring-dev");
         Account account = accountService.signUp(form);
+
+        String email = form.getEmail();
         String oldToken = account.getAuthentication().getEmailCheckToken();
         LocalDateTime oldTokenDate = account.getAuthentication().getEmailCheckTokenGeneratedDate();
 
-        //when
+        //when, then
         accountService.sendSignUpConfirmEmail(account.getId());
+        Account findAccount = accountRepository.findByEmail(email)
+                .orElseThrow(IllegalArgumentException::new);
 
-        //then
-        Account findAccount = accountRepository.findByEmail(account.getAuthentication().getEmail()).orElseThrow();
         String newToken = findAccount.getAuthentication().getEmailCheckToken();
         LocalDateTime newTokenDate = findAccount.getAuthentication().getEmailCheckTokenGeneratedDate();
 
@@ -125,4 +115,51 @@ class AccountServiceTest {
         assertThat(oldTokenDate).isBefore(newTokenDate);
     }
 
+    @Test
+    void sendLoginLinkConfirmEmail() {
+        //given
+        SignUpForm form = accountFactory.createSignUpForm("spring-dev");
+        Account account = accountService.signUp(form);
+
+        String email = form.getEmail();
+        String oldToken = account.getAuthentication().getEmailCheckToken();
+        LocalDateTime oldTokenDate = account.getAuthentication().getEmailCheckTokenGeneratedDate();
+
+        //when, then
+        EmailForm emailForm = new EmailForm();
+        emailForm.setEmail(form.getEmail());
+        accountService.sendLoginLinkConfirmEmail(emailForm);
+
+        Account findAccount = accountRepository.findByEmail(email)
+                .orElseThrow(IllegalArgumentException::new);
+
+        String newToken = findAccount.getAuthentication().getEmailCheckToken();
+        LocalDateTime newTokenDate = findAccount.getAuthentication().getEmailCheckTokenGeneratedDate();
+
+        assertThat(oldToken).isNotEqualTo(newToken);
+        assertThat(oldTokenDate).isBefore(newTokenDate);
+    }
+
+    @Test
+    void resetPassword() {
+        //given
+        SignUpForm form = accountFactory.createSignUpForm("spring-dev");
+        Account account = accountService.signUp(form);
+        String email = form.getEmail();
+
+        //when
+        String newPassword = "0101010101010";
+        ResetPasswordForm resetPasswordForm = new ResetPasswordForm();
+        resetPasswordForm.setEmail(email);
+        resetPasswordForm.setPassword(newPassword);
+        resetPasswordForm.setConfirmPassword(newPassword);
+        accountService.resetPassword(resetPasswordForm);
+        em.flush();
+        em.clear();
+
+        // then
+        Account findAccount = accountRepository.findByEmail(email)
+                .orElseThrow(IllegalArgumentException::new);
+        assertThat(passwordEncoder.matches(newPassword, findAccount.getPassword())).isTrue();
+    }
 }

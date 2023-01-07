@@ -1,5 +1,6 @@
 package com.studyIn.domain.main;
 
+import com.studyIn.domain.account.AccountFactory;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Account;
 import com.studyIn.domain.account.entity.Authentication;
@@ -33,35 +34,16 @@ class MainControllerTest {
 
     @Autowired MockMvc mvc;
     @Autowired AccountRepository accountRepository;
-    @Autowired AccountService accountService;
-    @Autowired PasswordEncoder passwordEncoder;
+    @Autowired AccountFactory accountFactory;
 
     @BeforeEach
     void beforeEach() {
-        SignUpForm form = createSignUpForm();
-        NotificationsSetting notificationsSetting = new NotificationsSetting();
-        Authentication authentication = Authentication.createAuthentication(form, notificationsSetting);
-        Profile profile = Profile.createProfile(form);
-        Account account = Account.createUser(form, profile, authentication);
-        account.encodePassword(passwordEncoder);
-        accountRepository.save(account);
+        accountFactory.createAccount("user");
     }
 
     @AfterEach
     void afterEach() {
         accountRepository.deleteAll();
-    }
-
-    private SignUpForm createSignUpForm() {
-        SignUpForm form = new SignUpForm();
-        form.setUsername("user");
-        form.setEmail("user@email.com");
-        form.setPassword("1234567890");
-        form.setNickname("nickname");
-        form.setCellPhone("01012341234");
-        form.setGender(Gender.MAN);
-        form.setBirthday("1997-08-30");
-        return form;
     }
 
     @DisplayName("로그인 없이 home 화면")
@@ -90,7 +72,7 @@ class MainControllerTest {
     void login_with_username() throws Exception {
         mvc.perform(post("/login")
                         .param("username", "user")
-                        .param("password", "1234567890")
+                        .param("password", "123123123")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"))
@@ -102,7 +84,7 @@ class MainControllerTest {
     void login_with_email() throws Exception {
         mvc.perform(post("/login")
                         .param("username", "user@email.com")
-                        .param("password", "1234567890")
+                        .param("password", "123123123")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"))

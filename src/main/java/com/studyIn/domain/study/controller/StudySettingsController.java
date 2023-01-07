@@ -12,7 +12,7 @@ import com.studyIn.domain.study.dto.form.PathForm;
 import com.studyIn.domain.study.dto.form.TitleForm;
 import com.studyIn.domain.study.entity.Study;
 import com.studyIn.domain.study.repository.StudyRepository;
-import com.studyIn.domain.study.repository.query.StudyQueryDto;
+import com.studyIn.domain.study.dto.StudyQueryDto;
 import com.studyIn.domain.study.repository.query.StudyQueryRepository;
 import com.studyIn.domain.study.service.StudySettingsService;
 import com.studyIn.domain.tag.Tag;

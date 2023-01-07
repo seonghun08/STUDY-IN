@@ -12,6 +12,9 @@ import javax.persistence.Lob;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 사용 X
+ */
 @Data
 public class StudyDto {
 
@@ -95,5 +98,13 @@ public class StudyDto {
                 .map(m -> m.getUsername())
                 .collect(Collectors.toList())
                 .contains(username);
+    }
+
+    public String getBannerImage() {
+        return this.bannerImage != null ? bannerImage : "/images/default_banner.jpg";
+    }
+
+    public boolean isRemovable() {
+        return !this.published;
     }
 }

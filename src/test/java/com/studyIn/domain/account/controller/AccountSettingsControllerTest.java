@@ -2,6 +2,7 @@ package com.studyIn.domain.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.studyIn.domain.account.AccountFactory;
 import com.studyIn.domain.account.AccountInfo;
 import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.*;
@@ -45,56 +46,25 @@ class AccountSettingsControllerTest {
 
     @Autowired MockMvc mvc;
     @Autowired JPAQueryFactory jpaQueryFactory;
-    @Autowired AccountService accountService;
-    @Autowired
-    AccontSettingsService accontSettingsService;
+    @Autowired AccontSettingsService accontSettingsService;
     @Autowired AccountRepository accountRepository;
-    @Autowired ObjectMapper objectMapper;
-    @Autowired PasswordEncoder passwordEncoder;
     @Autowired TagRepository tagRepository;
     @Autowired LocationRepository locationRepository;
+    @Autowired AccountFactory accountFactory;
+    @Autowired PasswordEncoder passwordEncoder;
+    @Autowired ObjectMapper objectMapper;
+
+    private Location testLocation = Location.createLocation("Seoul", "서울특별시", "none");
 
     @BeforeEach
     void beforeEach() {
-        SignUpForm signUpForm = new SignUpForm();
-        signUpForm.setUsername("user");
-        signUpForm.setEmail("user@email.com");
-        signUpForm.setPassword("123123123");
-        signUpForm.setNickname("nickname");
-        signUpForm.setCellPhone("01012341234");
-        signUpForm.setGender(Gender.MAN);
-        signUpForm.setBirthday("1997-08-30");
-        accountService.signUp(signUpForm);
+        accountFactory.createAccount("user");
     }
 
     @AfterEach
     void afterEach() {
         accountRepository.deleteAll();
         tagRepository.deleteAll();
-    }
-
-    private Location testLocation = Location.createLocation("Seoul", "서울특별시", "none");
-    private Account createAccount(SignUpForm form) {
-        NotificationsSetting notificationsSetting = new NotificationsSetting();
-        Authentication authentication = Authentication.createAuthentication(form, notificationsSetting);
-        Profile profile = Profile.createProfile(form);
-        Account account = Account.createUser(form, profile, authentication);
-        account.encodePassword(passwordEncoder);
-
-        /* 임시 토근 생성 */
-        account.getAuthentication().generateEmailToken();
-        return accountRepository.save(account);
-    }
-    private SignUpForm createSignUpForm(String username) {
-        SignUpForm form = new SignUpForm();
-        form.setUsername(username);
-        form.setEmail(username + "@email.com");
-        form.setPassword("1234567890");
-        form.setNickname("nick-" + username);
-        form.setCellPhone("01012341234");
-        form.setGender(Gender.MAN);
-        form.setBirthday("1997-08-30");
-        return form;
     }
 
     @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
@@ -437,8 +407,7 @@ class AccountSettingsControllerTest {
     @DisplayName("계정 수정 실패 - 이미 존재하는 아이디를 입력하는 경우")
     @Test
     public void updateAccount_fail3() throws Exception {
-        SignUpForm form = createSignUpForm("old-user");
-        createAccount(form);
+        accountFactory.createAccount("old-user");
 
         mvc.perform(post("/settings/account")
                         .param("username", "old-user")
@@ -454,7 +423,7 @@ class AccountSettingsControllerTest {
     @DisplayName("계정 수정 성공")
     @Test
     public void updateAccount_success() throws Exception {
-        String username = "update-user";
+        String username = "new-user";
 
         mvc.perform(post("/settings/account")
                         .param("username", username)

@@ -1,14 +1,14 @@
 package com.studyIn.domain.account.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.studyIn.domain.account.AccountFactory;
 import com.studyIn.domain.account.dto.ProfileDto;
 import com.studyIn.domain.account.dto.form.SignUpForm;
-import com.studyIn.domain.account.entity.Account;
-import com.studyIn.domain.account.entity.AccountTag;
-import com.studyIn.domain.account.entity.Authentication;
-import com.studyIn.domain.account.entity.Profile;
+import com.studyIn.domain.account.entity.*;
 import com.studyIn.domain.account.entity.value.Gender;
 import com.studyIn.domain.account.entity.value.NotificationsSetting;
+import com.studyIn.domain.location.Location;
+import com.studyIn.domain.location.LocationRepository;
 import com.studyIn.domain.tag.Tag;
 import com.studyIn.domain.tag.TagRepository;
 import org.junit.jupiter.api.Test;
@@ -30,115 +30,112 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AccountRepositoryCustomImplTest {
 
     @PersistenceContext EntityManager em;
-    @Autowired JPAQueryFactory jpaQueryFactory;
     @Autowired AccountRepository accountRepository;
-    @Autowired PasswordEncoder passwordEncoder;
     @Autowired TagRepository tagRepository;
+    @Autowired LocationRepository locationRepository;
+    @Autowired AccountFactory accountFactory;
+    @Autowired PasswordEncoder passwordEncoder;
 
-    private Account createAccount(SignUpForm form) {
-        NotificationsSetting notificationsSetting = new NotificationsSetting();
-        Authentication authentication = Authentication.createAuthentication(form, notificationsSetting);
-        Profile profile = Profile.createProfile(form);
-        Account account = Account.createUser(form, profile, authentication);
-        account.encodePassword(passwordEncoder);
-
-        /* 임시 토근 생성 */
-        account.getAuthentication().generateEmailToken();
-        return accountRepository.save(account);
+    private Tag createTag(String title) {
+        return tagRepository.save(Tag.createTag(title));
     }
-
-    private SignUpForm createSignUpForm(String username) {
-        SignUpForm form = new SignUpForm();
-        form.setUsername(username);
-        form.setEmail(username + "@email.com");
-        form.setPassword("1234567890");
-        form.setNickname("nick-" + username);
-        form.setCellPhone("01012341234");
-        form.setGender(Gender.MAN);
-        form.setBirthday("1997-08-30");
-        return form;
+    private Location createLocation() {
+        return locationRepository.save(Location.createLocation("testCity", "테스트도시", "none"));
     }
 
     @Test
     void findProfileDtoByUsername() throws Exception {
         //given
-        SignUpForm form = createSignUpForm("spring-dev");
-        Account account = createAccount(form);
+        Account account = accountFactory.createAccount("spring-dev");
         em.flush();
         em.clear();
 
-        //when
-        ProfileDto dto = accountRepository.findProfileDtoByUsername(form.getUsername()).orElseThrow();
-
-        //then
+        //when, then
+        ProfileDto dto = accountRepository.findProfileDtoByUsername(account.getUsername())
+                .orElseThrow(IllegalArgumentException::new);
         assertThat(dto.getUsername()).isEqualTo(account.getUsername());
         assertThat(dto.getEmail()).isEqualTo(account.getAuthentication().getEmail());
     }
 
     @Test
-    void findAccountTagByAccountId() {
-        SignUpForm form = createSignUpForm("spring-dev");
-        Account account = createAccount(form);
-
-        Tag tag = Tag.createTag("spring boot");
-        tagRepository.save(tag);
-
+    void findTagsByAccountId() {
+        //given
+        Account account = accountFactory.createAccount("spring-dev");
+        Tag tag = createTag("spring");
         AccountTag accountTag = AccountTag.createAccountTag(tag);
-
         account.addAccountTag(accountTag);
-
-        account.getAccountTags().forEach(a -> a.getTag());
         em.flush();
         em.clear();
 
-        List<AccountTag> accountTags = em.createQuery(
-                        "select at from AccountTag at" +
-                                " join fetch at.account a" +
-                                " join fetch at.tag t" +
-                                " where a.username = :username", AccountTag.class)
-                .setParameter("username", "spring-dev")
-                .getResultList();
-
-        accountTags.forEach(a -> {
-            String title = a.getTag().getTitle();
-            System.out.println("title = " + title);
-        });
-
-        List<String> titles = em.createQuery(
-                        "select t.title from Account a" +
-                                " join a.accountTags at" +
-                                " join at.tag t" +
-                                " where a.username = :username", String.class)
-                .setParameter("username", "spring-dev")
-                .getResultList();
-
-        titles.forEach(t -> {
-            System.out.println("t = " + t);
-        });
+        //when, then
+        Tag findTag = accountRepository.findTagsByAccountId(account.getId()).get(0);
+        assertThat(findTag.getTitle()).isEqualTo(tag.getTitle());
     }
 
     @Test
-    void exTest() {
-        SignUpForm form = createSignUpForm("spring-dev");
-        Account account = createAccount(form);
-
-        Tag t = Tag.createTag("spring boot");
-        tagRepository.save(t);
-
-        AccountTag at = AccountTag.createAccountTag(t);
-        account.addAccountTag(at);
-        account.getAccountTags().forEach(a -> a.getTag());
+    void findLocationsById() {
+        //given
+        Account account = accountFactory.createAccount("spring-dev");
+        Location location = createLocation();
+        AccountLocation accountLocation = AccountLocation.createAccountLocation(location);
+        account.addAccountLocation(accountLocation);
         em.flush();
         em.clear();
 
+        //when, then
+        Location findLocation = accountRepository.findLocationsById(account.getId()).get(0);
+        assertThat(findLocation.toString()).isEqualTo(location.toString());
+    }
 
-        AccountTag findAccountTag = jpaQueryFactory
-                .select(accountTag)
-                .from(accountTag)
-                .join(accountTag.tag, tag)
-                .where(tag.title.eq("spring boot"))
-                .fetchOne();
+    @Test
+    void findPasswordByUsername() {
+        //given
+        SignUpForm form = accountFactory.createSignUpForm("spring-dev");
+        form.setPassword("123123123");
+        accountFactory.createAccount(form);
+        em.flush();
+        em.clear();
 
-        System.out.println(findAccountTag.getTag().getTitle());
+        //when
+        String findPassword = accountRepository.findPasswordByUsername(form.getUsername());
+        assertThat(passwordEncoder.matches(form.getPassword(), findPassword)).isTrue();
+    }
+
+    @Test
+    void deleteAccountTag() {
+        //given
+        Account account = accountFactory.createAccount("spring-dev");
+        Tag tag = createTag("spring");
+        AccountTag accountTag = AccountTag.createAccountTag(tag);
+        account.addAccountTag(accountTag);
+
+        //when
+        Long count = accountRepository.deleteAccountTag(tag.getId(), account.getId());
+        em.flush();
+        em.clear();
+
+        //then
+        List<Tag> findTags = accountRepository.findTagsByAccountId(account.getId());
+        assertThat(findTags).isEmpty();
+        assertThat(count).isEqualTo(1);
+    }
+
+    @Test
+    void deleteAccountLocation() {
+        //given
+        Account account = accountFactory.createAccount("spring-dev");
+        Location location = createLocation();
+        AccountLocation accountLocation = AccountLocation.createAccountLocation(location);
+        account.addAccountLocation(accountLocation);
+
+        //when
+        Long count = accountRepository.deleteAccountLocation(location.getId(), account.getId());
+        em.flush();
+        em.clear();
+
+        //when, then
+        List<Location> findLocations = accountRepository.findLocationsById(account.getId());
+        assertThat(findLocations).isEmpty();
+        assertThat(count).isEqualTo(1);
     }
 }

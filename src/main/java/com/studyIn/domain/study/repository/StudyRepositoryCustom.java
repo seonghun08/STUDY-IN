@@ -12,9 +12,11 @@ public interface StudyRepositoryCustom {
 
     Optional<Study> findWithManagersByPath(String path);
 
-    List<Tag> findTagsByStudyPath(String path);
+    Optional<Study> findWithMembersByPath(String path);
 
     Long deleteStudyTag(Long tagId, Long studyId);
 
     Long deleteStudyLocation(Long locationId, Long studyId);
+
+    Long deleteStudyMember(Long accountId, Long studyId);
 }

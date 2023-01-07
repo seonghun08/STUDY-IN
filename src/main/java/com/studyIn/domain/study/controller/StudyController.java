@@ -5,7 +5,7 @@ import com.studyIn.domain.account.CurrentAccount;
 import com.studyIn.domain.study.controller.validator.StudyFormValidator;
 import com.studyIn.domain.study.dto.form.StudyForm;
 import com.studyIn.domain.study.entity.Study;
-import com.studyIn.domain.study.repository.query.StudyQueryDto;
+import com.studyIn.domain.study.dto.StudyQueryDto;
 import com.studyIn.domain.study.repository.query.StudyQueryRepository;
 import com.studyIn.domain.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
@@ -65,5 +65,17 @@ public class StudyController {
         model.addAttribute(accountInfo);
         model.addAttribute("study", study);
         return "study/members";
+    }
+
+    @PostMapping("/study/{path}/join")
+    public String joinStudy(@CurrentAccount AccountInfo accountInfo, @PathVariable String path) {
+        studyService.addMember(accountInfo, path);
+        return "redirect:/study/" + path + "/members";
+    }
+
+    @PostMapping("/study/{path}/leave")
+    public String leaveStudy(@CurrentAccount AccountInfo accountInfo, @PathVariable String path) {
+        studyService.leaveMember(accountInfo, path);
+        return "redirect:/study/" + path + "/members";
     }
 }

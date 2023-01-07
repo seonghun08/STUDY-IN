@@ -2,10 +2,8 @@ package com.studyIn.domain.study.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.studyIn.domain.study.entity.Study;
-import com.studyIn.domain.tag.Tag;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.studyIn.domain.account.entity.QAccount.account;
@@ -58,14 +56,16 @@ public class StudyRepositoryCustomImpl implements StudyRepositoryCustom {
     }
 
     @Override
-    public List<Tag> findTagsByStudyPath(String path) {
-        return jpaQueryFactory
-                .select(tag)
-                .from(study)
-                .join(study.studyTags, studyTag)
-                .join(studyTag.tag, tag)
+    public Optional<Study> findWithMembersByPath(String path) {
+        Study result = jpaQueryFactory
+                .selectFrom(study)
+                .leftJoin(study.members, studyMember).fetchJoin()
+                .leftJoin(studyMember.account, account).fetchJoin()
                 .where(study.path.eq(path))
-                .fetch();
+                .fetchOne();
+
+
+        return Optional.ofNullable(result);
     }
 
     @Override
@@ -83,6 +83,15 @@ public class StudyRepositoryCustomImpl implements StudyRepositoryCustom {
                 .delete(studyLocation)
                 .where(studyLocation.study.id.eq(studyId)
                         .and(studyLocation.location.id.eq(locationId)))
+                .execute();
+    }
+
+    @Override
+    public Long deleteStudyMember(Long accountId, Long studyId) {
+        return jpaQueryFactory
+                .delete(studyMember)
+                .where(studyMember.study.id.eq(studyId)
+                        .and(studyMember.account.id.eq(accountId)))
                 .execute();
     }
 }

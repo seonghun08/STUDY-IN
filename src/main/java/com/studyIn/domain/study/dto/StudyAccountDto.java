@@ -1,4 +1,4 @@
-package com.studyIn.domain.study.repository.query;
+package com.studyIn.domain.study.dto;
 
 import lombok.Data;
 

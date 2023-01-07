@@ -2,6 +2,10 @@ package com.studyIn.domain.study.repository.query;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.studyIn.domain.study.dto.StudyAccountDto;
+import com.studyIn.domain.study.dto.StudyLocationDto;
+import com.studyIn.domain.study.dto.StudyQueryDto;
+import com.studyIn.domain.study.dto.StudyTagDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -22,15 +26,6 @@ import static com.studyIn.domain.tag.QTag.tag;
 public class StudyQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
-
-    public boolean existManagerByAccountIdAndPath(Long accountId, String path) {
-        return jpaQueryFactory
-                .from(studyManager)
-                .join(studyManager.study, study).fetchJoin()
-                .join(studyManager.account, account).fetchJoin()
-                .where(study.path.eq(path).and(account.id.eq(accountId)))
-                .fetchFirst() != null;
-    }
 
     public StudyQueryDto findStudyQueryDtoByPath(String path) {
         StudyQueryDto studyQueryDto = jpaQueryFactory

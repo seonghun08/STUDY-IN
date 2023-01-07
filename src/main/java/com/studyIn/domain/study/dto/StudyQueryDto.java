@@ -1,4 +1,4 @@
-package com.studyIn.domain.study.repository.query;
+package com.studyIn.domain.study.dto;
 
 import com.studyIn.domain.account.AccountInfo;
 import com.studyIn.domain.account.UserAccount;

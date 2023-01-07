@@ -24,9 +24,8 @@ public class Study extends BaseTimeEntity {
     @Column(name = "study_id")
     private Long id;
 
-    /* CreatedBy Account.id */
     @CreatedBy
-    private Long createdBy;
+    private String createdBy;
 
     @Column(nullable = false, unique = true)
     private String path;
