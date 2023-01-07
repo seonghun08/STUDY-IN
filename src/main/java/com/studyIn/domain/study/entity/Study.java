@@ -2,7 +2,9 @@ package com.studyIn.domain.study.entity;
 
 import com.studyIn.domain.BaseTimeEntity;
 import com.studyIn.domain.study.dto.form.DescriptionForm;
+import com.studyIn.domain.study.dto.form.PathForm;
 import com.studyIn.domain.study.dto.form.StudyForm;
+import com.studyIn.domain.study.dto.form.TitleForm;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +24,7 @@ public class Study extends BaseTimeEntity {
     @Column(name = "study_id")
     private Long id;
 
-    /* Account.id */
+    /* CreatedBy Account.id */
     @CreatedBy
     private Long createdBy;
 
@@ -56,19 +58,19 @@ public class Study extends BaseTimeEntity {
      * 스터디 모임 공개
      */
     private boolean published;
-    private LocalDateTime publishedDateTime;
+    private LocalDateTime publishedDate;
 
     /**
      * 인원 모집 여부
      */
     private boolean recruiting;
-    private LocalDateTime recruitingUpdatedDateTime;
+    private LocalDateTime recruitingUpdatedDate;
 
     /**
      * 스터디 모임 종료
      */
     private boolean closed;
-    private LocalDateTime closedDateTime;
+    private LocalDateTime closedDate;
 
 
     //== 연관관계 메서드 ==//
@@ -108,4 +110,63 @@ public class Study extends BaseTimeEntity {
     public void updateUseBanner(boolean check) {
         this.useBanner = check;
     }
+
+    public void addStudyTag(StudyTag studyTag) {
+        this.studyTags.add(studyTag);
+        studyTag.setStudy(this);
+    }
+
+    public void addStudyLocation(StudyLocation studyLocation) {
+        this.studyLocations.add(studyLocation);
+        studyLocation.setStudy(this);
+    }
+
+    public void updatePath(PathForm pathForm) {
+        this.path = pathForm.getPath();
+    }
+
+    public void updateTitle(TitleForm titleForm) {
+        this.title = titleForm.getTitle();
+    }
+
+    public void publish() {
+        if (!this.published && !this.recruiting) {
+            this.published = true;
+            this.publishedDate = LocalDateTime.now();
+        } else {
+            throw new RuntimeException("스터디 공개를 할 수 없는 상태입니다. 이미 공개했거나 종료했습니다.");
+        }
+    }
+
+    public void close() {
+        if (this.published && !this.closed) {
+            this.closed = true;
+            this.closedDate = LocalDateTime.now();
+        } else {
+            throw new RuntimeException("스터디를 종료 할 수 없습니다. 스터디를 공개하지 않았거나 이미 종료한 스터디입니다.");
+        }
+    }
+
+    public void startRecruit() {
+        if (canUpdateRecruiting()) {
+            this.recruiting = true;
+            this.recruitingUpdatedDate = LocalDateTime.now();
+        } else {
+            throw new RuntimeException("인원 모집을 시작할 수 없습니다. 스터디를 공개하거나 30분 뒤 다시 시도하세요.");
+        }
+    }
+
+    public void stopRecruit() {
+        if (canUpdateRecruiting()) {
+            this.recruiting = false;
+            this.recruitingUpdatedDate = LocalDateTime.now();
+        } else {
+            throw new RuntimeException("인원 모집을 멈출 수 없습니다. 스터디를 공개하거나 30분 뒤 다시 시도하세요.");
+        }
+    }
+
+    public boolean canUpdateRecruiting() {
+        return this.published && (this.recruitingUpdatedDate == null) || this.recruitingUpdatedDate.isBefore(LocalDateTime.now().minusMinutes(30));
+    }
+
 }

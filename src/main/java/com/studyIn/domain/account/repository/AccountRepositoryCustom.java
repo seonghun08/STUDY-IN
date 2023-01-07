@@ -13,9 +13,9 @@ public interface AccountRepositoryCustom {
 
     String findPasswordByUsername(String username);
 
-    List<Tag> findTagListByAccountId(Long accountId);
+    List<Tag> findTagsByAccountId(Long accountId);
 
-    List<Location> findLocationListById(Long accountId);
+    List<Location> findLocationsById(Long accountId);
 
     Long deleteAccountTag(Long tagId, Long accountId);
 

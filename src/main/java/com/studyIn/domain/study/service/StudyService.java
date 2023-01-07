@@ -18,6 +18,9 @@ public class StudyService {
     private final AccountRepository accountRepository;
     private final StudyRepository studyRepository;
 
+    /**
+     * 스터디 생성
+     */
     public Study createStudy(AccountInfo accountInfo, StudyForm form) {
         Account account = accountRepository.findById(accountInfo.getAccountId())
                 .orElseThrow(IllegalArgumentException::new);

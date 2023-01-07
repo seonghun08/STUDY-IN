@@ -1,4 +1,4 @@
-package com.studyIn.domain.account.controller;
+package com.studyIn.domain.account.controller.validator;
 
 import com.studyIn.domain.account.dto.form.UsernameForm;
 import com.studyIn.domain.account.repository.AccountRepository;

@@ -65,7 +65,7 @@ public class AccontSettingsService {
     public void addTag(Tag tag, AccountInfo accountInfo) {
         AccountTag accountTag = AccountTag.createAccountTag(tag);
         accountRepository.findById(accountInfo.getAccountId())
-                .ifPresent(a -> a.addAccountTag(accountTag));
+                .ifPresent(account -> account.addAccountTag(accountTag));
     }
 
     /**
@@ -94,7 +94,7 @@ public class AccontSettingsService {
     public void addLocation(Location location, AccountInfo accountInfo) {
         AccountLocation accountLocation = AccountLocation.createAccountLocation(location);
         accountRepository.findById(accountInfo.getAccountId())
-                .ifPresent(a -> a.addAccountLocation(accountLocation));
+                .ifPresent(account -> account.addAccountLocation(accountLocation));
     }
 
     /**

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.studyIn.domain.account.entity.QAccount.account;
-import static com.studyIn.domain.account.entity.QAuthentication.authentication;
 import static com.studyIn.domain.account.entity.QProfile.profile;
 import static com.studyIn.domain.location.QLocation.location;
 import static com.studyIn.domain.study.entity.QStudy.study;
@@ -24,6 +23,15 @@ public class StudyQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    public boolean existManagerByAccountIdAndPath(Long accountId, String path) {
+        return jpaQueryFactory
+                .from(studyManager)
+                .join(studyManager.study, study).fetchJoin()
+                .join(studyManager.account, account).fetchJoin()
+                .where(study.path.eq(path).and(account.id.eq(accountId)))
+                .fetchFirst() != null;
+    }
+
     public StudyQueryDto findStudyQueryDtoByPath(String path) {
         StudyQueryDto studyQueryDto = jpaQueryFactory
                 .select(Projections.constructor(
@@ -34,8 +42,11 @@ public class StudyQueryRepository {
                         study.shortDescription,
                         study.fullDescription,
                         study.published,
+                        study.publishedDate,
                         study.recruiting,
+                        study.recruitingUpdatedDate,
                         study.closed,
+                        study.closedDate,
                         study.bannerImage,
                         study.useBanner
                 ))
@@ -50,31 +61,39 @@ public class StudyQueryRepository {
         Long studyId = studyQueryDto.getStudyId();
         studyQueryDto.setManagers(findStudyMangers(studyId));
         studyQueryDto.setMembers(findStudyMembers(studyId));
-        studyQueryDto.setTagTitles(findStudyTagTitles(studyId));
-        studyQueryDto.setLocationTitles(findStudyLocationTitles(studyId));
+        studyQueryDto.setTags(findStudyTags(studyId));
+        studyQueryDto.setLocations(findStudyLocations(studyId));
         return studyQueryDto;
     }
 
-    private List<String> findStudyLocationTitles(Long studyId) {
-        List<String> locationTitles = jpaQueryFactory
-                .select(location.localNameOfCity)
+    private List<StudyLocationDto> findStudyLocations(Long studyId) {
+        return jpaQueryFactory
+                .select(Projections.constructor(
+                        StudyLocationDto.class,
+                        location.id,
+                        location.city,
+                        location.localNameOfCity,
+                        location.province
+                ))
                 .from(studyLocation)
                 .join(studyLocation.study, study)
                 .join(studyLocation.location, location)
                 .where(studyLocation.study.id.eq(studyId))
                 .fetch();
-        return locationTitles;
     }
 
-    private List<String> findStudyTagTitles(Long studyId) {
-        List<String> tagTitles = jpaQueryFactory
-                .select(tag.title)
+    private List<StudyTagDto> findStudyTags(Long studyId) {
+        return jpaQueryFactory
+                .select(Projections.constructor(
+                        StudyTagDto.class,
+                        tag.id,
+                        tag.title
+                ))
                 .from(studyTag)
                 .join(studyTag.study, study)
                 .join(studyTag.tag, tag)
                 .where(studyTag.study.id.eq(studyId))
                 .fetch();
-        return tagTitles;
     }
 
     private List<StudyAccountDto> findStudyMembers(Long studyId) {
@@ -83,14 +102,13 @@ public class StudyQueryRepository {
                         StudyAccountDto.class,
                         account.id.as("accountId"),
                         account.username,
-                        authentication.email,
+                        profile.email,
                         profile.nickname,
                         profile.profileImage,
                         profile.bio))
                 .from(studyMember)
                 .join(studyMember.study, study)
                 .join(studyMember.account, account)
-                .join(account.authentication, authentication)
                 .join(account.profile, profile)
                 .where(studyMember.study.id.eq(studyId))
                 .fetch();
@@ -102,14 +120,13 @@ public class StudyQueryRepository {
                         StudyAccountDto.class,
                         account.id.as("accountId"),
                         account.username,
-                        authentication.email,
+                        profile.email,
                         profile.nickname,
                         profile.profileImage,
                         profile.bio))
                 .from(studyManager)
                 .join(studyManager.study, study)
                 .join(studyManager.account, account)
-                .join(account.authentication, authentication)
                 .join(account.profile, profile)
                 .where(studyManager.study.id.eq(studyId))
                 .fetch();

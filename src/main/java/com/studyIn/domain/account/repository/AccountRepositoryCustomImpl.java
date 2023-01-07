@@ -49,7 +49,7 @@ public class AccountRepositoryCustomImpl implements AccountRepositoryCustom {
     }
 
     @Override
-    public List<Tag> findTagListByAccountId(Long accountId) {
+    public List<Tag> findTagsByAccountId(Long accountId) {
         return jpaQueryFactory
                 .select(tag)
                 .from(account)
@@ -60,7 +60,7 @@ public class AccountRepositoryCustomImpl implements AccountRepositoryCustom {
     }
 
     @Override
-    public List<Location> findLocationListById(Long accountId) {
+    public List<Location> findLocationsById(Long accountId) {
         return jpaQueryFactory
                 .select(location)
                 .from(account)

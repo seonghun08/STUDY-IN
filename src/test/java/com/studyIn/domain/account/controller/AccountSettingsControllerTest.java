@@ -8,8 +8,8 @@ import com.studyIn.domain.account.entity.*;
 import com.studyIn.domain.account.entity.value.Gender;
 import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import com.studyIn.domain.account.repository.AccountRepository;
-import com.studyIn.domain.account.service.AccountService;
 import com.studyIn.domain.account.service.AccontSettingsService;
+import com.studyIn.domain.account.service.AccountService;
 import com.studyIn.domain.location.Location;
 import com.studyIn.domain.location.LocationForm;
 import com.studyIn.domain.location.LocationRepository;
@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class SettingsControllerTest {
+class AccountSettingsControllerTest {
 
     @Autowired MockMvc mvc;
     @Autowired JPAQueryFactory jpaQueryFactory;

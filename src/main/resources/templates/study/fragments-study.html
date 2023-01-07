@@ -110,18 +110,18 @@
     <div class="row justify-content-center">
         <div class="col-10">
             <p>
-                <span th:each="tag : ${study.tagTitles}" class="mr-2">
-                    <a class="box badge rounded-pill badge-primary mr-3" th:href="@{'/search/tag/' + ${tag}}">
+                <span th:each="tag : ${study.tags}" class="mr-2">
+                    <a class="box badge rounded-pill badge-primary mr-3" th:href="@{'/search/tag/' + ${tag.title}}">
                         <i class="fas fa-hashtag"></i>
-                        <span th:text="${tag}">Tag</span>
+                        <span th:text="${tag.title}">Tag</span>
                     </a>
                 </span><br/>
-                <span th:each="location: ${study.locationTitles}" class="mr-2">
+                <span th:each="location: ${study.locations}" class="mr-2">
                     <a class="box badge rounded-pill badge-success mr-3"
-                       th:href="@{'/search/location/' + ${location}}"
+                       th:href="@{'/search/location/' + ${location.localNameOfCity}}"
                     >
                         <i class="fas fa-globe-asia"></i>
-                        <span th:text="${location}">City</span>
+                        <span th:text="${location.localNameOfCity}">City</span>
                     </a>
                 </span>
             </p>

@@ -11,13 +11,13 @@ public class StudyAccountDto {
 
     private Long accountId;
     private String username;
+
     private String email;
     private String nickname;
+    private String bio;
 
     @Lob @Basic(fetch = FetchType.LAZY)
     private String profileImage;
-
-    private String bio;
 
     public StudyAccountDto(Long accountId, String username, String email, String nickname, String profileImage, String bio) {
         this.accountId = accountId;

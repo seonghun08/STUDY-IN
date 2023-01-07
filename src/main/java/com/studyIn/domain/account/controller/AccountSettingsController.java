@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studyIn.domain.account.AccountInfo;
 import com.studyIn.domain.account.CurrentAccount;
 import com.studyIn.domain.account.controller.validator.PasswordFormValidator;
+import com.studyIn.domain.account.controller.validator.UsernameFormValidator;
 import com.studyIn.domain.account.dto.form.NotificationsSettingForm;
 import com.studyIn.domain.account.dto.form.PasswordForm;
 import com.studyIn.domain.account.dto.form.ProfileForm;
@@ -40,7 +41,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/settings")
 @RequiredArgsConstructor
-public class SettingsController {
+public class AccountSettingsController {
 
     private final AccontSettingsService accontSettingsService;
     private final TagService tagService;
@@ -133,7 +134,7 @@ public class SettingsController {
 
     @GetMapping("/tags")
     public String updateTagsForm(@CurrentAccount AccountInfo accountInfo, Model model) throws JsonProcessingException {
-        List<String> tags = accountRepository.findTagListByAccountId(accountInfo.getAccountId()).stream()
+        List<String> tags = accountRepository.findTagsByAccountId(accountInfo.getAccountId()).stream()
                 .map(Tag::getTitle)
                 .collect(Collectors.toList());
         List<String> allTags = tagRepository.findAll().stream()
@@ -169,7 +170,7 @@ public class SettingsController {
 
     @GetMapping("/locations")
     public String updateLocationsForm(@CurrentAccount AccountInfo accountInfo, Model model) throws JsonProcessingException {
-        List<String> locations = accountRepository.findLocationListById(accountInfo.getAccountId()).stream()
+        List<String> locations = accountRepository.findLocationsById(accountInfo.getAccountId()).stream()
                 .map(Location::toString).collect(Collectors.toList());
         List<String> allLocations = locationRepository.findAll().stream()
                 .map(Location::toString)

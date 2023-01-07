@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "account")
@@ -35,10 +35,10 @@ public class Account extends BaseTimeEntity {
     private Authentication authentication;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    private Set<AccountTag> accountTags = new HashSet<>();
+    private List<AccountTag> accountTags = new ArrayList<>();
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    private Set<AccountLocation> accountLocations = new HashSet<>();
+    private List<AccountLocation> accountLocations = new ArrayList<>();
 
 
     //== 연관관계 메서드 ==//
