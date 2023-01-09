@@ -2,10 +2,6 @@
 ### 스터디모임 관리 웹 서비스
 
 Back-end dev 준비생의 1인 웹 프로젝트 포트폴리오<br/>
-example picture - 예시 사진 모음<br/>
-
-계속 공부하다보니 부족한 부분이 많이 느껴져서 진행 중단<br/>
-야매로 만든 감이 있어 좀 더 실무 관점에서 맞춰 새로 만들 생각이다.<br/><br/>
 
 java 11, JUnit5, MVC<br/>
 spring boot, spring data JPA, spring security<br/>
