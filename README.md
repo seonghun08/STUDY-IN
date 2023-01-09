@@ -1,5 +1,6 @@
 # STUDY IN
 스프링 기반 웹 서비스 프로젝트<br/>
+#### Example of View :: https://github.com/seonghun08/studyIn-project/commit/d6db1d0315e1e144d051d6038635611116cb49b1
 #### test-model :: https://github.com/seonghun08/studyIn-test-model
 
 ## 사용된 기술 스택
