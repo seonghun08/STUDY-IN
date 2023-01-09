@@ -5,15 +5,12 @@ import com.studyIn.domain.account.AccountFactory;
 import com.studyIn.domain.account.AccountInfo;
 import com.studyIn.domain.account.dto.form.*;
 import com.studyIn.domain.account.entity.*;
-import com.studyIn.domain.account.entity.value.Gender;
-import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import com.studyIn.domain.account.repository.AccountRepository;
 import com.studyIn.domain.location.Location;
 import com.studyIn.domain.location.LocationForm;
 import com.studyIn.domain.location.LocationRepository;
 import com.studyIn.domain.location.QLocation;
 import com.studyIn.domain.tag.*;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,7 +28,8 @@ class AccountSettingsServiceTest {
 
     @PersistenceContext EntityManager em;
     @Autowired JPAQueryFactory jpaQueryFactory;
-    @Autowired AccontSettingsService accontSettingsService;
+    @Autowired
+    AccountSettingsService accountSettingsService;
     @Autowired TagService tagService;
     @Autowired AccountRepository accountRepository;
     @Autowired LocationRepository locationRepository;
@@ -50,7 +48,7 @@ class AccountSettingsServiceTest {
         ProfileForm profileForm = new ProfileForm();
         profileForm.setBio(bio);
         profileForm.setNickname(nickname);
-        accontSettingsService.updateProfile(profileForm, accountInfo);
+        accountSettingsService.updateProfile(profileForm, accountInfo);
         em.flush();
         em.clear();
 
@@ -74,7 +72,7 @@ class AccountSettingsServiceTest {
         passwordForm.setCurrentPassword(form.getPassword());
         passwordForm.setNewPassword(password);
         passwordForm.setConfirmPassword(password);
-        accontSettingsService.updatePassword(passwordForm, accountInfo);
+        accountSettingsService.updatePassword(passwordForm, accountInfo);
         em.flush();
         em.clear();
 
@@ -95,7 +93,7 @@ class AccountSettingsServiceTest {
         notificationsSettingForm.setStudyCreatedByEmail(true);
         notificationsSettingForm.setStudyUpdatedByEmail(true);
         notificationsSettingForm.setStudyEnrollmentResultByEmail(true);
-        accontSettingsService.updateNotificationsSetting(notificationsSettingForm, accountInfo);
+        accountSettingsService.updateNotificationsSetting(notificationsSettingForm, accountInfo);
         em.flush();
         em.clear();
 
@@ -117,7 +115,7 @@ class AccountSettingsServiceTest {
         TagForm tagForm = new TagForm();
         tagForm.setTitle("spring boot");
         Tag tag = tagService.findExistingTagOrElseCreateTag(tagForm);
-        accontSettingsService.addTag(tag, accountInfo);
+        accountSettingsService.addTag(tag, accountInfo);
         em.flush();
         em.clear();
 
@@ -139,12 +137,12 @@ class AccountSettingsServiceTest {
         TagForm tagForm = new TagForm();
         tagForm.setTitle("spring boot");
         Tag tag = tagService.findExistingTagOrElseCreateTag(tagForm);
-        accontSettingsService.addTag(tag, accountInfo);
+        accountSettingsService.addTag(tag, accountInfo);
         em.flush();
         em.clear();
 
         //then
-        accontSettingsService.removeTag(tag, accountInfo);
+        accountSettingsService.removeTag(tag, accountInfo);
 
         //then
         AccountTag accountTag = jpaQueryFactory
@@ -167,7 +165,7 @@ class AccountSettingsServiceTest {
         locationForm.setLocationName("Seoul/(서울)/none");
         Location location = Location.createLocation(locationForm.getCityName(), locationForm.getLocalNameOfCity(), locationForm.getProvinceName());
         locationRepository.save(location);
-        accontSettingsService.addLocation(location, accountInfo);
+        accountSettingsService.addLocation(location, accountInfo);
         em.flush();
         em.clear();
 
@@ -191,12 +189,12 @@ class AccountSettingsServiceTest {
         locationForm.setLocationName("Seoul/(서울)/none");
         Location location = Location.createLocation(locationForm.getCityName(), locationForm.getLocalNameOfCity(), locationForm.getProvinceName());
         locationRepository.save(location);
-        accontSettingsService.addLocation(location, accountInfo);
+        accountSettingsService.addLocation(location, accountInfo);
         em.flush();
         em.clear();
 
         //when
-        accontSettingsService.removeLocation(location, accountInfo);
+        accountSettingsService.removeLocation(location, accountInfo);
 
         //then
         AccountLocation accountLocation = jpaQueryFactory
@@ -218,7 +216,7 @@ class AccountSettingsServiceTest {
         String username = "update-username";
         UsernameForm usernameForm = new UsernameForm();
         usernameForm.setUsername(username);
-        accontSettingsService.updateUsername(usernameForm, accountInfo);
+        accountSettingsService.updateUsername(usernameForm, accountInfo);
         em.flush();
         em.clear();
 

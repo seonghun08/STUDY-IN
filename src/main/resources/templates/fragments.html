@@ -32,6 +32,9 @@
             crossorigin="anonymous">
     </script>
 
+    <!--  moment date-time  -->
+    <script src="/node_modules/moment/min/moment-with-locales.min.js"></script>
+
     <style>
         .box {
             overflow: hidden;
@@ -449,6 +452,183 @@
     </a>
 </div>
 
+<!--  event form  -->
+<div th:fragment="event-form (mode, action)">
+    <div class="py-3 text-center form-label">
+        <br/>
+        <h2>STUDY IN</h2>
+    </div>
+    <div class="row justify-content-center">
+        <div class="lead text-center">
+            <h2><a th:href="@{'/study/' + ${study.path}}"><span th:text="${study.title}">스터디</span></a></h2>
+            <p th:if="${mode == 'new'}">스터디 모임 만들기</p>
+            <p th:if="${mode == 'edit'}" th:text="${event.title}"></p>
+        </div>
+        <form class="needs-validation col-sm-8"
+              th:action="@{${action}}"
+              th:object="${eventForm}"
+              method="post"
+              novalidate
+        >
+            <div class="form-group mt-3">
+                <label class="form-label" for="title">Study meeting title</label>
+                <input class="form-control"
+                       th:field="*{title}"
+                       id="title"
+                       type="text"
+                       placeholder="모임 이름을 입력하세요."
+                       aria-describedby="titleHelp"
+                       required max="30"
+                />
+                <small id="titleHelp" class="form-text text-muted">
+                    30자 이내로 입력하세요.<br/>
+                </small>
+                <small class="invalid-feedback">모임 이름을 입력하세요.</small>
+                <small th:if="${#fields.hasErrors('title')}"
+                       th:errors="*{title}"
+                       class="form-text text-danger"
+                >
+                    Title Error
+                </small>
+            </div>
+            <div class="row">
+                <small class="note note-light mt-4">
+                    <strong>선착순으로 모집하는 경우</strong> 모집 인원 이내의 접수는 자동으로 확정되며, 제한 인원을 넘는 신청은 대기 신청이 되며 이후 확정된 신청자 중에 취소를 하면
+                    선착순으로 대기 신청자를 확정 신청자도 변경합니다. 단, 등록 마감일 이후에는 취소해도 확정 여부가 바뀌지 않습니다.<br/>
+                    <strong>관리자 확인으로 모집하는 경우</strong> 관리자가 모임 신청 목록을 조회하고 직접 확정 여부를 정할 수 있습니다. 등록 마감일 이후에는 변경할 수 없습니다.
+                </small>
+                <div class="col-sm mt-3">
+                    <label class="form-label" for="eventType">Recruitment method</label>
+                    <select class="form-control form-select"
+                            th:disabled="${mode == 'edit'}"
+                            th:field="*{eventType}"
+                            id="eventType"
+                            aria-describedby="eventTypeHelp"
+                    >
+                        <option th:value="FIRST_COME_FIRST_SERVED">선착순</option>
+                        <option th:value="MANAGER_CHECK">관리자 확인</option>
+                    </select>
+                    <small class="form-text text-muted" id="eventTypeHelp">
+                        모집방법을 선택하세요.<br/>
+                    </small>
+                </div>
+                <div class="col-sm mt-3">
+                    <label class="form-label" for="limitOfEnrollments">Number of recruitment</label>
+                    <input class="form-control"
+                           th:field="*{limitOfEnrollments}"
+                           id="limitOfEnrollments"
+                           type="number"
+                           placeholder="0"
+                           aria-describedby="limitOfEnrollmentsHelp"
+                    >
+                    <small class="form-text text-muted" id="limitOfEnrollmentsHelp">
+                        최소 2인 이상 수용 가능한 모임 참석 인원을 설정하세요.<br/>
+                    </small>
+                    <small class="invalid-feedback">모임 신청 마감 일시를 입력하세요.</small>
+                    <small th:if="${#fields.hasErrors('limitOfEnrollments')}"
+                           th:errors="*{limitOfEnrollments}"
+                           class="form-text text-danger"
+                    >
+                        Error
+                    </small>
+                </div>
+            </div>
+            <div class="row">
+                <small class="note note-light mt-4">
+                    <strong>등록 마감 일시</strong> 이전에만 스터디 모임 참가 신청을 할 수 있습니다.<br/>
+                    <strong>모임 시작 일시</strong>를 입력하세요. 모임이 시작되면 등록이 마감되며 상세한 일정은 본문에 적어주세요.<br/>
+                    <strong>모임 종료 일시</strong>가 지나면 모임은 자동으로 종료 상태로 바뀝니다.
+                </small>
+                <div class="col-md-4 mt-3">
+                    <label class="form-label" for="endEnrollmentDate">Registration deadline</label>
+                    <input class="form-control"
+                           th:field="*{endEnrollmentDate}"
+                           id="endEnrollmentDate"
+                           type="datetime-local"
+                           aria-describedby="endEnrollmentDateHelp"
+                           required
+                    />
+                    <small id="endEnrollmentDateHelp" class="form-text text-muted">
+                        등록 마감 일시를 입력하세요.
+                    </small>
+                    <small class="invalid-feedback">모임 신청 마감 일시를 입력하세요.</small>
+                    <small th:if="${#fields.hasErrors('endEnrollmentDate')}"
+                           th:errors="*{endEnrollmentDate}"
+                           class="form-text text-danger"
+                    >
+                        Error
+                    </small>
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label class="form-label" for="startDate">Meeting start date</label>
+                    <input class="form-control"
+                           th:field="*{startDate}"
+                           id="startDate"
+                           type="datetime-local"
+                           aria-describedby="startDateHelp"
+                           required
+                    />
+                    <small id="startDateHelp" class="form-text text-muted">
+                        모임 시작 일시를 입력하세요.
+                    </small>
+                    <small class="invalid-feedback">모임 시작 일시를 입력하세요.</small>
+                    <small th:if="${#fields.hasErrors('startDate')}"
+                           th:errors="*{startDate}"
+                           class="form-text text-danger"
+                    >
+                        Error
+                    </small>
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label class="form-label" for="startDate">Meeting end date</label>
+                    <input class="form-control"
+                           th:field="*{endDate}"
+                           id="endDate"
+                           type="datetime-local"
+                           aria-describedby="endDateHelp"
+                           required
+                    />
+                    <small class="form-text text-muted" id="endDateHelp">
+                        종료 일시를 입력하세요.
+                    </small>
+                    <small class="invalid-feedback">모임 종료 일시를 입력하세요.</small>
+                    <small th:if="${#fields.hasErrors('endDate')}"
+                           th:errors="*{endDate}"
+                           class="form-text text-danger"
+                    >
+                        Error
+                    </small>
+                </div>
+            </div>
+            <div class="form-group mt-4">
+                <label class="form-label" for="fullDescription">Full description</label>
+                <textarea class="editor form-control"
+                          th:field="*{description}"
+                          id="fullDescription"
+                          required
+                >
+                </textarea>
+                <small class="invalid-feedback">상세 소개를 입력하세요.</small>
+                <small th:if="${#fields.hasErrors('description')}"
+                       th:errors="*{description}"
+                       class="form-text text-danger"
+                >
+                    FullDescription Error
+                </small>
+            </div>
+            <div class="form-group mt-3">
+                <button class="btn btn-primary btn-block"
+                        th:text="${mode == 'edit' ? '모임 수정' : '모임 만들기'}"
+                        type="submit"
+                >
+                    모임 만들기
+                </button>
+            </div>
+            <br/>
+        </form>
+    </div>
+</div>
+
 <!-- footer -->
 <footer th:fragment="footer" class="text-center text-lg-start bg-white text-muted mt-5">
 
@@ -744,5 +924,38 @@
     });
 </script>
 
+<!--  moment date-time  -->
+<script th:fragment="date-time" type="application/javascript">
+    $(function () {
+        moment.locale('ko');
+        $(".date-time").text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
+        });
+        $(".date").text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('L');
+        });
+        $(".date-ll").text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LL');
+        });
+        $(".weekday").text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('dddd');
+        });
+        $(".days").text(function (index, dateTime) {
+            return moment().subtract(9, 'days').calendar();
+        });
+        $(".time").text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LT');
+        });
+        $(".calendar").text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD`T`hh:mm").calendar();
+        });
+        $(".fromNow").text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD`T`hh:mm").fromNow();
+        });
+        $(".date-weekday-time").text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLLL');
+        });
+    })
+</script>
 </body>
 </html>

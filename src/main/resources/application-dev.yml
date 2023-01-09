@@ -22,15 +22,15 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     open-in-view: false
 
   mail:
     protocol: smtp
     host: smtp.gmail.com
     port: 587
-    username: shajhTest@gmail.com
-    password: hpuhpitlvbgdqzho
+    username: shajh2210@gmail.com
+    password: rkxnodxjoaacssbs
 
     properties.mail.smtp:
       auth: true

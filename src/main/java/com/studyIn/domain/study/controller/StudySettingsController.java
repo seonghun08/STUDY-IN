@@ -7,6 +7,7 @@ import com.studyIn.domain.account.CurrentAccount;
 import com.studyIn.domain.location.Location;
 import com.studyIn.domain.location.LocationForm;
 import com.studyIn.domain.location.LocationRepository;
+import com.studyIn.domain.study.controller.validator.PathFormValidator;
 import com.studyIn.domain.study.dto.form.DescriptionForm;
 import com.studyIn.domain.study.dto.form.PathForm;
 import com.studyIn.domain.study.dto.form.TitleForm;
@@ -25,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -43,9 +45,21 @@ public class StudySettingsController {
     private final StudyRepository studyRepository;
     private final TagRepository tagRepository;
     private final LocationRepository locationRepository;
-    private final StudyQueryRepository studyQueryRepository;
+
     private final ModelMapper modelMapper;
     private final ObjectMapper objectMapper;
+    private final PathFormValidator pathFormValidator;
+    private final TitleFormValidator titleFormValidator;
+
+    @InitBinder("pathForm")
+    public void pathFormInitBinder(WebDataBinder webDataBinder) {
+        webDataBinder.addValidators(pathFormValidator);
+    }
+
+    @InitBinder("titleForm")
+    public void titleFormInitBinder(WebDataBinder webDataBinder) {
+        webDataBinder.addValidators(titleFormValidator);
+    }
 
     @GetMapping("/description")
     public String updateDescriptionForm(@CurrentAccount AccountInfo accountInfo, @PathVariable String path, Model model) {

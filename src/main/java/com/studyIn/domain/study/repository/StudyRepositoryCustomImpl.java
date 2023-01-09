@@ -2,6 +2,7 @@ package com.studyIn.domain.study.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.studyIn.domain.study.entity.Study;
+import com.studyIn.domain.study.entity.StudyManager;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
@@ -66,6 +67,16 @@ public class StudyRepositoryCustomImpl implements StudyRepositoryCustom {
 
 
         return Optional.ofNullable(result);
+    }
+
+    @Override
+    public boolean existStudyManagerByStudyPathAndAccountId(String studyPath, Long accountId) {
+        return jpaQueryFactory
+                .selectFrom(studyManager)
+                .join(studyManager.study, study).fetchJoin()
+                .join(studyManager.account, account).fetchJoin()
+                .where(study.path.eq(studyPath).and(account.id.eq(accountId)))
+                .fetchFirst() != null;
     }
 
     @Override

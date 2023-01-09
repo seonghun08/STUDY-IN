@@ -1,9 +1,7 @@
 package com.studyIn.domain.study.repository;
 
 import com.studyIn.domain.study.entity.Study;
-import com.studyIn.domain.tag.Tag;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface StudyRepositoryCustom {
@@ -13,6 +11,8 @@ public interface StudyRepositoryCustom {
     Optional<Study> findWithManagersByPath(String path);
 
     Optional<Study> findWithMembersByPath(String path);
+
+    boolean existStudyManagerByStudyPathAndAccountId(String StudyPath, Long accountId);
 
     Long deleteStudyTag(Long tagId, Long studyId);
 

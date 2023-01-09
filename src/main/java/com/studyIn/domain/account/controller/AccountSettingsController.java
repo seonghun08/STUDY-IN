@@ -15,7 +15,7 @@ import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import com.studyIn.domain.account.repository.AccountRepository;
 import com.studyIn.domain.account.repository.AuthenticationRepository;
 import com.studyIn.domain.account.repository.ProfileRepository;
-import com.studyIn.domain.account.service.AccontSettingsService;
+import com.studyIn.domain.account.service.AccountSettingsService;
 import com.studyIn.domain.location.Location;
 import com.studyIn.domain.location.LocationForm;
 import com.studyIn.domain.location.LocationRepository;
@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AccountSettingsController {
 
-    private final AccontSettingsService accontSettingsService;
+    private final AccountSettingsService accountSettingsService;
     private final TagService tagService;
     private final AccountRepository accountRepository;
     private final AuthenticationRepository authenticationRepository;
@@ -84,7 +84,7 @@ public class AccountSettingsController {
             return "account/settings/profile";
         }
 
-        accontSettingsService.updateProfile(profileForm, accountInfo);
+        accountSettingsService.updateProfile(profileForm, accountInfo);
         attributes.addFlashAttribute("message", "프로필 수정을 완료했습니다.");
         return "redirect:/settings/profile";
     }
@@ -104,7 +104,7 @@ public class AccountSettingsController {
             return "account/settings/password";
         }
 
-        accontSettingsService.updatePassword(passwordForm, accountInfo);
+        accountSettingsService.updatePassword(passwordForm, accountInfo);
         attributes.addFlashAttribute("message", "패스워드를 수정했습니다.");
         return "redirect:/settings/password";
     }
@@ -127,7 +127,7 @@ public class AccountSettingsController {
             return "account/settings/notifications";
         }
 
-        accontSettingsService.updateNotificationsSetting(notificationsSettingForm, accountInfo);
+        accountSettingsService.updateNotificationsSetting(notificationsSettingForm, accountInfo);
         attributes.addFlashAttribute("message", "알림을 수정했습니다.");
         return "redirect:/settings/notifications";
     }
@@ -151,7 +151,7 @@ public class AccountSettingsController {
     @ResponseBody
     public ResponseEntity addTag(@CurrentAccount AccountInfo accountInfo, @RequestBody TagForm tagForm) {
         Tag tag = tagService.findExistingTagOrElseCreateTag(tagForm);
-        accontSettingsService.addTag(tag, accountInfo);
+        accountSettingsService.addTag(tag, accountInfo);
         return ResponseEntity.ok().build();
     }
 
@@ -164,7 +164,7 @@ public class AccountSettingsController {
             return ResponseEntity.badRequest().build();
         }
 
-        accontSettingsService.removeTag(tag.get(), accountInfo);
+        accountSettingsService.removeTag(tag.get(), accountInfo);
         return ResponseEntity.ok().build();
     }
 
@@ -191,7 +191,7 @@ public class AccountSettingsController {
             return ResponseEntity.badRequest().build();
         }
 
-        accontSettingsService.addLocation(location.get(), accountInfo);
+        accountSettingsService.addLocation(location.get(), accountInfo);
         return ResponseEntity.ok().build();
     }
 
@@ -204,7 +204,7 @@ public class AccountSettingsController {
             return ResponseEntity.badRequest().build();
         }
 
-        accontSettingsService.removeLocation(location.get(), accountInfo);
+        accountSettingsService.removeLocation(location.get(), accountInfo);
         return ResponseEntity.ok().build();
     }
 
@@ -223,7 +223,7 @@ public class AccountSettingsController {
             return "account/settings/account";
         }
 
-        accontSettingsService.updateUsername(usernameForm, accountInfo);
+        accountSettingsService.updateUsername(usernameForm, accountInfo);
         attributes.addFlashAttribute("message", "계정을 수정했습니다.");
         return "redirect:/login";
     }

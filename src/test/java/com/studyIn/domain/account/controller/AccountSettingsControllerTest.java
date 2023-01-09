@@ -4,13 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.studyIn.domain.account.AccountFactory;
 import com.studyIn.domain.account.AccountInfo;
-import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.*;
-import com.studyIn.domain.account.entity.value.Gender;
-import com.studyIn.domain.account.entity.value.NotificationsSetting;
 import com.studyIn.domain.account.repository.AccountRepository;
-import com.studyIn.domain.account.service.AccontSettingsService;
-import com.studyIn.domain.account.service.AccountService;
+import com.studyIn.domain.account.service.AccountSettingsService;
 import com.studyIn.domain.location.Location;
 import com.studyIn.domain.location.LocationForm;
 import com.studyIn.domain.location.LocationRepository;
@@ -46,7 +42,8 @@ class AccountSettingsControllerTest {
 
     @Autowired MockMvc mvc;
     @Autowired JPAQueryFactory jpaQueryFactory;
-    @Autowired AccontSettingsService accontSettingsService;
+    @Autowired
+    AccountSettingsService accountSettingsService;
     @Autowired AccountRepository accountRepository;
     @Autowired TagRepository tagRepository;
     @Autowired LocationRepository locationRepository;
@@ -277,7 +274,7 @@ class AccountSettingsControllerTest {
         Tag saveTag = tagRepository.save(Tag.createTag("spring boot"));
         Account saveAccount = accountRepository.findByUsername("user").orElseThrow();
         AccountInfo accountInfo = new AccountInfo(saveAccount);
-        accontSettingsService.addTag(saveTag, accountInfo);
+        accountSettingsService.addTag(saveTag, accountInfo);
 
         TagForm tagForm = new TagForm();
         tagForm.setTitle("spring boot");
@@ -342,7 +339,7 @@ class AccountSettingsControllerTest {
         Location location = locationRepository.findByCityAndProvince(testLocation.getCity(), testLocation.getProvince()).orElseThrow();
         Account saveAccount = accountRepository.findByUsername("user").orElseThrow();
         AccountInfo accountInfo = new AccountInfo(saveAccount);
-        accontSettingsService.addLocation(location, accountInfo);
+        accountSettingsService.addLocation(location, accountInfo);
 
         LocationForm locationForm = new LocationForm();
         locationForm.setLocationName(testLocation.toString());

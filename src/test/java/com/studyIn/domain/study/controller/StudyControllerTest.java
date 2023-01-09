@@ -3,23 +3,17 @@ package com.studyIn.domain.study.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.studyIn.domain.account.AccountFactory;
-import com.studyIn.domain.account.AccountInfo;
-import com.studyIn.domain.account.dto.form.SignUpForm;
 import com.studyIn.domain.account.entity.Account;
-import com.studyIn.domain.account.entity.QAccount;
-import com.studyIn.domain.account.entity.value.Gender;
 import com.studyIn.domain.account.repository.AccountRepository;
-import com.studyIn.domain.account.service.AccontSettingsService;
+import com.studyIn.domain.account.service.AccountSettingsService;
 import com.studyIn.domain.account.service.AccountService;
 import com.studyIn.domain.location.LocationRepository;
 import com.studyIn.domain.study.StudyFactory;
-import com.studyIn.domain.study.entity.QStudy;
-import com.studyIn.domain.study.entity.QStudyManager;
 import com.studyIn.domain.study.entity.Study;
+import com.studyIn.domain.study.entity.StudyMember;
 import com.studyIn.domain.study.repository.StudyRepository;
 import com.studyIn.domain.study.service.StudyService;
 import com.studyIn.domain.tag.TagRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,33 +25,29 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.studyIn.domain.account.entity.QAccount.account;
-import static com.studyIn.domain.study.entity.QStudy.study;
-import static com.studyIn.domain.study.entity.QStudyManager.studyManager;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
+@Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
 class StudyControllerTest {
 
-    @PersistenceContext EntityManager em;
     @Autowired MockMvc mvc;
     @Autowired JPAQueryFactory jpaQueryFactory;
     @Autowired AccountService accountService;
     @Autowired StudyService studyService;
-    @Autowired AccontSettingsService accontSettingsService;
+    @Autowired
+    AccountSettingsService accountSettingsService;
     @Autowired AccountRepository accountRepository;
     @Autowired ObjectMapper objectMapper;
     @Autowired PasswordEncoder passwordEncoder;
@@ -70,6 +60,11 @@ class StudyControllerTest {
     @BeforeEach
     void beforeEach() {
         accountFactory.createAccount("user");
+    }
+
+    @AfterEach
+    void afterEach() {
+        accountRepository.deleteAll();
     }
 
     @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
@@ -174,5 +169,74 @@ class StudyControllerTest {
                 .andExpect(view().name("study/members"))
                 .andExpect(model().attributeExists("accountInfo"))
                 .andExpect(model().attributeExists("study"));
+    }
+
+    @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("스터디 가입 실패 - 스터디 공개가 안됬거나, 모집 기간이 아닌 경우")
+    @Test
+    void joinStudy_fail() throws Exception {
+        Account manager = accountFactory.createAccount("manager");
+        Study study = studyFactory.createStudy("path", manager);
+
+        mvc.perform(post("/study/" + study.getPath() + "/join")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/study/" + study.getPath() + "/members"));
+
+        Account member = accountRepository.findByUsername("user")
+                .orElseThrow(RuntimeException::new);
+        Study findStudy = studyRepository.findWithMembersByPath("path")
+                .orElseThrow(RuntimeException::new);
+        List<String> members_username = findStudy.getMembers().stream()
+                .map(m -> m.getAccount().getUsername())
+                .collect(Collectors.toList());
+
+        assertThat(members_username.contains(member.getUsername())).isFalse();
+    }
+    
+    @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("스터디 가입 성공")
+    @Test
+    void joinStudy_success() throws Exception {
+        Account manager = accountFactory.createAccount("manager");
+        Study study = studyFactory.createStudy("path", manager);
+        study.publish();
+        study.startRecruit();
+        studyRepository.save(study);
+
+        mvc.perform(post("/study/" + study.getPath() + "/join")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/study/" + study.getPath() + "/members"));
+
+        Account member = accountRepository.findByUsername("user")
+                .orElseThrow(RuntimeException::new);
+        Study findStudy = studyRepository.findWithMembersByPath("path")
+                .orElseThrow(RuntimeException::new);
+        List<String> members_username = findStudy.getMembers().stream()
+                .map(m -> m.getAccount().getUsername())
+                .collect(Collectors.toList());
+
+        assertThat(members_username.contains(member.getUsername())).isTrue();
+    }
+
+    @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("스터디 탈퇴")
+    @Test
+    void leaveStudy() throws Exception {
+        Account manager = accountFactory.createAccount("manager");
+        Account member = accountRepository.findByUsername("user")
+                .orElseThrow(RuntimeException::new);
+
+        Study study = studyFactory.createStudy("path", manager);
+        study.publish();
+        study.startRecruit();
+        StudyMember studyMember = StudyMember.createStudyMember(member);
+        study.setStudyMember(studyMember);
+
+        mvc.perform(post("/study/" + study.getPath() + "/leave")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/study/" + study.getPath() + "/members"));
     }
 }
