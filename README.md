@@ -9,7 +9,7 @@
 ### Backend
 * Java 11
 * Spring Boot 2.xx, Spring MVC, Spring Data JPA
-* Spring data JPA, Querydsl
+* JPA/Hibernate, Querydsl
 * JUnit5, Mockito
 * Gradle
 * Thymeleaf
