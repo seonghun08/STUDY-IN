@@ -1,5 +1,7 @@
 # STUDY IN
-스프링 기반 웹 서비스 프로젝트<br/>
+### Spring Boot 기반 웹 1인 개발 프로젝트<br/>
+주제 태그와 지역 태그를 기반으로 스터디 모임을 관리하는 웹서비스<br/>
+
 #### Example of View :: https://github.com/seonghun08/studyIn-project/commit/d6db1d0315e1e144d051d6038635611116cb49b1
 #### test-model :: https://github.com/seonghun08/studyIn-test-model
 
