@@ -2,6 +2,8 @@ package com.studyIn.domain.account.entity;
 
 import com.studyIn.domain.BaseTimeEntity;
 import com.studyIn.domain.account.dto.form.SignUpForm;
+import com.studyIn.domain.board.Board;
+import com.studyIn.domain.comment.Comment;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static javax.persistence.CascadeType.ALL;
 
 @Entity
 @Table(name = "account")
@@ -40,6 +44,12 @@ public class Account extends BaseTimeEntity {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<AccountLocation> accountLocations = new ArrayList<>();
 
+    @OneToMany(mappedBy = "writer", cascade = ALL, orphanRemoval = true)
+    private List<Board> boards = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer", cascade = ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
 
     //== 연관관계 메서드 ==//
     public void setAuthentication(Authentication authentication) {
@@ -49,6 +59,14 @@ public class Account extends BaseTimeEntity {
 
     public void setProfile(Profile profile) {
         this.profile = profile;
+    }
+
+    public void addBoard(Board board) {
+        this.boards.add(board);
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
     }
 
 
