@@ -8,7 +8,7 @@
 ## 사용된 기술 스택
 ### Backend
 * Java 11
-* Spring Boot 2.xx, Spring MVC, Spring Data JPA
+* Spring Boot 2.7.6, Spring MVC, Spring Data JPA, Spring Security
 * JPA/Hibernate, Querydsl
 * JUnit5, Mockito
 * Gradle
