@@ -2,6 +2,7 @@ package com.studyIn.domain.notification;
 
 import com.studyIn.domain.account.AccountInfo;
 import com.studyIn.domain.account.CurrentAccount;
+import com.studyIn.domain.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,19 +17,20 @@ import java.util.List;
 public class NotificationController {
 
     private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
 
-//    @GetMapping("/notifications")
-//    public String viewNotifications(@CurrentAccount AccountInfo AccountInfo, Model model) {
-//        List<Notification> unreadNotifications = notificationService.findNotificationsByChecked(AccountInfo, false);
-//        int readNotificationsCount = notificationService.findNotificationsCountByChecked(AccountInfo, true);
-//
-//        model.addAttribute("AccountInfo", AccountInfo);
-//        model.addAttribute("isNew", true);
-//        putCategorizedNotificationList(unreadNotifications, readNotificationsCount, unreadNotifications.size(), model);
-//        notificationService.readChecked(unreadNotifications);
-//        return "notification/list";
-//    }
-//
+    @GetMapping("/notifications")
+    public String viewNotifications(@CurrentAccount AccountInfo AccountInfo, Model model) {
+        List<Notification> unreadNotifications = notificationRepository.findNotificationsByChecked(AccountInfo.getAccountId(), false);
+        int readNotificationsCount = notificationRepository.countByAccountAndChecked(AccountInfo.getAccountId(), true);
+
+        model.addAttribute("AccountInfo", AccountInfo);
+        model.addAttribute("isNew", true);
+        putCategorizedNotificationList(unreadNotifications, readNotificationsCount, unreadNotifications.size(), model);
+        notificationService.readChecked(unreadNotifications);
+        return "notification/list";
+    }
+
 //    @GetMapping("/notifications/old")
 //    public String viewOldNotifications(@CurrentAccount AccountInfo AccountInfo, Model model) {
 //        List<Notification> readNotifications = notificationService.findNotificationsByChecked(AccountInfo, true);

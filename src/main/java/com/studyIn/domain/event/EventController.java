@@ -35,7 +35,6 @@ public class EventController {
     private final EventRepository eventRepository;
     private final ModelMapper modelMapper;
     private final EventFormValidator eventFormValidator;
-    private final StudyRepository studyRepository;
 
     @InitBinder("eventForm")
     public void eventFormInitBinder(WebDataBinder webDataBinder) {
