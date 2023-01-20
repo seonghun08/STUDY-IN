@@ -27,7 +27,7 @@
 * IntelliJ
 
 ## ERD
-![캡처](https://user-images.githubusercontent.com/68460507/211348561-355b0c3c-9eff-438d-ad70-1e3f45bf2e69.PNG)
+![erd](https://user-images.githubusercontent.com/68460507/213635133-19dab775-bd2c-423c-91e1-2117eb59d0a9.PNG)
 
 ## View
 ![index-logged-in](https://user-images.githubusercontent.com/68460507/211349795-b5c36ad6-3847-437b-9afd-92935941b31e.PNG)
