@@ -31,22 +31,22 @@ public class NotificationController {
         return "notification/list";
     }
 
-//    @GetMapping("/notifications/old")
-//    public String viewOldNotifications(@CurrentAccount AccountInfo AccountInfo, Model model) {
-//        List<Notification> readNotifications = notificationService.findNotificationsByChecked(AccountInfo, true);
-//        int unreadNotificationsCount = notificationService.findNotificationsCountByChecked(AccountInfo, false);
-//
-//        model.addAttribute("AccountInfo", AccountInfo);
-//        model.addAttribute("isNew", false);
-//        putCategorizedNotificationList(readNotifications, unreadNotificationsCount, readNotifications.size(), model);
-//        return "notification/list";
-//    }
-//
-//    @DeleteMapping("/notifications")
-//    public String deleteNotifications(@CurrentAccount AccountInfo AccountInfo) {
-//        notificationService.deleteNotifications(AccountInfo, true);
-//        return "redirect:/notifications";
-//    }
+    @GetMapping("/notifications/old")
+    public String viewOldNotifications(@CurrentAccount AccountInfo AccountInfo, Model model) {
+        List<Notification> readNotifications = notificationRepository.findNotificationsByChecked(AccountInfo.getAccountId(), true);
+        int unreadNotificationsCount = notificationRepository.countByAccountAndChecked(AccountInfo.getAccountId(), false);
+
+        model.addAttribute("AccountInfo", AccountInfo);
+        model.addAttribute("isNew", false);
+        putCategorizedNotificationList(readNotifications, unreadNotificationsCount, readNotifications.size(), model);
+        return "notification/list";
+    }
+
+    @DeleteMapping("/notifications")
+    public String deleteNotifications(@CurrentAccount AccountInfo AccountInfo) {
+        notificationRepository.deleteByAccountAndChecked(AccountInfo.getAccountId(), true);
+        return "redirect:/notifications";
+    }
 
     private void putCategorizedNotificationList(List<Notification> notificationList, int numberOfChecked, int numberOfNotChecked, Model model) {
         List<Notification> STUDY_CREATED = new ArrayList<>();

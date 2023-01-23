@@ -35,4 +35,12 @@ public class NotificationRepositoryCustomImpl implements NotificationRepositoryC
                 .orderBy(notification.createdDate.asc())
                 .fetch();
     }
+
+    @Override
+    public Long deleteByAccountAndChecked(Long accountId, boolean checked) {
+        return jpaQueryFactory
+                .delete(notification)
+                .where(account.id.eq(accountId).and(notification.checked).eq(checked))
+                .execute();
+    }
 }

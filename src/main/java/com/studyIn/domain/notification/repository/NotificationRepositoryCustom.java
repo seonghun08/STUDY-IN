@@ -9,4 +9,6 @@ public interface NotificationRepositoryCustom {
     int countByAccountAndChecked(Long accountId, boolean checked);
 
     List<Notification> findNotificationsByChecked(Long accountId, boolean checked);
+
+    Long deleteByAccountAndChecked(Long accountId, boolean checked);
 }
