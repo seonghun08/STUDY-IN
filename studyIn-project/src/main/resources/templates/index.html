@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div class="text-center" style="background-color: #f5f7ff;">
+    <div th:if="${accountInfo != null && !accountInfo.emailVerified}"
+         class="alert alert-warning text-center"
+         role="alert"
+    >
+        <i class="fas fa-gem"></i>
+        스터디인 가입을 완료하려면 <a th:href="@{/check-email}" class="alert-link">계정 인증 이메일을 확인</a>하세요.
+    </div>
+
+    <br/>
+    <h2 class="mb-3">STUDY IN</h2>
+    <p class="lead">
+        스터디인에 오신 여러분을 환영합니다.<br/>
+        스터디인은 스터디 모임을 보다 효율적으로 관리해주는 스터디 웹 서비스입니다.
+    </p>
+    <a th:href="@{/login}" class="btn btn-primary mb-3">login</a>
+</div>
+<div class="container mt-5">
+    <h5 class="text-center text-primary fw-bold">서로 배우고, 나누고, 성장하세요.</h5>
+    <form th:action="@{/search/study}"
+          class="input-group mb-5"
+          method="get"
+    >
+        <div class="input-group mx-auto rounded w-50 mb-3">
+            <input class="form-control shadow-2 rounded-pill"
+                   type="search"
+                   name="keyword"
+                   placeholder="참여하고 싶은 스터디를 입력해보세요."
+                   aria-label="Search"
+                   aria-describedby="search-addon"
+                   style="padding-left:1em; height:2.5em;"
+            />
+            <span class="input-group-text border-0" id="search-addon">
+                <i class="fas fa-search" style="height: 0.5rem"></i>
+            </span>
+        </div>
+    </form>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+</body>
+</html>

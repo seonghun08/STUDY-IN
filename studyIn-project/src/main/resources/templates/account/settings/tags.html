@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<div th:replace="fragments.html :: main-nav"></div>
+<div class="container py-3">
+    <div th:replace="fragments.html :: profile-menu (settings)"></div>
+    <div class="row justify-content-center mt-4">
+        <div class="col-2">
+            <div th:replace="fragments.html :: settings-menu(currentMenu='tags')"></div>
+        </div>
+        <div class="col-8">
+            <div class="tab-content" role="tabpanel">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">Study tags</div>
+                    <div class="card-body">
+                        <div>
+                            <div class="alert alert-info" role="alert">
+                                참여하고 싶은 스터디 주제를 입력해 주세요.<br/>
+                                해당 주제의 스터디가 생기면 알림을 받을 수 있습니다.<br/>
+                                태그를 입력하고 콤마(,) 또는 엔터(Enter)를 입력하세요.
+                            </div>
+                            <div id="savedList" th:text="${savedList}" hidden></div>
+                            <!-- List<String> tags = List.of("a", "b") -> a, b 변환 (#strings.listJoin())-->
+                            <input class="tagify--outside col-lg-12 m-auto"
+                                   th:value="${#strings.listJoin(tags, ',')}"
+                                   id="tags" type="text" name="tags"
+                                   placeholder="원하시는 태그를 입력해주세요."
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+<script th:replace="fragments.html :: ajax-csrf-header"></script>
+<script th:replace="fragments.html :: update-tags (baseUrl='/settings/tags')"></script>
+</body>
+</html>
