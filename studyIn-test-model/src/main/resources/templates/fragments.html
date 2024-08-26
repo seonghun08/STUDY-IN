@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <title>StudyIn</title>
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          rel="stylesheet"/>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400&display=swap"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+          rel="stylesheet"/>
+
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.css"
+          rel="stylesheet"/>
+
+    <!--  @yaireo Tagify  -->
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css"/>
+
+    <!--  jquery  -->
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+
+    <!-- Bootstrap JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+            crossorigin="anonymous">
+    </script>
+
+    <!-- jDentition -->
+    <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js" async
+            integrity="sha384-yBhgDqxM50qJV5JPdayci8wCfooqvhFYbIKhv0hTtLvfeeyJMJCscRfFNKIxt43M"
+            crossorigin="anonymous">
+    </script>
+
+    <!-- include summernote css/js-->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+    <!--  moment date-time  -->
+    <script src="/node_modules/moment/min/moment-with-locales.min.js"></script>
+
+    <style>
+        .box {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .box2 {
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+
+        }
+
+        .mask {
+            background: linear-gradient(45deg, rgba(251, 251, 251, 0.6), rgba(18, 102, 241, 0.2) 100%);
+        }
+
+        .rounded-circle {
+            border-radius: 50% !important;
+        }
+
+        .card {
+            box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+        }
+
+        .card .card-header {
+            font-weight: 500;
+        }
+
+        .card-header:first-child {
+            border-radius: 0.35rem 0.35rem 0 0;
+        }
+
+        .card-header {
+            padding: 1rem 1.35rem;
+            margin-bottom: 0;
+            background-color: rgba(33, 40, 50, 0.03);
+            border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+        }
+
+        .nav-borders .nav-link.active {
+            color: #0061f2;
+            border-bottom-color: #0061f2;
+        }
+
+        .nav-borders .nav-link {
+            color: #69707a;
+            border-bottom-width: 0.125rem;
+            border-bottom-style: solid;
+            border-bottom-color: transparent;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
+
+        .tagify--outside {
+            border: 0;
+        }
+
+        .tagify--outside .tagify__input {
+            order: -1;
+            flex: 100%;
+            border: 1px solid var(--tags-border-color);
+            margin-bottom: 1em;
+            transition: .1s;
+        }
+
+        .tagify--outside .tagify__input:hover {
+            border-color: var(--tags-hover-border-color);
+        }
+
+        .tagify--outside.tagify--focus .tagify__input {
+            transition: 0s;
+            border-color: var(--tags-focus-border-color);
+        }
+
+        body {
+            font-family: Roboto, "Noto Sans KR", "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+
+        body,
+        input,
+        button,
+        select,
+        optgroup,
+        textarea,
+        .tooltip,
+        .popover {
+            font-family: Roboto, "Noto Sans KR", "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+
+        #btn-back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: none;
+        }
+
+        .carousel-inner img {
+
+            max-height: 400px;
+        }
+
+    </style>
+</head>
+<body>
+<!--  Navbar  -->
+<nav th:fragment="main-nav" class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+
+        <a class="navbar-brand" th:href="@{/}">
+            <img class="d-inline-block"
+                 src="/images/logo_sample.png"
+                 width="45" height="45"
+            />
+            STUDYIN
+        </a>
+
+        <button class="navbar-toggler"
+                type="button"
+                data-mdb-toggle="collapse"
+                data-mdb-target="#navbarButtonsExample"
+                aria-controls="navbarButtonsExample"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+        >
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link"
+                       aria-current="page"
+                       href="#"
+                    >
+                        Study
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                       aria-current="page"
+                       th:href="@{/community}" href="#"
+                    >
+                        Community
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle"
+                       href="#"
+                       id="navbarDropdown"
+                       role="button"
+                       data-mdb-toggle="dropdown"
+                       aria-expanded="false"
+                    >
+                        Menu
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">List of studies</a></li>
+                        <li><a class="dropdown-item" href="#">List of meetings</a></li>
+                        <li><a class="dropdown-item" href="#">Road map</a></li>
+                        <li>
+                            <hr class="dropdown-divider"/>
+                        </li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <form th:action="@{/search/study}"
+              class="input-group hover-shadow w-auto mx-4"
+              method="get"
+        >
+            <div id="navbar-search-autocomplete" class="form-outline">
+                <input class="form-control"
+                       id="form1"
+                       type="search"
+                       name="keyword"
+                />
+                <label class="form-label" for="form1">
+                    Study search
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+
+        <div sec:authorize="!isAuthenticated()" class="d-flex align-items-center">
+            <a class="btn btn-link px-3 me-2"
+               th:href="@{/login}"
+               type="button"
+            >
+                Login
+            </a>
+            <a class="btn btn-primary me-3"
+               th:href="@{/sign-up}"
+               type="button"
+            >
+                Sign up for free
+            </a>
+        </div>
+
+        <div sec:authorize="isAuthenticated()" class="d-flex align-items-center">
+
+            <a class="btn btn-primary px-3 me-4"
+               th:href="@{/new-study}"
+               type="button"
+               data-mdb-ripple-color="dark"
+            >
+                <i class="fas fa-dove"></i>
+                create a Study
+            </a>
+
+            <a class="me-3" th:href="@{/shoppingBasket}">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
+
+            <a th:if="${notificationCount} == 0" class="me-3" th:href="@{/notifications}">
+                <i class="far fa-bell"></i>
+            </a>
+            <a th:if="${notificationCount} > 0" class="me-3" th:href="@{/notifications}">
+                <i class="fas fa-bell"></i>
+                <span th:text="${notificationCount}" class="badge rounded-pill badge-notification bg-danger">3</span>
+            </a>
+
+            <div class="dropdown">
+                <a class="dropdown-toggle d-flex align-items-center hidden-arrow"
+                   id="navbarDropdownMenuAvatar"
+                   role="button"
+                   data-mdb-toggle="dropdown"
+                   aria-expanded="false"
+                >
+                    <svg th:if="${#strings.isEmpty(account?.profileImage)}"
+                         th:data-jdenticon-value="${#authentication.name}"
+                         class="rounded-circle"
+                         width="25" height="25"
+                    />
+                    <img th:if="${!#strings.isEmpty(account?.profileImage)}"
+                         th:src="${account.profileImage}"
+                         class="rounded-circle"
+                         width="25" height="25"
+                    />
+                    <i class="fas fa-caret-down mx-1"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                    <li>
+                        <div class="dropdown-header">
+                            Signed in as<br/>
+                            <strong><span sec:authentication="name">username</span></strong>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="dropdown-divider"/>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" th:href="@{'/profile/' + ${#authentication.name}}"><i
+                                class="fas fa-user"></i> Profile</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" th:href="@{/notifications}"><i class="fas fa-bell"></i>
+                            Notifications</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" th:href="@{'/studyList/' + ${#authentication.name}}"><i
+                                class="fas fa-book"></i> Study list</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#"><i class="fas fa-edit"></i> Meeting list</a>
+                    </li>
+                    <li>
+                        <div class="dropdown-divider"/>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" th:href="@{/settings/profile}"><i class="fas fa-cogs"></i> Settings</a>
+                    </li>
+                    <li>
+                        <form th:action="@{/logout}" method="post">
+                            <button class="dropdown-item" type="submit"><i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</nav>
+
+<!--  Email authentication message  -->
+<div th:fragment="email-authentication-message"
+     th:if="${account != null && !account.emailVerified}"
+     class="alert alert-warning text-center"
+     role="alert"
+>
+    <i class="fas fa-gem"></i>
+    스터디인 가입을 완료하려면 <a th:href="@{/check-email}" class="alert-link">계정 인증 이메일을 확인</a>하세요.
+</div>
+
+<!--  redirect: message  -->
+<div th:fragment="message"
+     th:if="${message}"
+     class="alert alert-primary text-center alert-dismissible"
+     role="alert"
+>
+    <span th:text="${message}">message</span>
+    <button class="btn-close"
+            type="button"
+            data-bs-dismiss="alert"
+    ></button>
+</div>
+
+<!--  profile menu  -->
+<div th:fragment="menu (currentMenu)" class="row justify-content-center col-10 mx-auto px-3 mt-2">
+    <ul th:if="${currentMenu == 'profile'}" class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" th:href="@{'/profile/' + ${profile.username}}" href="#">
+                <i class="fas fa-user-alt"></i> <strong>Profile</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{'/studyList/' + ${profile.username}}" href="#">
+                <i class="fas fa-book"></i> <strong>Study List</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="fas fa-edit"></i> <strong>Meeting List</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:if="${isOwner}" class="nav-link" th:href="@{/settings/profile}" href="#">
+                <i class="fas fa-cogs"></i> <strong>Settings</strong>
+            </a>
+        </li>
+    </ul>
+    <ul th:if="${currentMenu == 'studyList'}" class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{'/profile/' + ${profile.username}}" href="#">
+                <i class="fas fa-user-alt"></i> <strong>Profile</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" th:href="@{'/studyList/' + ${profile.username}}" href="#">
+                <i class="fas fa-book"></i> <strong>Study List</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="fas fa-edit"></i> <strong>Meeting List</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:if="${isOwner}" class="nav-link" th:href="@{/settings/profile}" href="#">
+                <i class="fas fa-cogs"></i> <strong>Settings</strong>
+            </a>
+        </li>
+    </ul>
+    <ul th:if="${currentMenu == 'settings'}" class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{'/profile/' + ${account.username}}" href="#">
+                <i class="fas fa-user-alt"></i> <strong>Profile</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{'/studyList/' + ${account.username}}" href="#">
+                <i class="fas fa-book"></i> <strong>Study List</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="fas fa-edit"></i> <strong>Meeting List</strong>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" th:href="@{/settings/profile}" href="#">
+                <i class="fas fa-cogs"></i> <strong>Settings</strong>
+            </a>
+        </li>
+    </ul>
+    <hr/>
+</div>
+
+<!--  profile settings-menu  -->
+<div th:fragment="settings-menu (currentMenu)"
+     class="card shadow-sm list-group mb-4"
+     role="tablist"
+>
+    <div class="list-group-item list-group-item bg-light">Settings</div>
+    <a class="list-group-item list-group-item-action"
+       th:classappend="${currentMenu == 'profile'}? active"
+       th:href="@{/settings/profile}" href="#"
+    >
+        Profile
+    </a>
+    <a class="list-group-item list-group-item-action "
+       th:classappend="${currentMenu == 'password'}? active"
+       th:href="@{/settings/password}"
+    >
+        Password
+    </a>
+    <a class="list-group-item list-group-item-action "
+       th:classappend="${currentMenu == 'notifications'}? active"
+       th:href="@{/settings/notifications}" href="#"
+    >
+        Notifications
+    </a>
+    <a class="list-group-item list-group-item-action "
+       th:classappend="${currentMenu == 'tags'}? active"
+       th:href="@{/settings/tags}" href="#"
+    >
+        Tags
+    </a>
+    <a class="list-group-item list-group-item-action "
+       th:classappend="${currentMenu == 'locations'}? active"
+       th:href="@{/settings/locations}" href="#"
+    >
+        Locations
+    </a>
+    <a class="list-group-item list-group-item-action list-group-item-danger"
+       th:classappend="${currentMenu == 'account'}? active"
+       th:href="@{/settings/account}" href="#"
+    >
+        Account
+    </a>
+</div>
+
+<!--  event form  -->
+<div th:fragment="event-form (mode, action)">
+    <div class="py-3 text-center form-label">
+        <br/>
+        <h2>STUDY IN</h2>
+    </div>
+    <div class="row justify-content-center">
+        <div class="lead text-center">
+            <h2><a th:href="@{'/study/' + ${study.path}}"><span th:text="${study.title}">스터디</span></a></h2>
+            <p th:if="${mode == 'new'}">스터디 모임 만들기</p>
+            <p th:if="${mode == 'edit'}" th:text="${event.title}"></p>
+        </div>
+        <form class="needs-validation col-sm-8"
+              th:action="@{${action}}"
+              th:object="${eventForm}"
+              method="post"
+              novalidate
+        >
+
+            <div class="form-group mt-3">
+                <label class="form-label" for="title">Study meeting title</label>
+                <input class="form-control"
+                       th:field="*{title}"
+                       id="title"
+                       type="text"
+                       placeholder="모임 이름을 입력하세요."
+                       aria-describedby="titleHelp"
+                       required max="30"
+                />
+                <small id="titleHelp" class="form-text text-muted">
+                    30자 이내로 입력하세요.<br/>
+                </small>
+                <small class="invalid-feedback">모임 이름을 입력하세요.</small>
+                <small th:if="${#fields.hasErrors('title')}"
+                       th:errors="*{title}"
+                       class="form-text text-danger"
+                >
+                    Title Error
+                </small>
+            </div>
+
+            <div class="row">
+
+                <small class="note note-light mt-4">
+                    <strong>선착순으로 모집하는 경우</strong> 모집 인원 이내의 접수는 자동으로 확정되며, 제한 인원을 넘는 신청은 대기 신청이 되며 이후 확정된 신청자 중에 취소를 하면
+                    선착순으로 대기 신청자를 확정 신청자도 변경합니다. 단, 등록 마감일 이후에는 취소해도 확정 여부가 바뀌지 않습니다.<br/>
+                    <strong>관리자 확인으로 모집하는 경우</strong> 관리자가 모임 신청 목록을 조회하고 직접 확정 여부를 정할 수 있습니다. 등록 마감일 이후에는 변경할 수 없습니다.
+                </small>
+
+                <div class="col-sm mt-3">
+                    <label class="form-label" for="eventType">Recruitment method</label>
+                    <select class="form-control form-select"
+                            th:disabled="${mode == 'edit'}"
+                            th:field="*{eventType}"
+                            id="eventType"
+                            aria-describedby="eventTypeHelp"
+                    >
+                        <option th:value="FIRST_COME_FIRST_SERVED">선착순</option>
+                        <option th:value="MANAGER_CHECK">관리자 확인</option>
+                    </select>
+                    <small class="form-text text-muted" id="eventTypeHelp">
+                        모집방법을 선택하세요.<br/>
+                    </small>
+                </div>
+
+                <div class="col-sm mt-3">
+                    <label class="form-label" for="limitOfEnrollments">Number of recruitment</label>
+                    <input class="form-control"
+                           th:field="*{limitOfEnrollments}"
+                           id="limitOfEnrollments"
+                           type="number"
+                           placeholder="0"
+                           aria-describedby="limitOfEnrollmentsHelp"
+                    >
+                    <small class="form-text text-muted" id="limitOfEnrollmentsHelp">
+                        최소 2인 이상 수용 가능한 모임 참석 인원을 설정하세요.<br/>
+                    </small>
+                    <small class="invalid-feedback">모임 신청 마감 일시를 입력하세요.</small>
+                    <small th:if="${#fields.hasErrors('limitOfEnrollments')}"
+                           th:errors="*{limitOfEnrollments}"
+                           class="form-text text-danger"
+                    >
+                        Error
+                    </small>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <small class="note note-light mt-4">
+                    <strong>등록 마감 일시</strong> 이전에만 스터디 모임 참가 신청을 할 수 있습니다.<br/>
+                    <strong>모임 시작 일시</strong>를 입력하세요. 모임이 시작되면 등록이 마감되며 상세한 일정은 본문에 적어주세요.<br/>
+                    <strong>모임 종료 일시</strong>가 지나면 모임은 자동으로 종료 상태로 바뀝니다.
+                </small>
+
+                <div class="col-md-4 mt-3">
+                    <label class="form-label" for="endEnrollmentDateTime">Registration deadline</label>
+                    <input class="form-control"
+                           th:field="*{endEnrollmentDateTime}"
+                           id="endEnrollmentDateTime"
+                           type="datetime-local"
+                           aria-describedby="endEnrollmentDateTimeHelp"
+                           required
+                    />
+                    <small id="endEnrollmentDateTimeHelp" class="form-text text-muted">
+                        등록 마감 일시를 입력하세요.
+                    </small>
+                    <small class="invalid-feedback">모임 신청 마감 일시를 입력하세요.</small>
+                    <small th:if="${#fields.hasErrors('endEnrollmentDateTime')}"
+                           th:errors="*{endEnrollmentDateTime}"
+                           class="form-text text-danger"
+                    >
+                        Error
+                    </small>
+                </div>
+
+                <div class="col-md-4 mt-3">
+                    <label class="form-label" for="startDateTime">Meeting start date</label>
+                    <input class="form-control"
+                           th:field="*{startDateTime}"
+                           id="startDateTime"
+                           type="datetime-local"
+                           aria-describedby="startDateTimeHelp"
+                           required
+                    />
+                    <small id="startDateTimeHelp" class="form-text text-muted">
+                        모임 시작 일시를 입력하세요.
+                    </small>
+                    <small class="invalid-feedback">모임 시작 일시를 입력하세요.</small>
+                    <small th:if="${#fields.hasErrors('startDateTime')}"
+                           th:errors="*{startDateTime}"
+                           class="form-text text-danger"
+                    >
+                        Error
+                    </small>
+                </div>
+
+                <div class="col-md-4 mt-3">
+                    <label class="form-label" for="startDateTime">Meeting end date</label>
+                    <input class="form-control"
+                           th:field="*{endDateTime}"
+                           id="endDateTime"
+                           type="datetime-local"
+                           aria-describedby="endDateTimeHelp"
+                           required
+                    />
+                    <small class="form-text text-muted" id="endDateTimeHelp">
+                        종료 일시를 입력하세요.
+                    </small>
+                    <small class="invalid-feedback">모임 종료 일시를 입력하세요.</small>
+                    <small th:if="${#fields.hasErrors('endDateTime')}"
+                           th:errors="*{endDateTime}"
+                           class="form-text text-danger"
+                    >
+                        Error
+                    </small>
+                </div>
+
+            </div>
+
+            <div class="form-group mt-4">
+                <label class="form-label" for="fullDescription">Full description</label>
+                <textarea class="editor form-control"
+                          th:field="*{description}"
+                          id="fullDescription"
+                          required
+                >
+                </textarea>
+                <small class="invalid-feedback">상세 소개를 입력하세요.</small>
+                <small th:if="${#fields.hasErrors('description')}"
+                       th:errors="*{description}"
+                       class="form-text text-danger"
+                >
+                    FullDescription Error
+                </small>
+            </div>
+
+            <div class="form-group mt-3">
+                <button class="btn btn-primary btn-block"
+                        th:text="${mode == 'edit' ? '모임 수정' : '모임 만들기'}"
+                        type="submit"
+                >
+                    모임 만들기
+                </button>
+            </div>
+            <br/>
+
+        </form>
+    </div>
+</div>
+
+<!--  notification-list  -->
+<div th:fragment="notification-list (notifications)" class="list-group list-group-flush">
+    <a th:each="nt: ${notifications}"
+       th:href="@{${nt.link}}" href="#"
+       class="list-group-item list-group-item-action"
+    >
+        <div class="d-flex w-100 justify-content-between">
+            <strong><small class="text-muted" th:text="${nt.title}">notification title</small></strong>
+            <strong><small class="fromNow text-muted" th:text="${nt.createdDateTime}">3 days ago</small></strong>
+        </div>
+        <p th:text="${nt.message}" class="text-left mb-0 mt-1">message</p>
+    </a>
+</div>
+
+<!-- Footer -->
+<footer th:fragment="footer" class="text-center text-lg-start bg-white text-muted mt-5">
+
+    <!-- Back to top button -->
+    <button class="btn btn-primary btn-floating btn-lg"
+            type="button"
+            id="btn-back-to-top"
+    >
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script type="application/javascript">
+        //Get the button
+        let mybutton = document.getElementById("btn-back-to-top");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () {
+            scrollFunction();
+        };
+
+        function scrollFunction() {
+            if (
+                document.body.scrollTop > 20 ||
+                document.documentElement.scrollTop > 20
+            ) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        mybutton.addEventListener("click", backToTop);
+
+        function backToTop() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+    <!-- Section: Social media -->
+    <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+        <!-- Left -->
+        <div class="me-5 d-none d-lg-block">
+            <span>Get connected with us on social networks:</span>
+        </div>
+        <!-- Left -->
+
+        <!-- Right -->
+        <div>
+            <a href="" class="me-4 link-secondary">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="" class="me-4 link-secondary">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="" class="me-4 link-secondary">
+                <i class="fab fa-google"></i>
+            </a>
+            <a href="" class="me-4 link-secondary">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="" class="me-4 link-secondary">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="https://github.com/seonghun08?tab=repositories" class="me-4 link-secondary">
+                <i class="fab fa-github"></i>
+            </a>
+        </div>
+        <!-- Right -->
+    </section>
+    <!-- Section: Social media -->
+
+    <!-- Section: Links  -->
+    <section class="">
+        <div class="container text-center text-md-start mt-5">
+            <!-- Grid row -->
+            <div class="row mt-3">
+                <!-- Grid column -->
+                <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+                    <!-- Content -->
+                    <h6 class="fw-bold mb-4">
+                        <i class="fas fa-gem me-2 text-secondary"></i>STUDYIN.Co
+                    </h6>
+                    <p>
+                        StudyIn web service wants to provide opportunities to learn and grow together with many people.
+                    </p>
+                </div>
+                <!-- Grid column -->
+
+                <!-- Grid column -->
+                <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+                    <!-- Links -->
+                    <h6 class="text-uppercase fw-bold mb-4">
+                        Products
+                    </h6>
+                    <p>
+                        <a href="#!" class="text-reset">Spring Boot</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Spring Security</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">JPA</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Thymeleaf</a>
+                    </p>
+                </div>
+                <!-- Grid column -->
+
+                <!-- Grid column -->
+                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+                    <!-- Links -->
+                    <h6 class="text-uppercase fw-bold mb-4">
+                        Useful links
+                    </h6>
+                    <p>
+                        <a href="#!" class="text-reset">Pricing</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Settings</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Orders</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Help</a>
+                    </p>
+                </div>
+                <!-- Grid column -->
+
+                <!-- Grid column -->
+                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+                    <!-- Links -->
+                    <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+
+                    <p>
+                        <i class="fas fa-home me-3 text-secondary"></i>
+                        Republic of Korea
+                    </p>
+
+                    <p>
+                        <i class="fas fa-envelope me-3 text-secondary"></i>
+                        shajh2210@gmail.com
+                    </p>
+
+                    <p>
+                        <i class="fas fa-phone me-3 text-secondary"></i>
+                        + 010 4349 4349
+                    </p>
+
+                    <p>
+                        <i class="fas fa-print me-3 text-secondary"></i>
+                        + 032 4349 4349
+                    </p>
+
+                </div>
+                <!-- Grid column -->
+            </div>
+            <!-- Grid row -->
+        </div>
+    </section>
+    <!-- Section: Links  -->
+
+    <!-- Copyright -->
+    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.025);">
+        © 2023 Copyright
+        <a class="text-reset fw-bold" href="http://localhost:8080/">StudyIn.com</a>
+        :: All Rights Reserved:
+    </div>
+    <!-- Copyright -->
+</footer>
+
+<!--  summernote  -->
+<script th:fragment="summernote">
+    $('.editor').summernote({
+        placeholder: '원하시는 내용을 입력해주세요.',
+        height: 300,
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['link', 'picture']],
+            ['view', ['help']],
+        ],
+    });
+</script>
+
+<!-- MDB -->
+<script th:fragment="mdb-js"
+        type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.js"></script>
+
+<!--  Form validation  -->
+<script th:fragment="form-validation" type="application/javascript">
+    (function () {
+        'use strict';
+        window.addEventListener('load', function () {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        }, false)
+    }())
+</script>
+
+<!--  Ajax csrf-header -->
+<script th:fragment="ajax-csrf-header" th:inline="javascript" type="application/javascript">
+    $(function () {
+        var csrfToken = /*[[${_csrf.token}]]*/ null;
+        var csrfHeader = /*[[${_csrf.headerName}]]*/ null;
+        $(document).ajaxSend(function (e, xhr, options) {
+            xhr.setRequestHeader(csrfHeader, csrfToken);
+        });
+    });
+</script>
+
+<!--  update-tags  -->
+<script th:fragment="update-tags (baseUrl)" type="application/javascript">
+    $(function () {
+        function tagRequest(url, tagTitle) {
+            $.ajax({
+                dataType: "json",
+                autocomplete: {
+                    enabled: true,
+                    rightKey: true,
+                },
+                contentType: "application/json; charset=utf-8",
+                method: "POST",
+                url: "[(${baseUrl})]" + url,
+                data: JSON.stringify({'tagTitle': tagTitle})
+            }).done(function (data, status) {
+                console.log("${data} and status is ${status}");
+            });
+        }
+
+        function onAdd(e) {
+            tagRequest("/add", e.detail.data.value);
+        }
+
+        function onRemove(e) {
+            tagRequest("/remove", e.detail.data.value);
+        }
+
+        var input = document.querySelector('input[name=tags]')
+
+        var tagify = new Tagify(input, {
+            pattern: /^.{0,20}$/,
+            whitelist: JSON.parse(document.querySelector("#savedList").textContent),
+            dropdown: {
+                position: "input",
+                enabled: 0
+            }
+        });
+
+        tagify.on("add", onAdd);
+        tagify.on("remove", onRemove);
+    });
+</script>
+
+<!--  update-locations  -->
+<script th:fragment="update-locations (baseUrl)" type="application/javascript">
+    $(function () {
+        function tagRequest(url, locationName) {
+            $.ajax({
+                dataType: "json",
+                autocomplete: {
+                    enabled: true,
+                    rightKey: true,
+                },
+                contentType: "application/json; charset=utf-8",
+                method: "POST",
+                url: "[(${baseUrl})]" + url,
+                data: JSON.stringify({'locationName': locationName})
+            }).done(function (data, status) {
+                console.log("${data} and status is ${status}");
+            });
+        }
+
+        function onAdd(e) {
+            tagRequest("/add", e.detail.data.value);
+        }
+
+        function onRemove(e) {
+            tagRequest("/remove", e.detail.data.value);
+        }
+
+        var input = document.querySelector('input[name=locations]')
+
+        var tagify = new Tagify(input, {
+            enforceWhitelist: true,
+            whitelist: JSON.parse(document.querySelector("#savedList").textContent),
+            dropdown: {
+                position: "input",
+                enabled: 0
+            }
+        });
+
+        tagify.on("add", onAdd);
+        tagify.on("remove", onRemove);
+
+    });
+</script>
+
+<!--  moment date-time  -->
+<script th:fragment="date-time" type="application/javascript">
+    $(function () {
+        moment.locale('ko');
+        $(".date-time").text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
+        });
+        $(".date").text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('L');
+        });
+        $(".date-ll").text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LL');
+        });
+        $(".weekday").text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('dddd');
+        });
+        $(".days").text(function (index, dateTime) {
+            return moment().subtract(9, 'days').calendar();
+        });
+        $(".time").text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LT');
+        });
+        $(".calendar").text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD`T`hh:mm").calendar();
+        });
+        $(".fromNow").text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD`T`hh:mm").fromNow();
+        });
+        $(".date-weekday-time").text(function (index, dateTime) {
+            return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLLL');
+        });
+    })
+</script>
+</body>
+</html>

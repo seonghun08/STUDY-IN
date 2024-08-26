@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div class="container py-3">
+    <div th:replace="fragments.html :: menu (settings)"></div>
+    <div class="row justify-content-center mt-4">
+        <div class="col-2">
+            <div th:replace="fragments.html :: settings-menu(currentMenu='account')"></div>
+        </div>
+        <div class="col-8">
+            <div th:replace="fragments.html :: message"></div>
+            <div class="tab-content" role="tabpanel">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">Account settings</div>
+                    <div class="card-body">
+                        <h5>아이디 변경</h5>
+                        <form class="mb-3"
+                              th:action="@{/settings/account}" action="#"
+                              th:object="${usernameForm}"
+                              method="post"
+                              novalidate
+                        >
+                            <div class="alert alert-warning" role="alert">
+                                아이디를 변경하시면 프로필 페이지 링크도 같이 바뀌게 됩니다.
+                            </div>
+                            <div class="form-group mb-2">
+                                <input class="form-control"
+                                       th:field="*{username}"
+                                       id="username" type="text"
+                                       aria-describedby="nicknameHelp"
+                                       required
+                                />
+                                <small class="form-text text-muted" id="usernameHelp">
+                                    공백없이 문자와 숫자로 2~20자 이내로 입력하세요.
+                                </small>
+                                <small class="invalid-feedback">바꾸실 아이디를 입력하세요.</small><br/>
+                                <small th:if="${#fields.hasErrors('username')}"
+                                       th:errors="*{username}"
+                                       class="form-text text-danger"
+                                >
+                                    username Error
+                                </small>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-warning" type="submit">
+                                    changes my username
+                                </button>
+                            </div>
+                        </form>
+                        <br/>
+                        <hr/>
+                        <h5 class="text-danger">계정 삭제</h5>
+                        <form class="mb-3" action="#">
+                            <div class="alert alert-danger" role="alert">
+                                계정 삭제는 영구적인 조치이며 취소할 수 없습니다.<br/>
+                                계정을 삭제하려면 아래 버튼을 선택하세요.
+                            </div>
+                            <button class="btn btn-danger" type="submit">
+                                I understand, delete my account
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+</body>
+</html>

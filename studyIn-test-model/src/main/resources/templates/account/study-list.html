@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div class="container py-3">
+    <div th:replace="fragments.html :: menu (studyList)"></div>
+    <div class="row justify-content-center">
+        <div class="col-10 mx-auto">
+            <ul class="nav nav-pills mb-3" id="ex1" role="tablist" style="margin-left: 1em">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link fw-bold active"
+                       id="ex1-tab-1"
+                       data-mdb-toggle="pill"
+                       href="#ex1-pills-1"
+                       role="tab"
+                       aria-controls="ex1-pills-1"
+                       aria-selected="true"
+                    >
+                        참여중인 스터디 목록
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link fw-bold"
+                       id="ex1-tab-2"
+                       data-mdb-toggle="pill"
+                       href="#ex1-pills-2"
+                       role="tab"
+                       aria-controls="ex1-pills-2"
+                       aria-selected="false"
+                    >
+                        관리중인 스터디 목록
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content" id="ex1-content">
+                <div class="tab-pane fade show active"
+                     id="ex1-pills-1"
+                     role="tabpanel"
+                     aria-labelledby="ex1-tab-1"
+                >
+                    <div class="col-10 mx-auto">
+                        <h5 class="fw-bold mb-3">참여중인 스터디 목록 <i class="fas fa-angle-right"></i></h5>
+                        <div class="row">
+                            <div th:each="study: ${studyListMemberOf}" class="col-md-4">
+                                <div class="card mb-4 shadow-2">
+                                    <img th:src="${study.image}"
+                                         th:alt="${study.title}"
+                                         class="card-img-top"
+                                    />
+                                    <div class="card-body" style="height: 11rem;">
+                                        <a th:href="@{'/study/' + ${study.path}}">
+                                            <p class="box card-title context text-dark fw-bold"
+                                               th:text="${study.title}"></p>
+                                        </a>
+                                        <p class="box2 card-text" th:text="${study.shortDescription}">short
+                                            description</p>
+                                        <p class="box card-text context">
+                                <span th:each="tag: ${study.tags}" class="mr-2">
+                                    <a class="badge rounded-pill badge-light mr-3"
+                                       th:href="@{'/search/study?keyword=' + ${tag.title}}">
+                                        <i class="fas fa-hashtag"></i>
+                                        <span th:text="${tag.title}">Tag</span>
+                                    </a>
+                                </span><br/>
+                                            <span th:each="location: ${study.locations}" class="mr-2">
+                                    <a class="badge rounded-pill badge-light mr-3"
+                                       th:href="@{'/search/study?keyword=' + ${location.getLocalNameOfCity}}">
+                                        <i class="fas fa-globe-asia"></i>
+                                        <span th:text="${location.localNameOfCity}">Location</span>
+                                    </a>
+                                </span>
+                                        </p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small>
+                                                <i class="fa fa-user-circle"></i>
+                                                <span th:text="${study.memberCount}"></span>명
+                                            </small>
+                                            <small class="date-ll" th:text="${study.publishedDateTime}">2023년 08월
+                                                30일</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="ex1-pills-2" role="tabpanel" aria-labelledby="ex1-tab-2">
+                    <div class="col-10 mx-auto">
+                        <h5 class="fw-bold mb-3">참여중인 스터디 목록 <i class="fas fa-angle-right"></i></h5>
+                        <div class="row">
+                            <div th:each="study: ${studyListManagerOf}" class="col-md-4">
+                                <div class="card mb-4 shadow-2">
+                                    <img th:src="${study.image}"
+                                         th:alt="${study.title}"
+                                         class="card-img-top"
+                                    />
+                                    <div class="card-body" style="height: 11rem;">
+                                        <a th:href="@{'/study/' + ${study.path}}">
+                                            <p class="box card-title context text-dark fw-bold"
+                                               th:text="${study.title}"></p>
+                                        </a>
+                                        <p class="box2 card-text" th:text="${study.shortDescription}">short
+                                            description</p>
+                                        <p class="box card-text context">
+                                <span th:each="tag: ${study.tags}" class="mr-2">
+                                    <a class="badge rounded-pill badge-light mr-3"
+                                       th:href="@{'/search/study?keyword=' + ${tag.title}}">
+                                        <i class="fas fa-hashtag"></i>
+                                        <span th:text="${tag.title}">Tag</span>
+                                    </a>
+                                </span><br/>
+                                            <span th:each="location: ${study.locations}" class="mr-2">
+                                    <a class="badge rounded-pill badge-light mr-3"
+                                       th:href="@{'/search/study?keyword=' + ${location.getLocalNameOfCity}}">
+                                        <i class="fas fa-globe-asia"></i>
+                                        <span th:text="${location.localNameOfCity}">Location</span>
+                                    </a>
+                                </span>
+                                        </p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small>
+                                                <i class="fa fa-user-circle"></i>
+                                                <span th:text="${study.memberCount}"></span>명
+                                            </small>
+                                            <small class="date-ll" th:text="${study.publishedDateTime}">2023년 08월
+                                                30일</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+<script th:replace="fragments.html :: date-time"></script>
+</body>
+</html>

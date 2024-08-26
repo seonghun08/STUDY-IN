@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div th:replace="fragments.html :: message"></div>
+<div class="text-center" style="background-color: #f5f7ff;">
+    <br/>
+    <h2 class="mb-3">STUDY IN</h2>
+    <p class="lead">
+        스터디인에 오신 여러분을 환영합니다.<br/>
+        스터디인은 스터디 모임을 보다 효율적으로 관리해주는 스터디 웹 서비스입니다.
+    </p>
+    <a th:href="@{/login}" class="btn btn-primary mb-3">login</a>
+</div>
+<div class="container mt-5">
+    <h5 class="text-center text-primary fw-bold">서로 배우고, 나누고, 성장하세요.</h5>
+    <form th:action="@{/search/study}"
+          class="input-group mb-5"
+          method="get"
+    >
+        <div class="input-group mx-auto rounded w-50 mb-3">
+            <input class="form-control shadow-2 rounded-pill" style="padding-left:1em; height:2.5em;"
+                   type="search"
+                   name="keyword"
+                   placeholder="참여하고 싶은 스터디를 입력해보세요."
+                   aria-label="Search"
+                   aria-describedby="search-addon"
+            />
+            <span class="input-group-text border-0" id="search-addon">
+            <i class="fas fa-search" style="height: 0.5rem"></i>
+        </span>
+        </div>
+    </form>
+    <div class="row justify-content-center">
+        <div class="col-10 mx-auto">
+            <h5 class="fw-bold mb-3">스터디 목록 <i class="fas fa-angle-right"></i></h5>
+            <div class="row">
+                <div th:each="study: ${studyPage.getContent()}" class="col-md-4">
+                    <div class="card mb-4 shadow-2">
+                        <img th:src="${study.image}"
+                             th:alt="${study.title}"
+                             class="card-img-top"
+                        />
+                        <div class="card-body" style="height: 11rem;">
+                            <a th:href="@{'/study/' + ${study.path}}">
+                                <p class="box card-title context text-dark fw-bold" th:text="${study.title}"></p>
+                            </a>
+                            <p class="box2 card-text" th:text="${study.shortDescription}">short description</p>
+                            <p class="box card-text context">
+                                <span th:each="tag: ${study.tags}" class="mr-2">
+                                    <a class="badge rounded-pill badge-light mr-3"
+                                       th:href="@{'/search/study?keyword=' + ${tag.title}}">
+                                        <i class="fas fa-hashtag"></i>
+                                        <span th:text="${tag.title}">Tag</span>
+                                    </a>
+                                </span><br/>
+                                <span th:each="location: ${study.locations}" class="mr-2">
+                                    <a class="badge rounded-pill badge-light mr-3"
+                                       th:href="@{'/search/study?keyword=' + ${location.getLocalNameOfCity}}">
+                                        <i class="fas fa-globe-asia"></i>
+                                        <span th:text="${location.localNameOfCity}">Location</span>
+                                    </a>
+                                </span>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small>
+                                    <i class="fa fa-user-circle"></i>
+                                    <span th:text="${study.memberCount}"></span>명
+                                </small>
+                                <small class="date-ll" th:text="${study.publishedDateTime}">2023년 08월 30일</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-10">
+            <nav>
+                <ul class="pagination justify-content-center fw-bolder">
+                    <li class="page-item" th:classappend="${!studyPage.hasPrevious()}? disabled">
+                        <a class="page-link"
+                           th:href="@{'/?' + 'desc&page=' + ${studyPage.getNumber() - 1}}"
+                           tabindex="-1"
+                           aria-disabled="true"
+                        >
+                            Previous
+                        </a>
+                    </li>
+                    <li class="page-item"
+                        th:classappend="${i == studyPage.getNumber()}? active"
+                        th:each="i: ${#numbers.sequence(0, studyPage.getTotalPages() - 1)}"
+                    >
+                        <a class="page-link"
+                           th:href="@{'/?' + 'desc&page=' + ${i}}" href="#"
+                           th:text="${i + 1}"
+                        >
+                            1
+                        </a>
+                    </li>
+                    <li class="page-item" th:classappend="${!studyPage.hasNext()}? disabled">
+                        <a class="page-link"
+                           th:href="@{'/?' + 'desc&page=' + ${studyPage.getNumber() + 1}}"
+                        >
+                            Next
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+<script th:replace="fragments.html :: date-time"></script>
+</body>
+</html>

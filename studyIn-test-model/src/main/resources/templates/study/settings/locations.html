@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div th:replace="fragments-study.html :: study-banner"></div>
+<div class="container">
+    <div th:replace="fragments-study.html :: study-info"></div>
+    <div th:replace="fragments-study.html :: study-menu(studyMenu='settings')"></div>
+    <div class="row justify-content-center mt-4">
+
+        <div class="col-2">
+            <div th:replace="fragments-study.html :: study-settings-menu(currentMenu='locations')"></div>
+        </div>
+
+        <div class="col-8">
+            <div class="tab-content" role="tabpanel">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">Locations</div>
+                    <div class="card-body">
+                        <div>
+                            <div class="alert alert-info" role="alert">
+                                주로 활동하는 모임 지역을 등록하세요.<br/>
+                                스터디에 등록된 지역만 선택할 수 있습니다.<br/>
+                                태그를 입력하고 콤마(,) 또는 엔터(Enter)를 입력하세요.
+                            </div>
+                            <div id="savedList" th:text="${savedList}" hidden></div>
+                            <!-- List<String> tags = List.of("a", "b") -> a, b 변환 (#strings.listJoin())-->
+                            <input class="tagify--outside col-lg-12 m-auto"
+                                   th:value="${#strings.listJoin(locations, ',')}"
+                                   id="locations"
+                                   type="text"
+                                   name="locations"
+                                   placeholder="원하시는 지역을 등록해주세요."
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+<script th:replace="fragments.html :: ajax-csrf-header"></script>
+<!--  @yaireo Tagify  -->
+<script th:replace="fragments.html :: update-locations (baseUrl='/study/' + ${study.path} + '/settings/locations')"></script>
+</body>
+</html>

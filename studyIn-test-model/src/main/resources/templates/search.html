@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div class="container">
+    <div class="py-5 text-center">
+        <p th:if="${studyPage.getTotalElements() == 0}" class="lead">
+            <strong class="context" th:text="${keyword}"></strong>에 해당하는 스터디가 존재하지 않습니다.
+        </p>
+        <p th:if="${studyPage.getTotalElements() > 0}" class="lead">
+            <strong class="context" th:text="${keyword}" id="keyword"></strong>에 해당하는 스터디 <span
+                th:text="${studyPage.getTotalElements()}"></span>개를 찾았습니다.
+        </p>
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle"
+                    type="button"
+                    id="dropdownMenuButton"
+                    data-mdb-toggle="dropdown"
+                    aria-expanded="false"
+            >
+                <strong>검색 결과 정렬 방식</strong>
+            </button>
+            <ul class="dropdown-menu lead" aria-labelledby="dropdownMenuButton">
+                <li>
+                    <a class="dropdown-item"
+                       th:classappend="${#strings.equals(sortProperty, 'publishedDateTime')}? active"
+                       th:href="@{'/search/study?sort=publishedDateTime,desc&keyword=' + ${keyword}}"
+                    >
+                        스터디 공개일
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item"
+                       th:classappend="${#strings.equals(sortProperty, 'memberCount')}? active"
+                       th:href="@{'/search/study?sort=memberCount,desc&keyword=' + ${keyword}}"
+                    >
+                        멤버 수
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-sm-10">
+            <div class="row">
+                <div th:each="study: ${studyPage.getContent()}" class="col-md-4">
+                    <div class="card mb-4 shadow-2">
+                        <img th:src="${study.image}"
+                             th:alt="${study.title}"
+                             class="card-img-top"
+                        >
+                        <div class="card-body" style="height: 11rem;">
+                            <a th:href="@{'/study/' + ${study.path}}">
+                                <div class="box card-title context text-dark fw-bold" th:text="${study.title}"></div>
+                            </a>
+                            <p class="box2 card-text" th:text="${study.shortDescription}">short description</p>
+                            <p class="box card-text context">
+                                <span th:each="tag: ${study.tags}" class="mr-2">
+                                    <a class="badge rounded-pill badge-light mr-3"
+                                       th:href="@{'/search/study?keyword=' + ${tag.title}}">
+                                        <i class="fas fa-hashtag"></i>
+                                        <span th:text="${tag.title}">Tag</span>
+                                    </a>
+                                </span><br/>
+                                <span th:each="location: ${study.locations}" class="mr-2">
+                                    <a class="badge rounded-pill badge-light mr-3"
+                                       th:href="@{'/search/study?keyword=' + ${location.getLocalNameOfCity}}">
+                                        <i class="fas fa-globe-asia"></i>
+                                        <span th:text="${location.localNameOfCity}">Location</span>
+                                    </a>
+                                </span>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small>
+                                    <i class="fa fa-user-circle"></i>
+                                    <span th:text="${study.memberCount}"></span>명
+                                </small>
+                                <small class="date-ll" th:text="${study.publishedDateTime}">2023년 08월 30일</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-10">
+            <nav>
+                <ul class="pagination justify-content-center fw-bolder">
+                    <li class="page-item" th:classappend="${!studyPage.hasPrevious()}? disabled">
+                        <a class="page-link"
+                           th:href="@{'/search/study?keyword=' + ${keyword} + '&sort=' + ${sortProperty} + ',desc&page=' + ${studyPage.getNumber() - 1}}"
+                           tabindex="-1"
+                           aria-disabled="true"
+                        >
+                            Previous
+                        </a>
+                    </li>
+                    <li class="page-item"
+                        th:classappend="${i == studyPage.getNumber()}? active"
+                        th:each="i: ${#numbers.sequence(0, studyPage.getTotalPages() - 1)}"
+                    >
+                        <a class="page-link"
+                           th:href="@{'/search/study?keyword=' + ${keyword} + '&sort=' + ${sortProperty} + ',desc&page=' + ${i}}"
+                           href="#"
+                           th:text="${i + 1}"
+                        >
+                            1
+                        </a>
+                    </li>
+                    <li class="page-item" th:classappend="${!studyPage.hasNext()}? disabled">
+                        <a class="page-link"
+                           th:href="@{'/search/study?keyword=' + ${keyword} + '&sort=' + ${sortProperty} + ',desc&page=' + ${studyPage.getNumber() + 1}}">
+                            Next
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+<script th:replace="fragments.html :: date-time"></script>
+<script src="/node_modules/mark.js/dist/jquery.mark.min.js"></script>
+<script type="application/javascript">
+    $(function () {
+        var mark = function () {
+            // Read the keyword
+            var keyword = $("#keyword").text();
+
+            // Determine selected options
+            var options = {
+                "each": function (element) {
+                    setTimeout(function () {
+                        $(element).addClass("animate");
+                    }, 150);
+                }
+            };
+
+            // Mark the keyword inside the context
+            $(".context").unmark({
+                done: function () {
+                    $(".context").mark(keyword, options);
+                }
+            });
+        };
+        mark();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>DATABASE</ID>
+  <OriginalElement>0d2b4970-0a22-4c35-8326-391fd41f9a06.SCHEMA:testdb.public</OriginalElement>
+  <nodes>
+    <node x="618.5" y="407.0">0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.account</node>
+    <node x="328.60750360750353" y="640.0655634687893">0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study_managers</node>
+    <node x="306.5" y="939.5">0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study_tags</node>
+    <node x="386.5" y="868.5">0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.account_tags</node>
+    <node x="324.0" y="763.282339524275">0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.tag</node>
+    <node x="306.5" y="173.5">0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study</node>
+    <node x="1191.7558069170973" y="307.0">0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study_locations</node>
+    <node x="214.47814551040352" y="684.5">0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study_members</node>
+    <node x="979.5" y="602.5">0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.notification</node>
+    <node x="1173.2238514173998" y="956.503537680957">0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.location</node>
+    <node x="979.5" y="407.0">0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.persistent_logins</node>
+    <node x="675.0" y="1149.6859579902962">0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.board</node>
+    <node x="41.5" y="-14.5">0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.enrollment</node>
+    <node x="960.8242796629895" y="1009.0">0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.account_locations</node>
+    <node x="-2.5" y="196.5">0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.event</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study_tags" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study" relationship="REFERENCES">
+      <point x="55.5" y="0.0" />
+      <point x="545.5" y="955.0" />
+      <point x="105.5" y="166.5" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study_managers" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.account" relationship="REFERENCES">
+      <point x="0.0" y="15.5" />
+      <point x="403.60750360750353" y="655.5655634687893" />
+      <point x="760.0" y="655.5655634687893" />
+      <point x="0.0" y="-293.0" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.enrollment" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.account" relationship="REFERENCES">
+      <point x="78.5" y="0.0" />
+      <point x="855.1503281664573" y="60.0" />
+      <point x="855.1503281664573" y="496.76231787925343" />
+      <point x="901.5" y="496.76231787925343" />
+      <point x="141.5" y="-102.75" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study_members" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.account" relationship="REFERENCES">
+      <point x="73.5" y="0.0" />
+      <point x="423.7764045989853" y="700.0" />
+      <point x="423.7764045989853" y="700.0" />
+      <point x="552.2873318437836" y="700.0" />
+      <point x="552.2873318437836" y="700.0" />
+      <point x="-141.5" y="0.0" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study_tags" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.tag" relationship="REFERENCES">
+      <point x="0.0" y="-15.5" />
+      <point x="-25.5" y="28.5" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.account_tags" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.account" relationship="REFERENCES">
+      <point x="63.5" y="0.0" />
+      <point x="-141.5" y="184.0" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.event" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.account" relationship="REFERENCES">
+      <point x="0.0" y="143.5" />
+      <point x="120.0" y="1054.7503528520776" />
+      <point x="657.1715070377788" y="1054.7503528520776" />
+      <point x="657.1715070377788" y="993.0" />
+      <point x="-33.25" y="293.0" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.board" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.account" relationship="REFERENCES">
+      <point x="0.0" y="-86.0" />
+      <point x="745.7607410510639" y="1149.6859579902962" />
+      <point x="745.7607410510639" y="993.0" />
+      <point x="0.0" y="293.0" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.enrollment" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.event" relationship="REFERENCES">
+      <point x="0.0" y="74.5" />
+      <point x="0.0" y="-143.5" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.account_tags" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.tag" relationship="REFERENCES">
+      <point x="-40.0" y="-15.5" />
+      <point x="424.08741795838574" y="868.5" />
+      <point x="424.08741795838574" y="820.282339524275" />
+      <point x="0.0" y="28.5" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.event" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study" relationship="REFERENCES">
+      <point x="122.5" y="0.0" />
+      <point x="-133.5" y="0.0" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study_managers" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study" relationship="REFERENCES">
+      <point x="-75.0" y="0.0" />
+      <point x="403.105106363171" y="655.5655634687893" />
+      <point x="403.105106363171" y="340.0" />
+      <point x="133.5" y="0.0" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.account_locations" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.location" relationship="REFERENCES">
+      <point x="-16.0" y="-15.5" />
+      <point x="1024.8242796629895" y="1016.75" />
+      <point x="1015.4326676907322" y="1016.75" />
+      <point x="1015.4326676907322" y="1024.5" />
+      <point x="1277.2238514173998" y="1024.5" />
+      <point x="0.0" y="51.5" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study_members" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study" relationship="REFERENCES">
+      <point x="0.0" y="-15.5" />
+      <point x="287.9781455104035" y="530.105106363171" />
+      <point x="375.43266769073216" y="530.105106363171" />
+      <point x="375.43266769073216" y="506.5" />
+      <point x="0.0" y="166.5" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.notification" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.account" relationship="REFERENCES">
+      <point x="-100.5" y="0.0" />
+      <point x="141.5" y="0.0" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study_locations" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study" relationship="REFERENCES">
+      <point x="-72.0" y="0.0" />
+      <point x="133.5" y="-17.5" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.study_locations" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.location" relationship="REFERENCES">
+      <point x="13.46804450030254" y="-1.3635665409858575" />
+      <point x="1277.2238514173998" y="979.7517688404785" />
+      <point x="1375.2238514173998" y="979.7517688404785" />
+      <point x="98.0" y="51.5" />
+    </edge>
+    <edge source="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.account_locations" target="0d2b4970-0a22-4c35-8326-391fd41f9a06.TABLE:testdb.public.account" relationship="REFERENCES">
+      <point x="-80.0" y="0.0" />
+      <point x="793.25" y="1024.5" />
+      <point x="33.25" y="293.0" />
+    </edge>
+  </edges>
+  <settings layout="Compact" zoom="0.5518239492466294" showDependencies="false" x="643.598692246893" y="689.8861823668899" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Columns</Category>
+    <Category>Comments</Category>
+    <Category>Virtual foreign keys</Category>
+  </Categories>
+</Diagram>
+

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div th:if="${error != null}" class="container">
+    <div class="py-3 text-center form-label">
+        <br/>
+        <h2>STUDY IN</h2>
+        <p>Reset password</p>
+        <div class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span th:text="${error}">
+                잘못된 접근입니다.
+            </span>
+        </div>
+    </div>
+</div>
+<div th:if="${error == null}" class="container">
+    <div class="py-3 text-center form-label">
+        <br/>
+        <h2>STUDY IN</h2>
+        <p>Reset password</p>
+        <div class="alert alert-primary col-lg-7 m-auto" role="alert">
+            새로운 비밀번호를 입력하세요.<br/>
+        </div>
+        <br/>
+    </div>
+    <div class="row justify-content-center">
+        <form class="needs-validation col-sm-6"
+              th:action="@{/find-by-email}" action="#"
+              th:object="${changePasswordForm}"
+              method="post"
+              novalidate
+        >
+            <div class="lead text-center mb-4">
+                Change password for @<span th:text="*{username}">username</span>
+            </div>
+            <div class="form-group mb-3">
+
+                <div class="mb-3">
+                    <label class="form-label" for="password">Password</label>
+                    <input class="form-control"
+                           th:field="*{password}"
+                           id="password"
+                           type="password"
+                           aria-describedby="passwordHelp"
+                           required minlength="8" maxlength="50"
+                    />
+                    <small class="form-text text-muted" id="passwordHelp">
+                        8~50자 이내로 바꾸실 패스워드를 입력하세요.
+                    </small><br/>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="confirmPassword">Confirm password</label>
+                    <input class="form-control"
+                           th:field="*{confirmPassword}"
+                           id="confirmPassword"
+                           type="password"
+                           aria-describedby="confirmPasswordHelp"
+                           required minlength="8" maxlength="50"
+                    />
+                    <small class="form-text text-muted" id="confirmPasswordHelp">
+                        패스워드를 한번 더 입력하세요.
+                    </small><br/>
+                </div>
+
+                <div th:if="${#fields.hasErrors('password')}" class="text-danger text-center mt-3">
+                    <small th:errors="*{password}">
+                        password Error
+                    </small>
+                </div>
+
+                <input class="form-control"
+                       th:field="*{username}"
+                       type="hidden"
+                       required
+                />
+
+            </div>
+            <div class="form-group mt-4">
+                <button class="btn btn-primary btn-block" type="submit">
+                    Change password
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<footer th:replace="fragments.html :: footer"></footer>
+<script th:replace="fragments.html :: mdb-js"></script>
+</body>
+</html>
